@@ -17,6 +17,15 @@ Includes contracts, migrations, tests, user interface and webpack build pipeline
 ```bash
 npm i -g truffle
 ```
+
+### Ethereum  
+You can choose between Parity or local testrpc
+
+### testRPC
+```bash
+npm install -g ethereumjs-testrpc
+```
+
 ### Parity
   **Parity requires Rust version 1.19.0 to build**
   - Linux:
@@ -61,10 +70,6 @@ npm i -g truffle
     cp /target/release/parity /usr/local/bin 
   ```
 
-### or testRPC
-```bash
-npm install -g ethereumjs-testrpc
-```
 
 ## Build 
 1.  First `cd protocol && npm i`
