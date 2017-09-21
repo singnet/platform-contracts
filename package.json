@@ -1,0 +1,17 @@
+{
+  "name": "singnet-contracts",
+  "version": "1.0.0",
+  "description": "Includes contracts, migrations, tests",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "truffle test"
+  },
+  "author": "tiero",
+  "license": "MIT",
+  "dependencies": {
+    "web3": "^0.2.8"
+  }
+}

@@ -1,0 +1,6 @@
+build
+node_modules
+yarn-error.log
+/.DS_Store
+npm-debug.log
+package-lock.json
