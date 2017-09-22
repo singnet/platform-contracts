@@ -119,11 +119,3 @@ async function main() {
 
 
 main()
-//await agentContract.methods.appendPacket('0x0').send({from:OWNER})
-
-
-
-
-
-
-//escrowContarct.methods.beneficiary().call().then(console.log)
