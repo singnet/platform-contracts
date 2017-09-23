@@ -12,6 +12,7 @@
   "author": "tiero",
   "license": "MIT",
   "dependencies": {
-    "web3": "^0.2.8"
+    "web3": "^0.2.8",
+    "zeppelin-solidity": "^1.3.0"
   }
 }
