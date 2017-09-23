@@ -6,7 +6,7 @@ import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
 
 /**
  * @title Singularity Network Token
- * @dev ERC20 Singularity Network Token (TNT)
+ * @dev ERC20 Singularity Network Token (SIN)
  *
  * SIN Tokens are divisible by 1e8 (100,000,000) base
  * units referred to as 'unit'.

@@ -1,21 +1,23 @@
-var Agent = artifacts.require('agent/Agent.sol')
-var AgentFactory = artifacts.require('agent/AgentFactory.sol')
-var AgentRegistry = artifacts.require('registries/AgentRegistry.sol')
-var FixedSupplyToken = artifacts.require('tokens/FixedSupplyToken.sol')
-var Escrow = artifacts.require('Escrow.sol')
-var ownable = artifacts.require('ownership/ownable.sol')
-var OrganizationFactory = artifacts.require('organization/OrganizationFactory.sol')
-var Organization = artifacts.require('organization/Organization.sol')
+const Agent = artifacts.require('agent/Agent.sol')
+const AgentFactory = artifacts.require('agent/AgentFactory.sol')
+const AgentRegistry = artifacts.require('registries/AgentRegistry.sol')
+const SingularityNetToken = artifacts.require('tokens/SingularityNetToken.sol')
+const FixedSupplyToken = artifacts.require('tokens/FixedSupplyToken.sol')
+const Escrow = artifacts.require('Escrow.sol')
+const ownable = artifacts.require('ownership/ownable.sol')
+const OrganizationFactory = artifacts.require('organization/OrganizationFactory.sol')
+const Organization = artifacts.require('organization/Organization.sol')
 
 module.exports = function(deployer) {
   deployer.deploy([
     Agent,
-    AgentFactory,
-    AgentRegistry,
-    FixedSupplyToken,
     Escrow,
     ownable,
+    AgentFactory,
     Organization,
-    OrganizationFactory
+    AgentRegistry,
+    FixedSupplyToken,
+    OrganizationFactory,
+    SingularityNetToken
   ])
 };
