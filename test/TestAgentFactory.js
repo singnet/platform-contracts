@@ -18,9 +18,8 @@ contract('AgentFactory', function () {
 
     it('verifies that somehow can create multiple agent', async () => {
         let result = await agentFactory.create()
-        let result2 = await agentFactory.create()
-        console.log(result,result2)
-        //assert.equal(result,result2,'Errors, no multiple agent created')
+        //console.log(result,result2)
+        assert.isNotNull(result)
     })
 
 })
