@@ -4,7 +4,14 @@ import "./AgentRegistryInterface.sol";
 
 contract AgentRegistry is AgentRegistryInterface {
 
+    struct Service {
+        uint unit;
+        ufixed pricePerUnit;
+    }
+
     address[] public agents;
+
+    mapping (uint => Service) services;
 
     mapping (uint => uint[]) agentsForService;
 
@@ -16,7 +23,11 @@ contract AgentRegistry is AgentRegistryInterface {
         return agents[id];
     }
 
-    function addAgent(uint service, address agent) external {
+    function addAgent(uint service, uint unit, ufixed price, address agent) external {
+        require(services[service].unit == 0 && services[service].pricePerUnit == 0);
+
+        services[service] = Service(unit, price);
+        
         uint id = agents.length;
 
         agents.push(agent);
