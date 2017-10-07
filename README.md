@@ -72,10 +72,9 @@ npm install -g ethereumjs-testrpc
 
 
 ## Build 
-1.  First `cd protocol && npm i`
+1.  First `cd dao && npm i`
 2.  `truffle compile` and run on separated tab `parity` or `testrpc`
 3.  `truffle migrate` to deploy the contracts onto your network of choice (default "development").
-4. Copy the addresses where the contracts have been deployed 
 5. `truffle test`
 
 

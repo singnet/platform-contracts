@@ -3,6 +3,11 @@ from web3 import Web3, HTTPProvider, IPCProvider
 
 web3 = Web3(HTTPProvider('http://localhost:8545'))
 
+def getAddressByName(addresses,name):
+  for key, value in addresses.items():
+    if key==name:
+      return value
+
 def parseAbi(data):
   for key, value in data.items():
     if key=='abi':
@@ -50,39 +55,25 @@ Private Keys
 
 #payloads
 payload = {'from': web3.eth.coinbase, 'gas': 1500000, 'gasPrice':30000000000000}
-payload_2 = {'from': '0xdce19aee0b67edfba78a4201618c6bdf29ed12f4', 'gas': 1500000, 'gasPrice':30000000000000}
-payload_3 = {'from': '0x8111407847a04a7a5d197298adba46381da6c33a', 'gas': 1500000, 'gasPrice':30000000000000}
 
 #ABI(s)
+agentRegistryAbi = parseAbi(json.loads(open('../build/contracts/AgentRegistry.json','r').read()))
 agentFactoryAbi = parseAbi(json.loads(open('../build/contracts/AgentFactory.json','r').read()))
 agentAbi = parseAbi(json.loads(open('../build/contracts/Agent.json','r').read()))
-escrowAbi = parseAbi(json.loads(open('../build/contracts/Escrow.json','r').read()))
-agentRegistryAbi = parseAbi(json.loads(open('../build/contracts/AgentRegistry.json','r').read()))
 #addresses
-agentFactoryAddress = '0x8b6d3d6db2333e6781fa4918926dd742152976c8'
-agentAddress = '0x45f4f554434a3157ddfb38d17b2b9d4504a8a045'
-escrowAddress = '0x6394dbb6cf1fbc5985eb799966e43e26cb47103e'
-agentRegistryAddress = '0xbea2b908a51e8cc5f76238cf022d0d5be1c3c5ac'
+agentRegistryAddress = getAddressByName(json.loads(open('../addresses.json','r').read()),'AgentRegistry')
+agentFactoryAddress = getAddressByName(json.loads(open('../addresses.json','r').read()),'AgentFactory')
+agentAddress = getAddressByName(json.loads(open('../addresses.json','r').read()),'Agent')
+
+
 #Contracts
+agentRegistryContract = web3.eth.contract(abi = agentRegistryAbi, address=agentRegistryAddress)
 agentFactoryContract = web3.eth.contract(abi = agentFactoryAbi, address=agentFactoryAddress)
 agentContract = web3.eth.contract(abi = agentAbi, address=agentAddress)
-agentRegistryContract = web3.eth.contract(abi = agentRegistryAbi, address=agentRegistryAddress)
-escrowContract = web3.eth.contract(abi= escrowAbi, address=escrowAddress)
+
 
 def joinNetwork():
-  return agentFactoryContract.call(payload).create()
-
-def newAgent():
-    return agentFactoryContract.call(payload_2).create()
-
-def newAgentTwo():
-    return agentFactoryContract.call(payload_3).create()
-
-def appendPacket(packet):
-  return agentContract.transact(payload).appendPacket(packet)
-
-def getPacket(position):
-  return agentContract.call(payload).getPacket(position)
+  return agentFactoryContract.transact(payload).create()
 
 def advertiseService(service,agent):
   return agentRegistryContract.transact(payload).addAgent(service,agent)
@@ -99,17 +90,19 @@ def getAgentsById(id):
 
 
 # Here I'm joining the network and putting in myself the address on the blockchain
-myself = joinNetwork()
-print("myself           {0}".format(myself))
+myself1 = joinNetwork()
+print("myself_1          {0}".format(myself1))
+myself2 = joinNetwork()
+print("myself_2           {0}".format(myself2))
 
-test_agent = newAgent()
-print("test_agent       {0}".format(test_agent))
+#test_agent = newAgent()
+#print("test_agent       {0}".format(test_agent))
 
-test_agent_two = newAgentTwo()
-print("test_agent_two   {0}".format(test_agent_two))
+#test_agent_two = newAgentTwo()
+#print("test_agent_two   {0}".format(test_agent_two))
 
 #Here I'm inserting a new agent for a determined service
-print("\n\nadvertize service\n")
+'''print("\n\nadvertize service\n")
 print(advertiseService(0,myself))
 print(advertiseService(0,test_agent))
 print(advertiseService(72182,test_agent))
@@ -121,9 +114,5 @@ print(getAgentsById(findServiceProviders(0)[1]))
 print("\n\nfind service providers for 72182\n")
 print(findServiceProviders(72182)[0])
 test_provider_address = findServiceProviders(72182)[0]
-test_provider = getAgentsById(test_provider_address)
+test_provider = getAgentsById(test_provider_address)'''
 
-## Here I'm adding a packet (bytes32) to the current agent
-#print appendPacket("0x0000000001")
-## Then I'm getting back using a zero-based position
-#print getPacket(0)
