@@ -2,11 +2,12 @@ const fs = require('fs')
 
 const Agent = artifacts.require('agent/Agent.sol')
 const AgentFactory = artifacts.require('agent/AgentFactory.sol')
+const MarketJob = artifacts.require('MarketJob.sol')
 const AgentRegistry = artifacts.require('registries/AgentRegistry.sol')
 const SingularityNetToken = artifacts.require('tokens/SingularityNetToken.sol')
 const Escrow = artifacts.require('Escrow.sol')
 const ownable = artifacts.require('ownership/ownable.sol')
-const AgiCrowdsale = artifacts.require("./AgiCrowdsale.sol")
+const AgiCrowdsale = artifacts.require("AgiCrowdsale.sol")
 
 module.exports = function(deployer, network, accounts) {
   const startTime =  1 // one second in the future
@@ -22,16 +23,18 @@ module.exports = function(deployer, network, accounts) {
     Agent,
     Escrow,
     ownable,
+    MarketJob,
     AgentFactory,
     AgentRegistry,
     SingularityNetToken,
-    [AgiCrowdsale, startTime, endTime, rate, goal, cap, wallet]    
+    // [AgiCrowdsale, startTime, endTime, rate, goal, cap, wallet]    
   ]).then(() => {
     const fileName = "addresses.json"
     const content = {
       Agent: Agent.address,
       Escrow: Escrow.address,
       ownable: ownable.address,
+      MarketJob: MarketJob.address,
       AgentFactory: AgentFactory.address,
       AgentRegistry: AgentRegistry.address,
       SingularityNetToken: SingularityNetToken.address
