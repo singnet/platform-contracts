@@ -1,14 +1,20 @@
 pragma solidity ^0.4.11;
 
+
 import "./AgentInterface.sol";
 import "../MarketJob.sol";
 import "../ownership/ownable.sol";
+
 
 contract Agent is AgentInterface, ownable {
 
     bytes[] public packets;
     MarketJob market;
     uint tokenAmount;
+
+    function() payable {
+        tokenAmount = msg.value;
+    }
 
     function sendPacket(address target, bytes packet) external onlyOwner {
         Agent(target).appendPacket(packet);
