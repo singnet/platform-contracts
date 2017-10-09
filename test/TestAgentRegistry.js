@@ -1,7 +1,7 @@
 const AgentRegistry = artifacts.require('registries/AgentRegistry.sol');
 
 
-contract('AgentRegistry', function () {
+contract('AgentRegistry', function (accounts) {
 
     let registry
 
@@ -13,7 +13,9 @@ contract('AgentRegistry', function () {
 
         let result = await registry.addAgent(
             0,
-            "0xf8d5c5ecb8f302f3e56af050f86633059ad10328"
+            1,
+            20,
+            accounts[2]
         )
 
         assert.equal(result.logs[0].event, 'AgentAdded', 'Agent was not added')
@@ -23,7 +25,9 @@ contract('AgentRegistry', function () {
 
         await registry.addAgent(
             0,
-            "0xf8d5c5ecb8f302f3e56af050f86633059ad10328"
+            1,
+            20,
+            accounts[2]
         )
 
         let result = await registry.getAgent.call(0)
@@ -34,7 +38,9 @@ contract('AgentRegistry', function () {
 
         await registry.addAgent(
             0,
-            "0xf8d5c5ecb8f302f3e56af050f86633059ad10328"
+            1,
+            20,
+            accounts[2]
         )
 
         let result = await registry.getAgentsWithService.call(0)

@@ -1,7 +1,7 @@
 const Agent = artifacts.require('agent/Agent.sol')
+const Market = artifacts.require('MarketJob.sol')
 
-
-contract('Agent', function () {
+contract('Agent', function (accounts) {
 
     let agent
 
@@ -37,12 +37,35 @@ contract('Agent', function () {
 
         let packet2 = await agent2.getPacket(0)
 
-        console.log(packet2)
-
         assert.isNotNull(packet2)
 
     })
 
+    it('verifies that master agent can create a Market Job', async () => {
+       let market = await agent.appendJob(
+            [agent.address, "0x1", "0x2", "0x3"], // agents
+            [30, 20, 30, 20], // amounts
+            accounts[2], // payer address
+            "0x0", "0x0101" // first and last packet
+        )
 
+        assert.isNotNull(market)
+    })
+
+    it('verifies that any agent allowed can be payed for its job', async () => {
+        let market = await Market.new(
+            [accounts[0], accounts[1], accounts[2], accounts[3]], // agents
+            [30, 20, 30, 20], // amounts
+            accounts[4], // payer address
+            "0x0", "0x0101", // first and last packet
+            {value: 100}
+        )
+
+        await market.setJobCompleted()
+
+        let result = await market.withdraw({from: accounts[0], value: 30})
+
+        assert.isNotNull(result)
+    })
 
 })
