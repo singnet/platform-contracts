@@ -6,7 +6,7 @@ contract AgentRegistry is AgentRegistryInterface {
 
     struct Service {
         uint unit;
-        ufixed pricePerUnit;
+        uint pricePerUnit;
     }
 
     address[] public agents;
@@ -23,7 +23,7 @@ contract AgentRegistry is AgentRegistryInterface {
         return agents[id];
     }
 
-    function addAgent(uint service, uint unit, ufixed price, address agent) external {
+    function addAgent(uint service, uint unit, uint price, address agent) external {
         require(services[service].unit == 0 && services[service].pricePerUnit == 0);
 
         services[service] = Service(unit, price);

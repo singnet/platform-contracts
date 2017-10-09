@@ -6,6 +6,6 @@ contract AgentRegistryInterface {
 
     function getAgentsWithService(uint service) external constant returns (uint[]);
     function getAgent(uint id) external constant returns (address);
-    function addAgent(uint id, address) external;
+    function addAgent(uint service, uint unit, uint price, address agent) external;
 
 }
