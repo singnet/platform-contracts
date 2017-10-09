@@ -25,7 +25,13 @@ contract MarketJob is ownable {
         _;
     }
 
-    function MarketJob(address[] _agents, uint[] _amounts, address _payer, bytes _firstPacket, bytes _lastPacket) payable {
+    function MarketJob(
+        address[] _agents,
+        uint[] _amounts,
+        address _payer,
+        bytes _firstPacket,
+        bytes _lastPacket
+    ) payable {
         require(_agents.length == _amounts.length);
         payer = _payer;
         lastPacket = _lastPacket;
@@ -37,7 +43,8 @@ contract MarketJob is ownable {
     }
 
     // todo: review since tests fail
-    function withdraw() allowed jobDone external {
+    function withdraw() payable allowed jobDone external {
+        require(amounts[msg.sender] == msg.value);
         uint amount = amounts[msg.sender];
 
         amounts[msg.sender] = 0;
