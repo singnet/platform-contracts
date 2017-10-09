@@ -20,4 +20,7 @@ else
   testrpc_pid=$!
 fi
 
+node_modules/.bin/truffle compile --all "$@"
+node_modules/.bin/truffle migrate --reset "$@"
 node_modules/.bin/truffle test "$@"
+cd py && python main.py
