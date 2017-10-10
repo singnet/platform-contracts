@@ -1,5 +1,4 @@
-pragma solidity ^0.4.11;
-
+pragma solidity ^0.4.15;
 
 import "zeppelin-solidity/contracts/token/StandardToken.sol";
 import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
@@ -25,31 +24,31 @@ import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
  */
 contract SingularityNetToken is StandardToken, Pausable {
 
-  string public constant NAME = "Singularity Network Token";                      
-  string public constant SYMBOL = "AGI";                                    
-  uint8 public constant DECIMALS = 8;                                      
-  uint256 public constant INITIAL_SUPPLY = 1000000000 * 10**uint256(DECIMALS); 
+    string public constant NAME = "Singularity Network Token";
+    string public constant SYMBOL = "AGI";
+    uint8 public constant DECIMALS = 8;
+    uint256 public constant INITIAL_SUPPLY = 1000000000 * 10**uint256(DECIMALS);
 
-  /**
-   * @dev SingularityNetToken Constructor
-   */
-  function SingularityNetToken() {
-    totalSupply = INITIAL_SUPPLY;                               
-    balances[msg.sender] = INITIAL_SUPPLY;                      
-  }
+    /**
+    * @dev SingularityNetToken Constructor
+    */
+    function SingularityNetToken() {
+        totalSupply = INITIAL_SUPPLY;
+        balances[msg.sender] = INITIAL_SUPPLY;
+    }
 
-  function transfer(address to, uint256 value) whenNotPaused returns (bool) {
-    require(to != address(0));
-    return super.transfer(to, value);
-  }
+    function transfer(address to, uint256 value) whenNotPaused returns (bool) {
+        require(to != address(0));
+        return super.transfer(to, value);
+    }
 
-  function transferFrom(address from, address to, uint256 value) whenNotPaused returns (bool) {
-    require(to != address(0));
-    return super.transferFrom(from, to, value);
-  }
+    function transferFrom(address from, address to, uint256 value) whenNotPaused returns (bool) {
+        require(to != address(0));
+        return super.transferFrom(from, to, value);
+    }
 
-  function approve(address spender, uint256 value) whenNotPaused returns (bool) {
-    return super.approve(spender, value);
-  }
+    function approve(address spender, uint256 value) whenNotPaused returns (bool) {
+        return super.approve(spender, value);
+    }
 
 }

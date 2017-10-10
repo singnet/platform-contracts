@@ -1,8 +1,9 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.15;
 
 import "./ownership/ownable.sol";
+import "./MarketJobInterface.sol";
 
-contract MarketJob is ownable {
+contract MarketJob is MarketJobInterface, ownable {
 
     address public payer;
     bytes public lastPacket;

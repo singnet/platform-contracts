@@ -1,15 +1,13 @@
-pragma solidity ^0.4.11;
-
+pragma solidity ^0.4.15;
 
 import "./AgentInterface.sol";
-import "../MarketJob.sol";
+import "../marketjob/MarketJobInterface.sol";
 import "../ownership/ownable.sol";
-
 
 contract Agent is AgentInterface, ownable {
 
     bytes[] public packets;
-    MarketJob job;
+    MarketJobInterface public job;
 
     function() payable { }
 
@@ -26,7 +24,7 @@ contract Agent is AgentInterface, ownable {
         return packets[id];
     }
 
-    function setJob(MarketJob _job) external returns (address) {
+    function setJob(MarketJobInterface _job) external returns (address) {
         job = _job;
     }
 
