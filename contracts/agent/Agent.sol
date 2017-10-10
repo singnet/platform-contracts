@@ -9,12 +9,9 @@ import "../ownership/ownable.sol";
 contract Agent is AgentInterface, ownable {
 
     bytes[] public packets;
-    MarketJob market;
-    uint tokenAmount;
+    MarketJob job;
 
-    function() payable {
-        tokenAmount = msg.value;
-    }
+    function() payable { }
 
     function sendPacket(address target, bytes packet) external onlyOwner {
         Agent(target).appendPacket(packet);
@@ -29,9 +26,8 @@ contract Agent is AgentInterface, ownable {
         return packets[id];
     }
 
-    function appendJob(address[] agents, uint[] amounts, address payer, bytes firstPacket, bytes lastPacket) external constant returns (address) {
-        market = new MarketJob(agents, amounts, payer, firstPacket, lastPacket);
-        return market;
+    function setJob(MarketJob _job) external returns (address) {
+        job = _job;
     }
 
 }

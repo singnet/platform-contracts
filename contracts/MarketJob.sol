@@ -1,4 +1,4 @@
-pragma solidity^0.4.11;
+pragma solidity ^0.4.11;
 
 import "./ownership/ownable.sol";
 
@@ -8,12 +8,8 @@ contract MarketJob is ownable {
     bytes public lastPacket;
     bytes public firstPacket;
     bool public jobCompleted;
-    mapping (address => uint) public amounts;
 
-    modifier allowed {
-        require(amounts[msg.sender] != 0);
-        _;
-    }
+    mapping (address => uint) public amounts;
 
     modifier jobDone {
         require(jobCompleted == true);
@@ -42,16 +38,15 @@ contract MarketJob is ownable {
         }
     }
 
-    // todo: review since tests fail
-    function withdraw() payable allowed jobDone external {
-        require(amounts[msg.sender] == msg.value);
-        uint amount = amounts[msg.sender];
+    function withdraw() external jobDone {
+        require(amounts[msg.sender] > 0);
+        uint256 amount = amounts[msg.sender];
 
         amounts[msg.sender] = 0;
         msg.sender.transfer(amount);
     }
 
-    function setJobCompleted() jobPending external {
+    function setJobCompleted() external jobPending {
         jobCompleted = true;
     }
 }
