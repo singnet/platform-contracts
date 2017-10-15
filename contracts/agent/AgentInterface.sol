@@ -1,6 +1,6 @@
 pragma solidity ^0.4.15;
 
-import "../marketJob/MarketJob.sol";
+import "../market/MarketJob.sol";
 
 contract AgentInterface {
 

@@ -1,5 +1,5 @@
 const Agent = artifacts.require('agent/Agent.sol')
-const Market = artifacts.require('marketJob/MarketJob.sol')
+const Market = artifacts.require('market/MarketJob.sol')
 
 contract('Agent', function (accounts) {
 

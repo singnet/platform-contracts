@@ -1,7 +1,6 @@
 pragma solidity ^0.4.15;
 
 import "./AgentInterface.sol";
-// import "../marketjob/MarketJobInterface.sol";
 import "../ownership/ownable.sol";
 
 contract Agent is AgentInterface, ownable {
