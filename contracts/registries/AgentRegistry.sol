@@ -11,7 +11,7 @@ contract AgentRegistry is AgentRegistryInterface {
 
     address[] public agents;
 
-    mapping (uint => Service) services;
+    mapping (uint => Service[]) services;
 
     mapping (uint => uint[]) agentsForService;
 
@@ -24,9 +24,8 @@ contract AgentRegistry is AgentRegistryInterface {
     }
 
     function addAgent(uint service, uint unit, uint price, address agent) external {
-        require(services[service].unit == 0 && services[service].pricePerUnit == 0);
-
-        services[service] = Service(unit, price);
+        // require(services[service].unit == 0 && services[service].pricePerUnit == 0);
+        services[service].push(Service(unit, price));
         
         uint id = agents.length;
 

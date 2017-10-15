@@ -1,7 +1,7 @@
 pragma solidity ^0.4.15;
 
 import "./AgentInterface.sol";
-import "../marketjob/MarketJobInterface.sol";
+// import "../marketjob/MarketJobInterface.sol";
 import "../ownership/ownable.sol";
 
 contract Agent is AgentInterface, ownable {
@@ -24,7 +24,7 @@ contract Agent is AgentInterface, ownable {
         return packets[id];
     }
 
-    function setJob(MarketJobInterface _job) external returns (address) {
+    function setJob(MarketJob _job) external returns (address) {
         job = _job;
     }
 

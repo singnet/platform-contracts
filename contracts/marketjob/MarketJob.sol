@@ -1,6 +1,6 @@
 pragma solidity ^0.4.15;
 
-import "./ownership/ownable.sol";
+import "../ownership/ownable.sol";
 import "./MarketJobInterface.sol";
 
 contract MarketJob is MarketJobInterface, ownable {
