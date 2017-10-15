@@ -60,16 +60,18 @@ payload = {'from': web3.eth.coinbase, 'gas': 1500000, 'gasPrice':30000000000000}
 agentRegistryAbi = parseAbi(json.loads(open('../build/contracts/AgentRegistry.json','r').read()))
 agentFactoryAbi = parseAbi(json.loads(open('../build/contracts/AgentFactory.json','r').read()))
 agentAbi = parseAbi(json.loads(open('../build/contracts/Agent.json','r').read()))
+crowdsaleAbi = parseAbi(json.loads(open('../build/contracts/AgiCrowdsale.json','r').read()))
 #addresses
 agentRegistryAddress = getAddressByName(json.loads(open('../addresses.json','r').read()),'AgentRegistry')
 agentFactoryAddress = getAddressByName(json.loads(open('../addresses.json','r').read()),'AgentFactory')
 agentAddress = getAddressByName(json.loads(open('../addresses.json','r').read()),'Agent')
-
+crowdsaleAddress = getAddressByName(json.loads(open('../addresses.json','r').read()),'AgiCrowdsale')
 
 #Contracts
 agentRegistryContract = web3.eth.contract(abi = agentRegistryAbi, address=agentRegistryAddress)
 agentFactoryContract = web3.eth.contract(abi = agentFactoryAbi, address=agentFactoryAddress)
 agentContract = web3.eth.contract(abi = agentAbi, address=agentAddress)
+crowdsaleContract = web3.eth.contract(abi = crowdsaleAbi, address=crowdsaleAddress, args)
 
 
 def joinNetwork():
@@ -84,16 +86,18 @@ def findServiceProviders(service):
 def getAgentsById(id):
   return agentRegistryContract.call(payload).getAgent(id)
 
+
 # assign an integer for each service
 # wordSenseDisambiguation = 0,
 # textSummarization = 1
 
 
+
 # Here I'm joining the network and putting in myself the address on the blockchain
-myself1 = joinNetwork()
-print("myself_1          {0}".format(myself1))
-myself2 = joinNetwork()
-print("myself_2           {0}".format(myself2))
+#myself1 = joinNetwork()
+#print("myself_1          {0}".format(myself1))
+#myself2 = joinNetwork()
+#print("myself_2           {0}".format(myself2))
 
 #test_agent = newAgent()
 #print("test_agent       {0}".format(test_agent))
