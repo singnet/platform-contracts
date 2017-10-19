@@ -11,7 +11,7 @@ contract('SingularityNetToken', (accounts) => {
 
   it('should have the name Singularity Network Token', async () => {
     const name = await singularityNetToken.NAME.call()
-    assert.equal(name, 'Singularity Network Token', "Singularity Network Token wasn't the name")
+    assert.equal(name, 'SingularityNET Token', "Singularity Network Token wasn't the name")
   })
 
   it('should have the symbol AGI', async () => {

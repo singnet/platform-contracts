@@ -4,73 +4,76 @@ const AGIToken = artifacts.require('SingularityNetToken.sol');
 const { latestTime, duration } = require('./helpers/latestTime');
 
 
-contract('AgiCrowdsale', async function ([miner, owner, investor, wallet]) {
-  let tokenOfferingDeployed;
-  let tokenDeployed;
+contract('AgiCrowdsale', async function ([miner, owner, contributor, wallet]) {
+  let agiCrowdsale;
+  let token;
   beforeEach(async function () {
-    tokenDeployed = await AGIToken.new();
+    token = await AGIToken.new();
     const startTime = latestTime() + duration.seconds(1);
     const endTime = startTime + duration.weeks(1);
     const rate = new web3.BigNumber(1000);
     const goal = new web3.BigNumber(3000 * Math.pow(10, 18));
     const cap = new web3.BigNumber(15000 * Math.pow(10, 18));
     console.log(startTime, endTime);
-    tokenOfferingDeployed = await Crowdsale.new(tokenDeployed.address, startTime, endTime, rate, cap, goal, wallet);
-    await tokenOfferingDeployed.setBlockTimestamp(startTime + duration.days(1));
+    agiCrowdsale = await Crowdsale.new(token.address, startTime, endTime, rate, cap, goal, wallet);
+    await agiCrowdsale.setBlockTimestamp(startTime + duration.days(1));
   });
   it('should not be finalized', async function () {
-    const isFinalized = await tokenOfferingDeployed.isFinalized();
+    const isFinalized = await agiCrowdsale.isFinalized();
     assert.isFalse(isFinalized, "isFinalized should be false");
   });
 
   it('goal should be 3000 ETH', async function () {
-    const goal = await tokenOfferingDeployed.goal();
+    const goal = await agiCrowdsale.goal();
     assert.equal(goal.toString(10), '3000000000000000000000', "goal is incorrect");
   });
 
   it('cap should be 15000 ETH', async function () {
-    const cap = await tokenOfferingDeployed.cap();
+    const cap = await agiCrowdsale.cap();
     assert.equal(cap.toString(10), '15000000000000000000000', "cap is incorrect");
   });
 
-  describe('#whitelistAddresses', async function () {
-    let investors;
+  describe('whitelist', async function () {
+    let contributors;
     beforeEach(async function () {
-      investors = [
-        '0x2718C59E08Afa3F8b1EaA0fCA063c566BA4EC98B',
-        '0x14ABEbe9064B73c63AEcd87942B0ED2Fef2F7B3B',
-        '0x5850f06700E92eDe92cb148734b3625DCB6A14d4',
-        '0xA38c9E212B46C58e05fCb678f0Ce62B5e1bc6c52',
-        '0x7e2392A0DDE190457e1e8b2c7fd50d46ACb6ad4f',
-        '0x0306D4C6ABC853bfDc711291032402CF8506422b',
-        '0x1a91022B10DCbB60ED14584dC66B7faC081A9691'
+      contributors = [
+        '0x4f0d50e0456f88b417906a8cff84243ece7396f2',
+        '0x6bb4b29e4b805c87e5387a3480b83c80291a2309',
+        '0xc261bd3b83785040dbb5d57beb268615fc2f5e29',
+        '0x9e70839c294f7dc48af8179d8a449e3536bc432f',
+        '0x3622bb7863c39d62065ccd9a5cd3282d28529c8c',
+        '0xa5285d08a7f0ea67a7ce9203664a9b6431e5fd15',
+        '0x06cacb3745e2eadfb0612afffed3815becbac1e8',
+        '0x07de5626afea063027c92aa52e71f2ecac2564da',
+        '0x3894ffe9d19816dfa7c0e7336435eb581f9255b7',
+        '0x48104a26f6ac28fb3823055378ddb65b772f10ec'
       ];
     });
-    it('should whitelist and blacklist', async function () {
-      let firstInvestorStatus = await tokenOfferingDeployed.whitelist(investors[0]);
-      assert.isFalse(firstInvestorStatus);
+    it('should add and remove from whitelist', async function () {
+      let fisrtContributor = await agiCrowdsale.whitelist(contributors[0]);
+      assert.isFalse(fisrtContributor);
 
-      await tokenOfferingDeployed.whitelistAddresses(investors, true);
-      firstInvestorStatus = await tokenOfferingDeployed.whitelist(investors[0]);
-      assert.isTrue(firstInvestorStatus);
+      await agiCrowdsale.addWhitelist(contributors);
+      fisrtContributor = await agiCrowdsale.whitelist(contributors[0]);
+      assert.isTrue(fisrtContributor);
 
-      await tokenOfferingDeployed.whitelistAddresses(investors, false);
-      firstInvestorStatus = await tokenOfferingDeployed.whitelist(investors[0]);
-      assert.isFalse(firstInvestorStatus);
+      await agiCrowdsale.removeWhitelist(contributors);
+      fisrtContributor = await agiCrowdsale.whitelist(contributors[0]);
+      assert.isFalse(fisrtContributor);
     })
 
-    it('allows to buy tokens', async function () {
-      let firstInvestorStatus = await tokenOfferingDeployed.whitelist(investors[0]);
-      assert.isFalse(firstInvestorStatus);
+    it('allows to purchase tokens', async function () {
+      let firstContributor = await agiCrowdsale.whitelist(contributors[0]);
+      assert.isFalse(firstContributor);
 
-      await tokenOfferingDeployed.whitelistAddresses([investor], true);
-      let balance = await tokenDeployed.balanceOf(investor);
+      await agiCrowdsale.addWhitelist([contributor]);
+      let balance = await token.balanceOf(contributor);
       assert.equal(balance.toString(10), '0');
 
       const value = web3.toWei(1, 'ether');
-      await tokenOfferingDeployed.sendTransaction({ from: investor, value, gas: '200000' });
-      balance = await tokenOfferingDeployed.allocations(investor);
-      assert.isTrue(balance.toNumber(10) > 0, 'balanceOf is 0 for investor who just bought tokens');
+      await agiCrowdsale.sendTransaction({ from: contributor, value, gas: '200000' });
+      balance = await agiCrowdsale.allocations(contributor);
+      assert.isTrue(balance.toNumber(10) > 0, 'balanceOf is 0 for contributor who just bought tokens');
     })
 
   })
