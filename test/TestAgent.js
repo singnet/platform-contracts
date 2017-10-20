@@ -1,7 +1,7 @@
 const Agent = artifacts.require('agent/Agent.sol')
-const Market = artifacts.require('market/MarketJob.sol')
 
-contract('Agent', function (accounts) {
+
+contract('Agent', function () {
 
     let agent
 
@@ -28,17 +28,21 @@ contract('Agent', function (accounts) {
     it('verifies that somehow can send bytes of data to an agent', async () => {
 
         const agent2 = await Agent.new()
-        
+
         await agent.appendPacket("0x0101")
-        
+
         let packet = await agent.getPacket(0)
 
         await agent2.sendPacket(agent2.address,packet)
 
         let packet2 = await agent2.getPacket(0)
 
+        console.log(packet2)
+
         assert.isNotNull(packet2)
 
     })
+
+
 
 })
