@@ -23,7 +23,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     uint256 public rate;
 
     address public wallet;
-    RefundVailt public vault;
+    RefundVault public vault;
     StandardToken public token;
 
     uint256 public startTime;
@@ -92,7 +92,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         TokenPurchase(
             msg.sender,
             beneficiary,
-            weiAmounts,
+            weiAmount,
             tokens
         );
 
@@ -127,7 +127,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
 
     //in case of endTime before the reach of the cap, the owner can claim the unsold tokens
     function claimUnsold() onlyOwner {
-        require(_endTime <= getBlockTimestamp());
+        require(endTime <= getBlockTimestamp());
         uint256 unsold = token.balanceOf(this);
 
         if (unsold > 0) {
