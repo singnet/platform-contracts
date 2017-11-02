@@ -2,6 +2,7 @@ pragma solidity ^0.4.15;
 
 import "../market/MarketJob.sol";
 
+
 contract AgentInterface {
 
     function sendPacket(address target, bytes packet) external;
