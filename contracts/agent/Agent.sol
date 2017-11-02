@@ -1,10 +1,10 @@
 pragma solidity ^0.4.15;
 
 import "./AgentInterface.sol";
-import "../ownership/ownable.sol";
+import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 
 
-contract Agent is AgentInterface, ownable {
+contract Agent is AgentInterface, Ownable {
 
     bytes[] public packets;
     MarketJobInterface public job;

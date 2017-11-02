@@ -7,6 +7,7 @@ const { latestTime, duration } = require('./helpers/latestTime');
 contract('AgiCrowdsale', async function ([miner, owner, contributor, wallet]) {
   let agiCrowdsale;
   let token;
+
   beforeEach(async function () {
     token = await AGIToken.new();
     const startTime = latestTime() + duration.seconds(1);
@@ -14,12 +15,13 @@ contract('AgiCrowdsale', async function ([miner, owner, contributor, wallet]) {
     const rate = new web3.BigNumber(1000);
     const goal = new web3.BigNumber(3000 * Math.pow(10, 18));
     const cap = new web3.BigNumber(15000 * Math.pow(10, 18));
-    console.log(startTime, endTime);
-    agiCrowdsale = await Crowdsale.new(token.address, startTime, endTime, rate, cap, goal, wallet);
+    agiCrowdsale = await Crowdsale.new(token.address, wallet, startTime, endTime, rate, cap, goal);
     await agiCrowdsale.setBlockTimestamp(startTime + duration.days(1));
   });
+
   it('should not be finalized', async function () {
     const isFinalized = await agiCrowdsale.isFinalized();
+
     assert.isFalse(isFinalized, "isFinalized should be false");
   });
 
@@ -33,6 +35,7 @@ contract('AgiCrowdsale', async function ([miner, owner, contributor, wallet]) {
     assert.equal(cap.toString(10), '15000000000000000000000', "cap is incorrect");
   });
 
+  
   describe('whitelist', async function () {
     let contributors;
     beforeEach(async function () {
@@ -75,6 +78,6 @@ contract('AgiCrowdsale', async function ([miner, owner, contributor, wallet]) {
       balance = await agiCrowdsale.allocations(contributor);
       assert.isTrue(balance.toNumber(10) > 0, 'balanceOf is 0 for contributor who just bought tokens');
     })
-
   })
+  
 });

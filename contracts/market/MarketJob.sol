@@ -1,9 +1,10 @@
 pragma solidity ^0.4.15;
 
-import "../ownership/ownable.sol";
+import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 import "./MarketJobInterface.sol";
 
-contract MarketJob is MarketJobInterface, ownable {
+
+contract MarketJob is MarketJobInterface, Ownable {
 
     address public payer;
     bytes public lastPacket;
@@ -27,8 +28,8 @@ contract MarketJob is MarketJobInterface, ownable {
         uint[] _amounts,
         address _payer,
         bytes _firstPacket,
-        bytes _lastPacket
-    ) payable {
+        bytes _lastPacket ) payable 
+    {
         require(_agents.length == _amounts.length);
         payer = _payer;
         lastPacket = _lastPacket;

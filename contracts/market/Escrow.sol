@@ -1,10 +1,11 @@
 pragma solidity ^0.4.11;
 
 
-import "../ownership/ownable.sol";
+import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 
 
-contract Escrow is ownable {
+
+contract Escrow is Ownable {
 
 
     address public beneficiary;

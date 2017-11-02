@@ -2,6 +2,7 @@ pragma solidity ^0.4.15;
 
 import "./AgentRegistryInterface.sol";
 
+
 contract AgentRegistry is AgentRegistryInterface {
 
     struct Service {
@@ -23,7 +24,12 @@ contract AgentRegistry is AgentRegistryInterface {
         return agents[id];
     }
 
-    function addAgent(uint service, uint unit, uint price, address agent) external {
+    function addAgent(
+        uint service, 
+        uint unit, 
+        uint price, 
+        address agent ) external 
+    {
         // require(services[service].unit == 0 && services[service].pricePerUnit == 0);
         services[service].push(Service(unit, price));
         

@@ -72,8 +72,8 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     }
 
     //low level function to buy tokens
-    //pay attention, lony the beneficiary can reedem the tokens
-    function buyTokens(address beneficiary) {
+    //pay attention, only the beneficiary can reedems the tokens
+    function buyTokens(address beneficiary) payable {
         require(whitelist[beneficiary]);
         require(beneficiary != 0x0);
         require(validPurchase());
@@ -153,6 +153,22 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         //emit the event of the token released
         TokenRelease(beneficiary,tokens);
 
+    }
+
+    // add to whitelist array of addresses
+    function addWhitelist(address[] _addresses) public onlyOwner {
+        for (uint256 i = 0; i < _addresses.length; i++) {
+            address contributorAddress = _addresses[i];
+            whitelist[contributorAddress] = true;
+        }
+    }
+
+    // remove from whitelist array of addresses 
+    function removeWhitelist(address[] _addresses) public onlyOwner {
+        for (uint256 i = 0; i < _addresses.length; i++) {
+            address contributorAddress = _addresses[i];
+            whitelist[contributorAddress] = false;
+        }
     }
 
     function finalize() onlyOwner {

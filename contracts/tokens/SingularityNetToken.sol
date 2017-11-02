@@ -3,6 +3,7 @@ pragma solidity ^0.4.15;
 import "zeppelin-solidity/contracts/token/StandardToken.sol";
 import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
 
+
 /**
  * @title SingularityNET Token
  * @dev ERC20 SingularityNET Token (AGI)
