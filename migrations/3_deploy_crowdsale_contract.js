@@ -26,12 +26,12 @@ module.exports = function(deployer, network, accounts) {
   deployer.deploy(
     AgiCrowdsale,
     SingularityNetToken.address,
+    wallet,
     startTime,
     endTime,
     rate,
     goal,
     cap,
-    wallet  
   ).then(() => {
     const fileName = "addresses.json"
 
