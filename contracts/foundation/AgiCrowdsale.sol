@@ -1,9 +1,9 @@
 pragma solidity ^0.4.15;
 
+import '../tokens/SingularityNetToken.sol';
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
 import 'zeppelin-solidity/contracts/ReentrancyGuard.sol';
 import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
-import 'zeppelin-solidity/contracts/token/StandardToken.sol';
 import 'zeppelin-solidity/contracts/crowdsale/RefundVault.sol';
 
 
@@ -24,7 +24,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
 
     address public wallet;
     RefundVault public vault;
-    StandardToken public token;
+    SingularityNetToken public token;
 
     uint256 public startTime;
     uint256 public endTime;
@@ -32,11 +32,17 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     bool public isFinalized = false;
     uint256 public weiRaised;
 
-    mapping(address => bool) public whitelist;
-    mapping(address => uint256) public allocations;
+    struct Contributor {
+        bool status;
+        uint256 tier;
+        uint256 contributedAmount;
+    }
+
+    mapping(address => Contributor) public whitelist;
     
     event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
     event TokenRelease(address indexed beneficiary, uint256 amount);
+    event TokenRefund(address indexed refundee, uint256 amount);
 
     event Finalized();
 
@@ -57,7 +63,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         require(_wallet != 0x0);
 
         vault = new RefundVault(_wallet);
-        token = StandardToken(_token);
+        token = SingularityNetToken(_token);
         wallet = _wallet;
         startTime = _startTime;
         endTime = _endTime;
@@ -72,50 +78,44 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     }
 
     //low level function to buy tokens
-    //pay attention, only the beneficiary can reedems the tokens
     function buyTokens(address beneficiary) payable {
-        require(whitelist[beneficiary]);
         require(beneficiary != 0x0);
+        require(whitelist[beneficiary].status);
         require(validPurchase());
 
         //derive amount in wei to buy 
         uint256 weiAmount = msg.value;
+        //check if there is enough funds 
+        uint256 remainingToFund = cap.sub(weiRaised);
+        if (weiAmount > remainingToFund) {
+            weiAmount = remainingToFund;
+        }
+        uint256 weiToReturn = msg.value.sub(weiAmount);
         //derive how many tokens
         uint256 tokens = weiAmount.mul(rate);
         //update the state of weiRaised
         weiRaised = weiRaised.add(weiAmount);
 
-        //update the state of current allocations
-        allocations[beneficiary] = tokens;
+       //Forward funs to the vault 
+        forwardFunds();
+        //refund if the contribution exceed the cap
+        if (weiToReturn > 0) {
+            beneficiary.transfer(weiToReturn);
+            TokenRefund(beneficiary,weiToReturn);
+        }
 
+        //update whitelist contributed amount
+        whitelist[beneficiary].contributedAmount += weiAmount;
+        
         //Trigger the event of TokenPurchase
         TokenPurchase(
             msg.sender,
             beneficiary,
             weiAmount,
             tokens
-        );
-
-        forwardFunds();
-    }
-
-    //If is finalized and goal is reached the tokens can be claimed  
-    function claimTokens() nonReentrant external {
-        require(isFinalized);
-        require(goalReached());
-        //check if there are tokens available
-        require(token.balanceOf(this) > 0);
-        require(allocations[msg.sender] > 0);
-
-        //ok, now we can send tokens
-        //get the amount allocated
-        uint256 tokens = allocations[msg.sender];
-        // ok if we arrived till here, we can cleanup the current allocation
-        allocations[msg.sender] = 0;
-        require(token.transfer(msg.sender,tokens));
-
-        //emit the event of the token release
-        TokenRelease(msg.sender,tokens);
+        ); 
+        token.transferTokens(beneficiary,tokens);
+        
     }
 
     // contributors can claim refund if the goal is not reached
@@ -135,39 +135,12 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         }
     }
 
-    //admin fallback, is preferrable using claimTokens in pull 
-    function sendTokens(address beneficiary) onlyOwner {
-        require(isFinalized);
-        require(goalReached());
-        //check if there are tokens available
-        require(token.balanceOf(this) > 0);
-        require(allocations[beneficiary] > 0);
-
-        //ok, now we can send tokens
-        //get the amount allocated
-        uint256 tokens = allocations[beneficiary];
-        // ok if we arrived till here, we can cleanup the current allocation
-        allocations[beneficiary] = 0;
-        require(token.transfer(beneficiary,tokens));
-
-        //emit the event of the token released
-        TokenRelease(beneficiary,tokens);
-
-    }
-
     // add to whitelist array of addresses
-    function addWhitelist(address[] _addresses) public onlyOwner {
-        for (uint256 i = 0; i < _addresses.length; i++) {
-            address contributorAddress = _addresses[i];
-            whitelist[contributorAddress] = true;
-        }
-    }
-
-    // remove from whitelist array of addresses 
-    function removeWhitelist(address[] _addresses) public onlyOwner {
-        for (uint256 i = 0; i < _addresses.length; i++) {
-            address contributorAddress = _addresses[i];
-            whitelist[contributorAddress] = false;
+    function updateWhitelist( address[] addresses, uint256 tier, bool status ) public onlyOwner {
+        for (uint256 i = 0; i < addresses.length; i++) {
+            address contributorAddress = addresses[i];
+            require(whitelist[contributorAddress].contributedAmount == 0);
+            whitelist[contributorAddress] = Contributor(status,tier,0);
         }
     }
 
@@ -178,6 +151,8 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         if (goalReached()) {
             //Close the vault
             vault.close();
+            //Unpause the token 
+            token.unpause();
         } else {
             //else enable refunds
             vault.enableRefunds();
@@ -202,6 +177,10 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
 
     function goalReached() public constant returns (bool) {
         return weiRaised >= goal;
+    }
+
+    function isWhitelisted(address contributor) public constant returns (bool) {
+        return whitelist[contributor].status;
     }
 
     // @return true if the transaction can buy tokens

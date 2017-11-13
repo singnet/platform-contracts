@@ -1,7 +1,7 @@
 pragma solidity ^0.4.15;
 
-import "zeppelin-solidity/contracts/token/StandardToken.sol";
-import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
+import "zeppelin-solidity/contracts/token/PausableToken.sol";
+import "zeppelin-solidity/contracts/token/BurnableToken.sol";
 
 
 /**
@@ -9,45 +9,52 @@ import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
  * @dev ERC20 SingularityNET Token (AGI)
  *
  * AGI Tokens are divisible by 1e8 (100,000,000) base
- * spikes referred to as 'spike'.
+ * referred to as 'cogs'.
  *
  * AGI are displayed using 8 decimal places of precision.
  *
  * 1 AGI is equivalent to:
- *   100000000 == 1 * 10**8 == 1e8 == One Hundred Million spikes
+ *   100 000 000 == 1 * 10**8 == 1e8 == One Hundred Million cogs
  *
  * 1 Billion AGI (total supply) is equivalent to:
- *   100000000000000000 == 1000000000 * 10**8 == 1e17 == One Hundred Quadrillion spikes
+ *   100000000000000000 == 1 000 000 000 * 10**8 == 1e17 == One Hundred Quadrillion cogs
  *
  *
  */
-contract SingularityNetToken is StandardToken, Pausable {
+contract SingularityNetToken is PausableToken, BurnableToken {
 
     string public constant NAME = "SingularityNET Token";
     string public constant SYMBOL = "AGI";
     uint8 public constant DECIMALS = 8;
     uint256 public constant INITIAL_SUPPLY = 1000000000 * 10**uint256(DECIMALS);
 
+    uint256 public constant PRIVATE_SUPPLY =  200000000 * 10**uint256(DECIMALS);
+    uint256 public constant ADVISORS_SUPPLY = 100000000 * 10**uint256(DECIMALS); 
+    uint256 public constant PUBLIC_SUPPLY  =  700000000 * 10**uint256(DECIMALS);
+    
     /**
     * @dev SingularityNetToken Constructor
     */
+
     function SingularityNetToken() {
-        totalSupply = INITIAL_SUPPLY;
+        totalSupply = INITIAL_SUPPLY;   
         balances[msg.sender] = INITIAL_SUPPLY;
     }
 
-    function transfer(address to, uint256 value) whenNotPaused returns (bool) {
-        require(to != address(0));
-        return super.transfer(to, value);
-    }
+    function setOwnership(address _owner) onlyOwner {
+        pause();
+        balances[owner] = INITIAL_SUPPLY.sub(PUBLIC_SUPPLY);
+        owner = _owner;
+        balances[owner] = PUBLIC_SUPPLY;
+    } 
 
-    function transferFrom(address from, address to, uint256 value) whenNotPaused returns (bool) {
-        require(to != address(0));
-        return super.transferFrom(from, to, value);
-    }
+    function transferTokens(address beneficiary, uint256 amount) onlyOwner returns (bool) {
+        require(amount > 0);
 
-    function approve(address spender, uint256 value) whenNotPaused returns (bool) {
-        return super.approve(spender, value);
-    }
+        balances[owner] = balances[owner].sub(amount);
+        balances[beneficiary] = balances[beneficiary].add(amount);
+        Transfer(owner, beneficiary, amount);
 
+        return true;
+    }
 }

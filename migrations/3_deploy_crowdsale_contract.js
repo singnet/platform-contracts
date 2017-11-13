@@ -30,8 +30,8 @@ module.exports = function(deployer, network, accounts) {
     startTime,
     endTime,
     rate,
-    goal,
     cap,
+    goal
   ).then(() => {
     const fileName = "addresses.json"
 
