@@ -94,7 +94,7 @@ contract('SingularityNetToken', (accounts) => {
   })
 
   it('should transfer tokens to someone if owner', async function() {
-    console.log(await token.transferTokens(accounts[2],50))
+    await token.transferTokens(accounts[2],50)
     const balance2 = await token.balanceOf(accounts[2])
     assert.equal(balance2.toNumber(), 50) 
   })

@@ -21,6 +21,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     uint256 public cap;
     uint256 public goal;
     uint256 public rate;
+    uint256 public constant WEI_TO_COGS =  10**uint256(10);
 
     address public wallet;
     RefundVault public vault;
@@ -78,7 +79,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     }
 
     //low level function to buy tokens
-    function buyTokens(address beneficiary) payable {
+    function buyTokens(address beneficiary) internal {
         require(beneficiary != 0x0);
         require(whitelist[beneficiary].status);
         require(validPurchase());
@@ -92,7 +93,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         }
         uint256 weiToReturn = msg.value.sub(weiAmount);
         //derive how many tokens
-        uint256 tokens = weiAmount.mul(rate);
+        uint256 tokens = getTokens(weiAmount);
         //update the state of weiRaised
         weiRaised = weiRaised.add(weiAmount);
 
@@ -113,9 +114,13 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
             beneficiary,
             weiAmount,
             tokens
-        ); 
+        );
         token.transferTokens(beneficiary,tokens);
         
+    }
+
+    function getTokens(uint256 amount) internal constant returns(uint256) {
+        return amount.mul(rate).div(WEI_TO_COGS);
     }
 
     // contributors can claim refund if the goal is not reached
