@@ -9,7 +9,9 @@ contract Agent is AgentInterface, Ownable {
     bytes[] public packets;
     MarketJobInterface public job;
 
-    function() payable { }
+    function Agent() {
+        
+    }
 
     function sendPacket(address target, bytes packet) external onlyOwner {
         Agent(target).appendPacket(packet);

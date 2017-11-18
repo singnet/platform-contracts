@@ -2,7 +2,8 @@ const fs = require('fs')
 
 const Escrow = artifacts.require('Escrow.sol')
 const Agent = artifacts.require('agent/Agent.sol')
-const MarketJob = artifacts.require('MarketJob.sol')
+const MarketJob = artifacts.require('market/MarketJob.sol')
+const MarketJobFactory = artifacts.require('market/MarketJobFactory.sol')
 const AgentFactory = artifacts.require('agent/AgentFactory.sol')
 const AgentRegistry = artifacts.require('registries/AgentRegistry.sol')
 const SingularityNetToken = artifacts.require('tokens/SingularityNetToken.sol')
@@ -14,6 +15,7 @@ module.exports = function(deployer, network, accounts) {
     MarketJob,
     AgentFactory,
     AgentRegistry,
+    MarketJobFactory,
     SingularityNetToken
   ]).then(() => {
     const fileName = "addresses.json"
@@ -23,6 +25,7 @@ module.exports = function(deployer, network, accounts) {
       MarketJob: MarketJob.address,
       AgentFactory: AgentFactory.address,
       AgentRegistry: AgentRegistry.address,
+      MarketJobFactory: MarketJobFactory.address,
       SingularityNetToken: SingularityNetToken.address
     }
 
