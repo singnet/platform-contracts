@@ -6,6 +6,8 @@ contract MarketJobInterface {
     event JobCompleted();
     event Withdraw(address payee, uint256 amount);
 
-    function withdraw() external;
+    function deposit() public payable;
+    function withdraw(address agent) public;
+    function setJobCompleted(bytes lastPacket) public;
 
 }

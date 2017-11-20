@@ -45,28 +45,29 @@ contract MarketJob is MarketJobInterface, Ownable {
         masterAgent = msg.sender;
         payer = _payer;
         firstPacket = _firstPacket;
+        jobCompleted = false;
 
         for (uint256 i = 0; i < _amounts.length; i++) {
             amounts[_agents[i]] = Job(_amounts[i],_services[i]);
         }
     }
 
-    function deposit() payable {
-
+    function deposit() jobPending public payable {
+        
     }
 
-    function withdraw() external jobDone {
-        require(amounts[msg.sender].amount > 0);
-        uint256 amount = amounts[msg.sender].amount;
-
-        amounts[msg.sender].amount = 0;
-        Withdraw(msg.sender,amount);
-        //msg.sender.transfer(amount);
-    }
-
-    function setJobCompleted(bytes _lastPacket) onlyOwner jobPending {
+    function setJobCompleted(bytes _lastPacket) onlyOwner jobPending public {
         jobCompleted = true;
         lastPacket = _lastPacket;
         JobCompleted();
+    }
+
+    function withdraw(address agent) jobDone public {
+        require(amounts[agent].amount > 0);
+        uint256 amount = amounts[agent].amount;
+
+        amounts[agent].amount = 0;
+        agent.transfer(amount);
+        Withdraw(msg.sender,amount);
     }
 }
