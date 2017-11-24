@@ -3,11 +3,15 @@ pragma solidity ^0.4.15;
 
 contract MarketJobInterface {
 
+    event Deposited(address payer, uint256 amount);
+    event Withdrew(address payee, uint256 amount);
     event JobCompleted();
-    event Withdraw(address payee, uint256 amount);
+    event JobAccepted();
 
-    function deposit() public payable;
-    function withdraw(address agent) public;
+
+    function withdraw() public;
     function setJobCompleted(bytes lastPacket) public;
+    function setJobAccepted() public;
+    function deposit(uint256 amount) public;
 
 }

@@ -2,21 +2,26 @@ pragma solidity ^0.4.15;
 
 import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
-import "./MarketJobInterface.sol";
+import '../tokens/SingularityNetToken.sol';
+import './MarketJobInterface.sol';
 
 
 contract MarketJob is MarketJobInterface, Ownable {
     using SafeMath for uint256;
 
-
-    address public payer;
+    SingularityNetToken public token;
     address public masterAgent;
-    bytes public lastPacket;
-    bytes public firstPacket;
+    bytes public jobDescriptor;
     bool public jobCompleted;
+    bool public jobAccepted;
+    bytes public jobResult;
+    address public payer;
 
+    event Deposited(address payer, uint256 amount);
+    event Withdrew(address payee, uint256 amount);
     event JobCompleted();
-    event Withdraw(address payee, uint256 amount);
+    event JobAccepted();
+
 
     struct Job {
         uint256 amount;
@@ -30,8 +35,23 @@ contract MarketJob is MarketJobInterface, Ownable {
         _;
     }
 
+    modifier jobApproved {
+        require(jobAccepted == true);
+        _;
+    }
+
     modifier jobPending {
         require(jobCompleted == false);
+        _;
+    }
+
+    modifier onlyPayer {
+        require(msg.sender == payer);
+        _;
+    }
+
+    modifier onlyMasterAgent {
+        require(msg.sender == masterAgent);
         _;
     }
 
@@ -39,35 +59,46 @@ contract MarketJob is MarketJobInterface, Ownable {
         address[] _agents,
         uint256[] _amounts,
         uint256[] _services,
+        address _token,
         address _payer,
-        bytes _firstPacket ) {
+        bytes _jobDescriptor ) {
         require(_agents.length == _amounts.length);
+        require(_amounts.length == _services.length);
         masterAgent = msg.sender;
         payer = _payer;
-        firstPacket = _firstPacket;
+        jobDescriptor = _jobDescriptor;
         jobCompleted = false;
+        token = SingularityNetToken(_token);
 
         for (uint256 i = 0; i < _amounts.length; i++) {
             amounts[_agents[i]] = Job(_amounts[i],_services[i]);
         }
     }
 
-    function deposit() jobPending public payable {
-        
+    function deposit(uint256 amount) onlyPayer jobPending public {
+        require(token.transferFrom(msg.sender, address(this), amount));
+        Deposited(msg.sender,amount);
     }
 
-    function setJobCompleted(bytes _lastPacket) onlyOwner jobPending public {
+    function setJobCompleted(bytes _jobResult) onlyOwner onlyMasterAgent jobPending public {
         jobCompleted = true;
-        lastPacket = _lastPacket;
+        jobResult = _jobResult;
         JobCompleted();
     }
 
-    function withdraw(address agent) jobDone public {
+    function setJobAccepted() onlyPayer jobDone public {
+        jobAccepted = true;
+        JobAccepted();
+    }
+
+    function withdraw() jobDone jobApproved public {
+        address agent = msg.sender;
         require(amounts[agent].amount > 0);
+
         uint256 amount = amounts[agent].amount;
 
         amounts[agent].amount = 0;
-        agent.transfer(amount);
-        Withdraw(msg.sender,amount);
+        require(token.transferFrom(address(this), agent, amount));
+        Withdrew(agent,amount);
     }
 }
