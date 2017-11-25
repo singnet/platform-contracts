@@ -4,27 +4,35 @@ const AGIToken = artifacts.require('tokens/SingularityNetTokenMock.sol')
 contract('Market Job', function ([firstAgent,secondAgent,thirdAgent,payer]) {
   
   let marketJob
-  let token 
   const  amounts = [30, 40, 30]
+
  beforeEach(async () => {
-    token = await AGIToken.new(payer,100)
+    const agiToken = await AGIToken.new(payer,100)
     marketJob = await Market.new(
       [firstAgent, secondAgent, thirdAgent], // agents
       amounts, //amounts
       [101, 102, 103], // services id
-      token.address, //token address
+      agiToken.address, //token address
       payer, // payer address
       "0x0" // first bytes packet
     )
+    console.log(await marketJob.owner.call(),marketJob.address)
   })
 
   it('only the payer can deposit AGI token', async () => {
    // console.log(await token.balanceOf(payer))
+   const token = await AGIToken.new(payer,100)
+   const watch = token.Approval() 
+    amount = 100 
 
-    const amount = 99 
-    await token.approve(marketJob.address, amount);
 
-    const result = await marketJob.deposit(amount,{from:payer})
+    await token.approve(marketJob.address, amount, {from: payer})
+    const allowance = await token.allowance(marketJob.address, payer)
+
+    assert.equal(watch.get()[0].args.owner, payer)
+    assert.equal(watch.get()[0].args.spender, marketJob.address)
+
+    const result = await marketJob.deposit(amount, {from:payer})
     assert.equal(result.logs[0].event, 'Deposited', 'Amount was not deposited')    
   })
 

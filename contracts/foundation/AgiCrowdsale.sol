@@ -33,13 +33,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     bool public isFinalized = false;
     uint256 public weiRaised;
 
-    struct Contributor {
-        bool status;
-        uint256 tier;
-        uint256 contributedAmount;
-    }
-
-    mapping(address => Contributor) public whitelist;
+    mapping(address => bool) public whitelist;
     
     event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
     event TokenRelease(address indexed beneficiary, uint256 amount);
@@ -81,7 +75,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     //low level function to buy tokens
     function buyTokens(address beneficiary) internal {
         require(beneficiary != 0x0);
-        require(whitelist[beneficiary].status);
+        require(whitelist[beneficiary]);
         require(validPurchase());
 
         //derive amount in wei to buy 
@@ -102,11 +96,9 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         //refund if the contribution exceed the cap
         if (weiToReturn > 0) {
             beneficiary.transfer(weiToReturn);
-            TokenRefund(beneficiary,weiToReturn);
+            TokenRefund(beneficiary, weiToReturn);
         }
 
-        //update whitelist contributed amount
-        whitelist[beneficiary].contributedAmount += weiAmount;
         
         //Trigger the event of TokenPurchase
         TokenPurchase(
@@ -119,7 +111,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         
     }
 
-    function getTokens(uint256 amount) internal constant returns(uint256) {
+    function getTokens(uint256 amount) internal constant returns (uint256) {
         return amount.mul(rate).div(WEI_TO_COGS);
     }
 
@@ -141,11 +133,10 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     }
 
     // add to whitelist array of addresses
-    function updateWhitelist( address[] addresses, uint256 tier, bool status ) public onlyOwner {
+    function updateWhitelist(address[] addresses, bool status) public onlyOwner {
         for (uint256 i = 0; i < addresses.length; i++) {
             address contributorAddress = addresses[i];
-            require(whitelist[contributorAddress].contributedAmount == 0);
-            whitelist[contributorAddress] = Contributor(status,tier,0);
+            whitelist[contributorAddress] = status;
         }
     }
 
@@ -185,7 +176,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     }
 
     function isWhitelisted(address contributor) public constant returns (bool) {
-        return whitelist[contributor].status;
+        return whitelist[contributor];
     }
 
     // @return true if the transaction can buy tokens
