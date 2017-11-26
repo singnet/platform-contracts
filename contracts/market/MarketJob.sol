@@ -1,12 +1,11 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.18;
 
-import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
 import '../tokens/SingularityNetToken.sol';
 import './MarketJobInterface.sol';
 
 
-contract MarketJob is MarketJobInterface, Ownable {
+contract MarketJob is MarketJobInterface {
     using SafeMath for uint256;
 
     SingularityNetToken public token;
@@ -76,11 +75,12 @@ contract MarketJob is MarketJobInterface, Ownable {
     }
 
     function deposit(uint256 amount) onlyPayer jobPending public {
+        require(token.balanceOf(msg.sender) >= amount);
         require(token.transferFrom(msg.sender, address(this), amount));
         Deposited(msg.sender,amount);
     }
 
-    function setJobCompleted(bytes _jobResult) onlyOwner onlyMasterAgent jobPending public {
+    function setJobCompleted(bytes _jobResult) onlyMasterAgent jobPending public {
         jobCompleted = true;
         jobResult = _jobResult;
         JobCompleted();
@@ -93,12 +93,12 @@ contract MarketJob is MarketJobInterface, Ownable {
 
     function withdraw() jobDone jobApproved public {
         address agent = msg.sender;
-        require(amounts[agent].amount > 0);
-
         uint256 amount = amounts[agent].amount;
+        require(amount > 0);
+        require(this.balance >= amount);
 
         amounts[agent].amount = 0;
-        require(token.transferFrom(address(this), agent, amount));
+        assert(agent.send(amount));
         Withdrew(agent,amount);
     }
 }

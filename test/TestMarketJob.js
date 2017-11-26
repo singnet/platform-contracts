@@ -1,42 +1,53 @@
 const Market = artifacts.require('market/MarketJob.sol')
 const AGIToken = artifacts.require('tokens/SingularityNetTokenMock.sol')
 
-contract('Market Job', function ([firstAgent,secondAgent,thirdAgent,payer]) {
+contract('Market Job', function ([payer,firstAgent,secondAgent,thirdAgent]) {
   
   let marketJob
+  let token
   const  amounts = [30, 40, 30]
 
  beforeEach(async () => {
-    const agiToken = await AGIToken.new(payer,100)
+    token = await AGIToken.new(payer,100)
     marketJob = await Market.new(
       [firstAgent, secondAgent, thirdAgent], // agents
       amounts, //amounts
       [101, 102, 103], // services id
-      agiToken.address, //token address
+      token.address, //token address
       payer, // payer address
       "0x0" // first bytes packet
     )
-    console.log(await marketJob.owner.call(),marketJob.address)
   })
+
+
 
   it('only the payer can deposit AGI token', async () => {
    // console.log(await token.balanceOf(payer))
-   const token = await AGIToken.new(payer,100)
-   const watch = token.Approval() 
-    amount = 100 
+   const amount = new web3.BigNumber(1000) 
 
+   const watch = token.Approval()
+   
 
     await token.approve(marketJob.address, amount, {from: payer})
-    const allowance = await token.allowance(marketJob.address, payer)
+    const allowance = await token.allowance.call(marketJob.address,payer)
+  
 
     assert.equal(watch.get()[0].args.owner, payer)
     assert.equal(watch.get()[0].args.spender, marketJob.address)
 
-    const result = await marketJob.deposit(amount, {from:payer})
+   //console.log(allowance.toNumber())
+
+    await marketJob.deposit(amount)
+
+    assert.strictEqual(
+      (await token.balanceOf.call(marketJob.address)).toNumber(),
+      amount.toNumber()
+    );
+
     assert.equal(result.logs[0].event, 'Deposited', 'Amount was not deposited')    
   })
 
-  it('only the the master agent can set the job as completed and trigger an event', async () => {
+  it('COMPLETION # only the the master agent can set the job as completed and trigger an event', async () => {
     const hash = '0x01'
     
     const result = await marketJob.setJobCompleted(hash)
@@ -46,22 +57,23 @@ contract('Market Job', function ([firstAgent,secondAgent,thirdAgent,payer]) {
     assert.equal(result.logs[0].event, 'JobCompleted', 'Job was not completed')
   })
 
-  it('only the the payer can set the job as approved and trigger an event', async () => {
+  it('APPROVAL # only the the payer can set the job as approved ', async () => {
     
-    const result = await marketJob.setJobAccepted({from:payer})
+    const result = await marketJob.setJobAccepted()
     const jobAccepted = await marketJob.jobAccepted.call()
 
-    assert.equal(jobAccepted,true,'the job state is euqal to approved')
+    assert.equal(jobAccepted, true,'the job state is euqal to approved')
     assert.equal(result.logs[0].event, 'JobApproved', 'Job was not approved') 
   })
 
-  it('only allowed agents can request a withdrawal', async () => {
+  it('WITHDRAW # only allowed agents can request a withdrawal', async () => {
     
-    const amount = amounts[0]
-    
-    await token.approve(firstAgent, amount);
-    
-    const result = await marketJob.withdraw({from:firstAgent})
+    await marketJob.setJobCompleted("0x0")
+    await marketJob.setJobAccepted()
+
+    const result = await marketJob.withdraw()
+    console.log(result)
+    console.log(await token.balanceOf(firstAgent))
 
     assert.equal(result.logs[0].event, 'Withdrew', 'Withdrawal was not approved')
   })
