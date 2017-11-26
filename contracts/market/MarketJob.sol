@@ -96,7 +96,7 @@ contract MarketJob is MarketJobInterface {
         require(amount > 0);
 
         amounts[agent].amount = 0;
-        token.transfer(agent,amount);
+        require(token.transfer(agent,amount));
         Withdrew(agent,amount);
     }
 }
