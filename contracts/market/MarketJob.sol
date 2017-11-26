@@ -75,7 +75,6 @@ contract MarketJob is MarketJobInterface {
     }
 
     function deposit(uint256 amount) onlyPayer jobPending public {
-        require(token.balanceOf(msg.sender) >= amount);
         require(token.transferFrom(msg.sender, address(this), amount));
         Deposited(msg.sender,amount);
     }
@@ -95,10 +94,9 @@ contract MarketJob is MarketJobInterface {
         address agent = msg.sender;
         uint256 amount = amounts[agent].amount;
         require(amount > 0);
-        require(this.balance >= amount);
 
         amounts[agent].amount = 0;
-        assert(agent.send(amount));
+        token.transfer(agent,amount);
         Withdrew(agent,amount);
     }
 }

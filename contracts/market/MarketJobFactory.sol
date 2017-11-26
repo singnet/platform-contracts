@@ -2,6 +2,7 @@ pragma solidity ^0.4.18;
 
 import './MarketJob.sol';
 
+
 contract MarketJobFactory {
 
     function create(
