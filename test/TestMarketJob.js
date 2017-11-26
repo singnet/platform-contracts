@@ -12,7 +12,6 @@ contract('Market Job', function ([payer, firstAgent, secondAgent, thirdAgent]) {
 
 
   it('DEPOSIT # only the payer can deposit AGI token', async () => {
-
     const token = await AGIToken.new(payer, 1000)
     const marketJob = await Market.new(
       [firstAgent, secondAgent, thirdAgent], // agents

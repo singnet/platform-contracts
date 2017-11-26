@@ -1,7 +1,6 @@
 pragma solidity ^0.4.18;
 
-import '../../contracts/tokens/SingularityNetToken.sol';
-
+import "../../contracts/tokens/SingularityNetToken.sol";
 
 contract SingularityNetTokenMock is SingularityNetToken {
 

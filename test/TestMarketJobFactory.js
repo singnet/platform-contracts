@@ -2,12 +2,12 @@ const Factory = artifacts.require('market/MarketJobFactory.sol')
 const MarketJob = artifacts.require('market/MarketJob.sol')
 const AGIToken = artifacts.require('tokens/SingularityNetTokenMock.sol')
 
-contract('Market Job Factory', function ([agent,payer]) {
+contract('Market Job Factory', function ([agent, payer]) {
   let factory
-  let token 
+  let token
 
   beforeEach(async () => {
-    token = await AGIToken.new(agent,100)
+    token = await AGIToken.new(agent, 100)
     factory = await Factory.new()
   })
   // master agent: accounts[0]

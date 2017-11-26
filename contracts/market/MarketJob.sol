@@ -1,8 +1,8 @@
 pragma solidity ^0.4.18;
 
-import 'zeppelin-solidity/contracts/math/SafeMath.sol';
-import '../tokens/SingularityNetToken.sol';
-import './MarketJobInterface.sol';
+import "zeppelin-solidity/contracts/math/SafeMath.sol";
+import "../tokens/SingularityNetToken.sol";
+import "./MarketJobInterface.sol";
 
 
 contract MarketJob is MarketJobInterface {

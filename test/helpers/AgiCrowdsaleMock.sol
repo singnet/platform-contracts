@@ -1,7 +1,6 @@
 pragma solidity ^0.4.18;
 
-import '../../contracts/foundation/AgiCrowdsale.sol';
-
+import "../../contracts/foundation/AgiCrowdsale.sol";
 
 contract AgiCrowdsaleMock is AgiCrowdsale {
     uint256 public timeStamp = now;

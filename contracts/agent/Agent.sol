@@ -1,8 +1,7 @@
 pragma solidity ^0.4.18;
 
 import "./AgentInterface.sol";
-import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
-
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
 contract Agent is AgentInterface, Ownable {
 
