@@ -60,7 +60,8 @@ contract MarketJob is MarketJobInterface {
         uint256[] _services,
         address _token,
         address _payer,
-        bytes _jobDescriptor ) {
+        bytes _jobDescriptor
+    ) {
         require(_agents.length == _amounts.length);
         require(_amounts.length == _services.length);
         masterAgent = msg.sender;

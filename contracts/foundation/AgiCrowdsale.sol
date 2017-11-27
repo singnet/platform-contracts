@@ -127,7 +127,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         uint256 unsold = token.balanceOf(this);
 
         if (unsold > 0) {
-            require(token.transfer(msg.sender, unsold));
+            require(token.transferTokens(msg.sender, unsold));
         }
     }
 

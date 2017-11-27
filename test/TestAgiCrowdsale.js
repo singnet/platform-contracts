@@ -69,6 +69,7 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, wal
     it('should not accept purchase before start', async () => {
       try {
         await agiCrowdsale.sendTransaction({ value: new web3.BigNumber(web3.toWei(1, 'ether')), from: firstContributor })
+
         assert.fail('should have thrown before')
       } catch (error) {
         assert.isAbove(error.message.search('invalid opcode'), -1, 'Invalid opcode error must be returned');
@@ -110,8 +111,43 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, wal
       const isFinalized = await agiCrowdsale.isFinalized()
 
       assert.isFalse(isFinalized, "isFinalized should be true")
+    })
 
+    it('should refund payers if the goal is not reached', async () => {
+      await agiCrowdsale.updateWhitelist([firstContributor], true)
+      await token.setOwnership(agiCrowdsale.address)
 
+      const value = new web3.BigNumber(web3.toWei(1, 'ether'))
+
+      await agiCrowdsale.sendTransaction({ value, from: firstContributor })
+      await agiCrowdsale.setBlockTimestamp(latestTime() + duration.weeks(2))
+      await agiCrowdsale.finalize()
+
+      const before = web3.fromWei(web3.eth.getBalance(firstContributor), 'ether')
+
+      await agiCrowdsale.claimRefund({ from: firstContributor })
+
+      const after = web3.fromWei(web3.eth.getBalance(firstContributor), 'ether')
+
+      assert.equal(Math.round(after - before), web3.fromWei(value, 'ether').toString())
+    })
+
+    it('should enable the owner to claim all unsold tokens', async () => {
+      await token.setOwnership(agiCrowdsale.address)
+
+      await agiCrowdsale.setBlockTimestamp(latestTime() + duration.weeks(2))
+      await agiCrowdsale.finalize()
+
+      const initialSupply = await token.balanceOf(agiCrowdsale.address)
+      const before = await token.balanceOf(miner)
+
+      await agiCrowdsale.claimUnsold()
+
+      const endSupply = await token.balanceOf(agiCrowdsale.address)
+      const after = await token.balanceOf(miner)
+
+      assert.equal(after.toString(), parseInt(initialSupply.toString()) + parseInt(before.toString()))
+      assert.equal(endSupply.toString(), 0)
     })
 
   })
