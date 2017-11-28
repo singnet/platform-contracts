@@ -1,6 +1,6 @@
 const HDWalletProvider = require("truffle-hdwallet-provider")
-const mnemonic //MNEMONIC
-const host //NODE
+const mnemonic = "word word word" //MNEMONIC
+const host = "http://localhost:8545"//NODE
 
 module.exports = {
   networks: {
