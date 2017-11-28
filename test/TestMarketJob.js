@@ -5,11 +5,6 @@ contract('Market Job', function ([payer, firstAgent, secondAgent, thirdAgent]) {
 
   const amounts = [new web3.BigNumber(300), new web3.BigNumber(300), new web3.BigNumber(400)]
 
-  beforeEach(async () => {
-
-  })
-
-
 
   it('DEPOSIT # only the payer can deposit AGI token', async () => {
     const token = await AGIToken.new(payer, 1000)

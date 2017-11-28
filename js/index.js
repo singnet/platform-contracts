@@ -1,17 +1,7 @@
-/**
- *  
- * 
-  AgentFactory: 0xc2950c3526254417351438babe5f2100cba90bf2
-  Agent: 0x2bb2fdf0eb609046bbba217bca0765759a95600d
-  AgentRegistry: 0x7988941a7d6037ef89b031af8606b88a1aa09e91
-  FixedSupplyToken: 0xc180a3910eb79f257a849a0ecd5f1876223c2858
-  Escrow: 0x278c4b8a81eebc94f2b2ebcac2ae33d4b889f5eb
-  ownable: 0x4593de2c43ec702262480f6b0a57a200fa1296ed
- * 
- */
+
 //web3js
 const Web3 = require('web3')
-const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545')
+const web3 = new Web3(Web3.givenProvider)
 const OWNER = web3.eth.accounts[0]
  console.log(OWNER)
 //const OWNER = '0xb9d2bdfe453640730919fbd8acc5083e991177ff'
@@ -121,4 +111,4 @@ async function main() {
 }
 
 
-main()
+//main()
