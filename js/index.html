@@ -1,0 +1,33 @@
+<!doctype>
+<html>
+
+<head>
+  <script type="text/javascript" src="./node_modules/web3/dist/web3.js"></script>
+
+  <script type="text/javascript">
+
+    if (typeof web3 !== 'undefined') {
+      web3 = new Web3(web3.currentProvider);
+    } else {
+      // set the provider you want from Web3.providers
+      web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:9545"));
+    }
+    
+
+  </script>
+</head>
+
+<body>
+  <h1>contract</h1>
+  <div id="code"></div>
+  <div id="status"></div>
+  <div id='create'>
+    <button type="button" onClick="createExampleContract();">Get address of Factory</button>
+  </div>
+  <div id='call' style='visibility: hidden;'>
+    <button type="button" onClick="callExampleContract();">Create a new MarketJob</button>    
+  </div>
+  <div id="result"></div>
+</body>
+
+</html>

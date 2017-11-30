@@ -1,61 +1,70 @@
-//web3js
+// Import libraries we need.
 const Web3 = require('web3')
-const web3 = new Web3("http://localhost:8545")
-//contracts ABI 
-const marketFactory = require("../build/contracts/MarketJobFactory.json")
-const token = require("../build/contracts/SingularityNetToken.json")
-//constants 
-const MARKET_FACTORY_ADDRESS = "0xB86d5Ec230F706104eA3CDA6664AA02548591124"
-const TOKEN_ADDRESS = "0xbf625fD0aE8C827D9A9ecbA19fe959723CE052EC"
-const firstAgent = "0x951BE8FAE44CD16a1152DA1CcC8c414f7aEC7bd6"
-const PAYER = "0xabdd6525BC4012B07a3A3758070C676fAd70869B"
-
-const tokenContract = new web3.eth.Contract(token.abi,TOKEN_ADDRESS)
-const factoryContract = new web3.eth.Contract(marketFactory.abi,MARKET_FACTORY_ADDRESS)
-//payload dev 
-const GAS = 200000, GAS_PRICE = 10000000000000,
-      PAYLOAD = { from:PAYER, gas: GAS, gasPrice: GAS_PRICE}
+const contract = require('truffle-contract')
+// Import our contract artifacts and turn them into usable abstractions.
+const MarketJob = require('../build/contracts/MarketJob.json')
+const marketJob = contract(MarketJob)
 
 
-async function getSymbol() {
-  return await new Promise((resolve,reject) => {
-    tokenContract.methods.SYMBOL.call()
-      .then(resolve)
-      .catch(reject)
-  })
-}
-//appendPacket
-async function createMarketJob() {
-  return await new Promise((resolve,reject) => {
-    factoryContract.methods.create(
-      [firstAgent], //agents
-      [300], //amounts
-      [101], //ids services 
-      TOKEN_ADDRESS, //token addrss
-      PAYER, //payer
-      "0x01"
-    ).send(PAYLOAD)
-      .then(result => {
-        resolve(result)
-      })
-      .catch( reason => {
-        reject(reason)
-      })
-  })
-}
+const account = "0x951BE8FAE44CD16a1152DA1CcC8c414f7aEC7bd6",
+  PAYER = process.env.PAYER || account,
+  AGENTS = process.env.AGENTS || [account],
+  AMOUNTS = process.env.AMOUNTS || [new marketJob.web3.BigNumber(300)],
+  SERVICES = process.env.SERVICES || [new marketJob.web3.BigNumber(101)],
+  JOB_DESCRIPTOR = process.env.JOB_DESC || "0x0"
 
+async function create() {
+  marketJob.setProvider(new Web3.providers.HttpProvider("http://52.18.144.116:8545"))
 
-async function main() {
+  let tx 
   try {
-    //console.log(Object.keys(tokenContract.methods))
-    console.log(await tokenContract.methods.SYMBOL().call())
-    const result = await createMarketJob()
-    console.log(result.events)
-    //const marketJobContract = new web3.eth.Contract(marketJob.abi)
+    tx = await marketJob.new(
+      AGENTS, // agents
+      AMOUNTS, //amounts
+      SERVICES, // services id
+      "0xbf625fd0ae8c827d9a9ecba19fe959723ce052ec", //token address
+      PAYER, // payer address
+      JOB_DESCRIPTOR, // first bytes packet
+      {
+        from: account,
+        gas: 1500000
+      }
+    )
+    const payer = await tx.payer.call()
+    console.log('New MarketJob started ')
+    console.log('tx hash :' + tx.transactionHash)
+    console.log('\n')
+
+    console.log('=====================')
+    console.log('PAYER   :' + payer)
+    console.log('AGENT   :' + account)
+    console.log('Amount,serviceId  : ' + await tx.amounts.call(account))
+    console.log('\n')
+
+    console.log('=====================')
+    console.log('Job Descriptor')
+    console.log(await tx.jobDescriptor.call())
+
   } catch (reason) {
-    console.log(reason)
+    console.error(reason)
   }
+
+  return tx
 }
+
+const allowAndDeposit = async (contract) => {
+  
+
+  //APPROVE 
+  //await token.approve(escrow, amount, { from: acont })
+  //const allowance = await token.allowance.call(account, escrow)
+ 
+}
+
+
+const main = async () => {
+  const escrow = await create()
+  await allowAndDeposit(escrow)
+}   
 
 main()
-
