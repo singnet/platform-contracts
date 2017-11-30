@@ -21,7 +21,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     uint256 public goal;
     uint256 public rate;
     uint256 public constant WEI_TO_COGS =  10**uint256(10);
-    uint256 public constant CONTRIBUTION_LIMIT = 50 * 10**uint256(18);
+    uint256 public constant CONTRIBUTION_LIMIT = 5 * 10**uint256(18);
 
     address public wallet;
     RefundVault public vault;
@@ -29,6 +29,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
 
     uint256 public startTime;
     uint256 public endTime;
+    uint256 limitedContributionTime;
 
     bool public isFinalized = false;
     uint256 public weiRaised;
@@ -62,6 +63,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         wallet = _wallet;
         startTime = _startTime;
         endTime = _endTime;
+        limitedContributionTime = startTime + 1 * 1 days;
         rate = _rate;
         goal = _goal;
         cap = _cap;
@@ -82,8 +84,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         uint256 weiAmount = msg.value;
 
         // check if contribution is in the first 24h hours
-        uint256 limitedContributionTime = startTime + 1 * 1 days;
-        if (now <= limitedContributionTime) {
+        if (getBlockTimestamp() <= limitedContributionTime) {
             require(weiAmount <= CONTRIBUTION_LIMIT);
         }
         //check if there is enough funds 

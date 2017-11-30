@@ -85,12 +85,12 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, wal
       const weiToCogs = new web3.BigNumber(Math.pow(10, -10))
       const startTime = latestTime() + duration.seconds(1)
 
-      const investmentAmount = new web3.BigNumber(web3.toWei(0.5, 'ether'))
+      const investmentAmount = new web3.BigNumber(web3.toWei(6, 'ether'))
       const expectedCotributorAmount = rate.mul(investmentAmount).mul(weiToCogs)
 
       await increaseTimeTo(startTime)
 
-      const value = new web3.BigNumber(web3.toWei(0.5, 'ether'))
+      const value = new web3.BigNumber(web3.toWei(6, 'ether'))
 
       await agiCrowdsale.sendTransaction({ value, from: firstContributor })
 
@@ -118,7 +118,7 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, wal
       await agiCrowdsale.updateWhitelist([firstContributor], true)
       await token.setOwnership(agiCrowdsale.address)
 
-      const value = new web3.BigNumber(web3.toWei(60, 'ether'))
+      const value = new web3.BigNumber(web3.toWei(6, 'ether'))
 
       try {
         await agiCrowdsale.sendTransaction({ value, from: firstContributor })
@@ -134,7 +134,7 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, wal
       await agiCrowdsale.updateWhitelist([firstContributor], true)
       await token.setOwnership(agiCrowdsale.address)
 
-      const value = new web3.BigNumber(web3.toWei(40, 'ether'))
+      const value = new web3.BigNumber(web3.toWei(5, 'ether'))
 
       await agiCrowdsale.sendTransaction({ value, from: firstContributor })
 
