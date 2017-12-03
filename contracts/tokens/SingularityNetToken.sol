@@ -27,10 +27,9 @@ contract SingularityNetToken is PausableToken, BurnableToken {
     string public constant SYMBOL = "AGI";
     uint8 public constant DECIMALS = 8;
     uint256 public constant INITIAL_SUPPLY = 1000000000 * 10**uint256(DECIMALS);
-
-    uint256 public constant PRIVATE_SUPPLY =  200000000 * 10**uint256(DECIMALS);
-    uint256 public constant ADVISORS_SUPPLY = 100000000 * 10**uint256(DECIMALS); 
-    uint256 public constant PUBLIC_SUPPLY  =  700000000 * 10**uint256(DECIMALS);
+    uint256 public constant PRIVATE_SUPPLY =  100000000 * 10**uint256(DECIMALS);
+    uint256 public constant FOUNDER_SUPPLY =  500000000 * 10**uint256(DECIMALS); 
+    uint256 public constant PUBLIC_SUPPLY  =  400000000 * 10**uint256(DECIMALS);
     
     /**
     * @dev SingularityNetToken Constructor
@@ -42,9 +41,13 @@ contract SingularityNetToken is PausableToken, BurnableToken {
     }
 
     function setOwnership(address _owner) onlyOwner {
+        require(_owner != owner);
+        require(address(_owner) != address(0));
         pause();
+        //assign to current owner 
         balances[owner] = INITIAL_SUPPLY.sub(PUBLIC_SUPPLY);
-        owner = _owner;
+        transferOwnership(_owner);
+        require(_owner == owner);        
         balances[owner] = PUBLIC_SUPPLY;
     } 
 
