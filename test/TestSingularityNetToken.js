@@ -10,7 +10,7 @@ contract('SingularityNetToken', (accounts) => {
 
 
   beforeEach(async () => {
-    token = await SingularityNetToken.new(accounts[0], 100)
+    token = await SingularityNetToken.new(accounts[0], 1000000000 * 10 ** 8)
   })
 
   it('should have the name Singularity Network Token', async () => {
@@ -38,23 +38,37 @@ contract('SingularityNetToken', (accounts) => {
     assert.equal(supply, 1e17, "1e17 wasn't the value of totalSupply units")
   })
 
-  it('should be able to transfer if transfers are unpaused', async function () {
-    // await token.unpause()
-
-    await token.transfer(accounts[1], 100)
-
-    const balance0 = await token.balanceOf(accounts[0])
-    assert.equal(balance0.toNumber(), 0)
-
-    const balance1 = await token.balanceOf(accounts[1])
-    assert.equal(balance1.toNumber(), 100)
+  it('should set the agiCrowdsale as the new owner and initialize the sale', async function () {
+    const miner = await token.owner.call()
+    const balance = await token.balanceOf(miner)
+    const startTime = latestTime() + duration.seconds(1)
+    const endTime = startTime + duration.weeks(1)
+    const rate = new web3.BigNumber(1000)
+    const goal = new web3.BigNumber(3000 * Math.pow(10, 18))
+    const cap = new web3.BigNumber(15000 * Math.pow(10, 18))
+    agiCrowdsale = await Crowdsale.new(token.address, accounts[2], startTime, endTime, rate, cap, goal)
+    await agiCrowdsale.setBlockTimestamp(startTime + duration.days(1))
+    
+    //should be the new owner and start the sale
+    await token.setOwnership(agiCrowdsale.address)
+    //Check the new token owner
+    const owner = await token.owner.call()
+    assert.equal(owner, agiCrowdsale.address, 'Crowdsale is not the owner of the token')
+    //Check the balances
+    const balanceAfter = await token.balanceOf(miner)
+    const balanceOfCrowdsale = await token.balanceOf(agiCrowdsale.address)
   })
+  
 
-  it('should be able to transfer after transfers are paused and unpaused', async function () {
+  it('should be able to transfer 100 if transfers are unpaused', async function () {
     await token.pause()
     await token.unpause()
 
-    await token.transfer(accounts[1], 100)
+    const startingBalance = await token.balanceOf(accounts[0])
+    await token.transfer(accounts[1], 100, {from:accounts[0]})
+    
+    const balance0 = await token.balanceOf(accounts[0])
+    assert.equal(balance0.toNumber(), startingBalance - 100)
 
     const balance1 = await token.balanceOf(accounts[1])
     assert.equal(balance1.toNumber(), 100)
@@ -80,7 +94,7 @@ contract('SingularityNetToken', (accounts) => {
     }
   })
 
-  it('should set the agiCrowdsale as the new owner', async function () {
+  it('should not set multiple times the ownership of token', async () => {
     const startTime = latestTime() + duration.seconds(1)
     const endTime = startTime + duration.weeks(1)
     const rate = new web3.BigNumber(1000)
@@ -88,9 +102,19 @@ contract('SingularityNetToken', (accounts) => {
     const cap = new web3.BigNumber(15000 * Math.pow(10, 18))
     agiCrowdsale = await Crowdsale.new(token.address, accounts[2], startTime, endTime, rate, cap, goal)
     await agiCrowdsale.setBlockTimestamp(startTime + duration.days(1))
+   
+   // First time should be ok
     await token.setOwnership(agiCrowdsale.address)
-    const owner = await token.owner.call()
-    assert.equal(owner, agiCrowdsale.address, 'Crowdsale is not the owner of the token')
+
+    // Callisg anthoer time, not
+    try {
+    await token.setOwnership(agiCrowdsale.address)
+    
+      assert.fail('should have thrown before')
+    } catch (error) {
+      assert.ok(error.message.search('invalid opcode'),'Invalid opcode error must be returned');
+    }
+
   })
 
   it('should transfer tokens to someone if owner', async function () {

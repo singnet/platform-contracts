@@ -5,19 +5,19 @@ const { latestTime, duration } = require('./helpers/latestTime')
 const { increaseTimeTo } = require('./helpers/increaseTime')
 
 
-contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, wallet]) => {
+contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whitelisted, blacklisted, wallet]) => {
   let agiCrowdsale
   let token
 
 
   beforeEach(async () => {
-    token = await AGIToken.new()
+    token = await AGIToken.new({ from: miner })
     const startTime = latestTime() + duration.seconds(1)
     const endTime = startTime + duration.weeks(1)
     const rate = new web3.BigNumber(1000)
     const goal = new web3.BigNumber(3000 * Math.pow(10, 18))
     const cap = new web3.BigNumber(15000 * Math.pow(10, 18))
-    agiCrowdsale = await Crowdsale.new(token.address, wallet, startTime, endTime, rate, cap, goal)
+    agiCrowdsale = await Crowdsale.new(token.address, wallet, startTime, endTime, rate, cap, goal, { from: miner })
     await agiCrowdsale.setBlockTimestamp(startTime + duration.days(2))
   })
 
@@ -45,22 +45,43 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, wal
       assert.equal(owner, agiCrowdsale.address, 'Crowdsale is not the owner of the token')
     })
 
+    it('Check the balances just after deploy and after crodsale initialization', async () => {
+      assert.equal((await token.balanceOf(miner)).toNumber(), 1e17, "The miner should hold 1 bilion")
+      assert.equal((await token.balanceOf(agiCrowdsale.address)).toNumber(), 0, "The Crowdsale should have no balance")
+   
+      await token.setOwnership(agiCrowdsale.address)
+      
+      assert.equal((await token.balanceOf(miner)).toNumber(), 600000000 * 10**8, "The miner should hold 600mil")
+      assert.equal((await token.balanceOf(agiCrowdsale.address)).toNumber(), 400000000 * 10**8, "The Crowdsale should hold 400mil")
+  
+      
+    })  
+
   })
 
   describe('whitelist', async () => {
 
     it('should add two contributors into the whitelist', async () => {
-      await agiCrowdsale.updateWhitelist([firstContributor, secondContributor], true)
+      await agiCrowdsale.updateWhitelist([firstContributor, secondContributor, whitelisted, blacklisted], true)
       assert.isTrue(await agiCrowdsale.isWhitelisted(firstContributor))
       assert.isTrue(await agiCrowdsale.isWhitelisted(secondContributor))
     })
 
     it('should add and remove the same contributor in whitelist', async () => {
-      await agiCrowdsale.updateWhitelist([firstContributor], true)
-      assert.isTrue(await agiCrowdsale.isWhitelisted(firstContributor))
+      await agiCrowdsale.updateWhitelist([blacklisted], true)
+      assert.isTrue(await agiCrowdsale.isWhitelisted(blacklisted))
 
-      await agiCrowdsale.updateWhitelist([firstContributor], false)
-      assert.isFalse(await agiCrowdsale.isWhitelisted(firstContributor))
+      await agiCrowdsale.updateWhitelist([blacklisted], false)
+      assert.isFalse(await agiCrowdsale.isWhitelisted(blacklisted))
+    })
+
+    it('only owner can add and remove from whitelist', async () => {
+      try {
+        await agiCrowdsale.updateWhitelist([firstContributor], true, {from:firstContributor})
+        assert.fail('should have thrown before')
+      } catch (error) {
+        assert.ok(error.message.search('invalid opcode'), 'Invalid opcode error must be returned');
+      }
     })
   })
 
@@ -113,7 +134,18 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, wal
       assert.isFalse(isFinalized, "isFinalized should be true")
     })
 
-    it('should not accept contributions greater then the limit in the first 24 hours', async () => {
+    it('Passig a null beneficiary to crowdsale should throw ', async () => {
+      const startTime = latestTime() + duration.seconds(1)
+      await increaseTimeTo(startTime)
+      try {
+        await agiCrowdsale.buyTokens(0x0, { from: firstContributor })
+        assert.fail('should have thrown before')
+      } catch (error) {
+        assert.ok(error.message.search('invalid opcode'), error.message);
+      }
+    })
+
+    it('should not accept contributions greater than the limit in the first 24 hours', async () => {
       await agiCrowdsale.setBlockTimestamp(latestTime() + duration.hours(10))
       await agiCrowdsale.updateWhitelist([firstContributor], true)
       await token.setOwnership(agiCrowdsale.address)
@@ -129,16 +161,31 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, wal
       }
     })
 
-    it('should accept contributions lower then or equal to the limit in the first 24 hours', async () => {
-      await agiCrowdsale.setBlockTimestamp(latestTime() + duration.hours(10))
+    it('should accept contributions lower or equal to the limit in the first 24 hours', async () => {
+      await agiCrowdsale.setBlockTimestamp(latestTime() + duration.hours(10))      
       await agiCrowdsale.updateWhitelist([firstContributor], true)
       await token.setOwnership(agiCrowdsale.address)
 
       const value = new web3.BigNumber(web3.toWei(5, 'ether'))
 
-      await agiCrowdsale.sendTransaction({ value, from: firstContributor })
+      try {
+        await agiCrowdsale.sendTransaction({ value, from: firstContributor })
+        assert.fail('should have thrown before')
+      } catch (error) {
+        assert.ok(error.message.search('invalid opcode'), error.message);
+      }
+    })
 
-      assert.ok(true)
+
+    it('Tokens should not be able to be refunded before the Crowdsale is finalized', async () => {
+      await agiCrowdsale.setBlockTimestamp(latestTime() + duration.seconds(1))
+      try {
+        await token.claimRefund()
+        assert.fail('should have thrown before')
+      } catch (error) {
+        assert.ok((error.message.search('invalid opcode') && true), error.message);
+      }
+
     })
 
     it('should refund payers if the goal is not reached', async () => {
@@ -178,8 +225,24 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, wal
       assert.equal(endSupply.toString(), 0)
     })
 
-  })
+    it('Only the owner can unpause token transfers', async () => {
+      await token.setOwnership(agiCrowdsale.address)
+      try {
+        await token.unpause({ from: firstContributor })
+        assert.fail('should have thrown before')
+      } catch (error) {
+        assert.isAbove(error.message.search('invalid opcode'), -1, error.message);
+      }
 
-})
+      try {
+        await token.unpause({ from: secondContributor })
+        assert.fail('should have thrown before')
+      } catch (error) {
+        assert.isAbove(error.message.search('invalid opcode'), -1, error.message);
+      }
+    })
+
+  })
+})  
 
 
