@@ -11,17 +11,21 @@ import "zeppelin-solidity/contracts/crowdsale/RefundVault.sol";
  * @dev AgiCrowdsale is a base contract for managing a token crowdsale.
  * Crowdsales have a start and end timestamps, where investors can make
  * token purchases and the crowdsale will assign them tokens based
- * on a token per ETH rate. Funds collected are forwarded to a wallet
+ * on a token per ETH rate. Funds collected are forwarded to a vault
  * as they arrive.
  */
 contract AgiCrowdsale is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
 
+    // We have a window in the first 24hrs that permits to allocate all whitelist 
+    // participants with an equal distribution => firstDayCap = cap / whitelist participants.
+
+    uint256 public firstDayCap = 5 * 10**uint256(18);
     uint256 public cap;
     uint256 public goal;
     uint256 public rate;
     uint256 public constant WEI_TO_COGS =  10**uint256(10);
-    uint256 public constant CONTRIBUTION_LIMIT = 5 * 10**uint256(18);
+
 
     address public wallet;
     RefundVault public vault;
@@ -29,13 +33,13 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
 
     uint256 public startTime;
     uint256 public endTime;
-    uint256 limitedContributionTime;
+    uint256 firstDay;
 
     bool public isFinalized = false;
     uint256 public weiRaised;
 
     mapping(address => bool) public whitelist;
-    mapping(address => uint256) public amounts;
+    mapping(address => uint256) public contribution;
     
     event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
     event TokenRelease(address indexed beneficiary, uint256 amount);
@@ -64,7 +68,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         wallet = _wallet;
         startTime = _startTime;
         endTime = _endTime;
-        limitedContributionTime = startTime + 1 * 1 days;
+        firstDay = startTime + 1 * 1 days;
         rate = _rate;
         goal = _goal;
         cap = _cap;
@@ -85,8 +89,8 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         uint256 weiAmount = msg.value;
 
         // check if contribution is in the first 24h hours
-        if (getBlockTimestamp() <= limitedContributionTime) {
-            require((amounts[beneficiary] + weiAmount) <= CONTRIBUTION_LIMIT);
+        if (getBlockTimestamp() <= firstDay) {
+            require((contribution[beneficiary].add(weiAmount)) <= firstDayCap);
         }
         //check if there is enough funds 
         uint256 remainingToFund = cap.sub(weiRaised);
@@ -105,7 +109,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         uint256 tokens = getTokens(weiAmount);
         //update the state of weiRaised
         weiRaised = weiRaised.add(weiAmount);
-        amounts[beneficiary] = amounts[beneficiary].add(weiAmount);
+        contribution[beneficiary] = contribution[beneficiary].add(weiAmount);
      
         //Trigger the event of TokenPurchase
         TokenPurchase(
