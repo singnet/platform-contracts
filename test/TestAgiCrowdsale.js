@@ -4,6 +4,9 @@ const AGIToken = artifacts.require('SingularityNetToken.sol')
 const { latestTime, duration } = require('./helpers/latestTime')
 const { increaseTimeTo } = require('./helpers/increaseTime')
 
+require('chai')
+.use(require('chai-as-promised'))
+.should();
 
 contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whitelisted, blacklisted, wallet]) => {
   let agiCrowdsale
@@ -15,8 +18,8 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
     const startTime = latestTime() + duration.seconds(1)
     const endTime = startTime + duration.weeks(1)
     const rate = new web3.BigNumber(1000)
-    const goal = new web3.BigNumber(3000 * Math.pow(10, 18))
-    const cap = new web3.BigNumber(15000 * Math.pow(10, 18))
+    const goal = new web3.BigNumber(3 * Math.pow(10, 18))
+    const cap = new web3.BigNumber(15 * Math.pow(10, 18))
     agiCrowdsale = await Crowdsale.new(token.address, wallet, startTime, endTime, rate, cap, goal, { from: miner })
     await agiCrowdsale.setBlockTimestamp(startTime + duration.days(2))
   })
@@ -29,14 +32,14 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
       assert.isFalse(isFinalized, "isFinalized should be false")
     })
 
-    it('goal should be 3000 ETH', async () => {
+    it('goal should be 3 ETH', async () => {
       const goal = await agiCrowdsale.goal()
-      assert.equal(goal.toString(10), '3000000000000000000000', "goal is incorrect")
+      assert.equal(goal.toNumber(), web3.toWei(3, 'ether'), "goal is incorrect")
     })
 
-    it('cap should be 15000 ETH', async () => {
+    it('cap should be 15 ETH', async () => {
       const cap = await agiCrowdsale.cap()
-      assert.equal(cap.toString(10), '15000000000000000000000', "cap is incorrect")
+      assert.equal(cap.toNumber(), web3.toWei(15, 'ether'), "cap is incorrect")
     })
 
     it('should set the agiCrowdsale as a new owner of AGI token', async () => {
@@ -53,8 +56,6 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
       
       assert.equal((await token.balanceOf(miner)).toNumber(), 600000000 * 10**8, "The miner should hold 600mil")
       assert.equal((await token.balanceOf(agiCrowdsale.address)).toNumber(), 400000000 * 10**8, "The Crowdsale should hold 400mil")
-  
-      
     })  
 
   })
@@ -97,6 +98,40 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
       }
     })
 
+    it('should not accept purchase after end', async () => {
+      await token.setOwnership(agiCrowdsale.address)
+      await agiCrowdsale.updateWhitelist([firstContributor], true, {from:miner})
+      const startTime = latestTime() + duration.seconds(1)
+      const endTime = startTime + duration.weeks(2)
+      await increaseTimeTo(endTime + duration.seconds(1))
+      try {
+        await agiCrowdsale.sendTransaction({ value: new web3.BigNumber(web3.toWei(1, 'ether')), from: firstContributor })
+        assert.fail('should have thrown before')
+      } catch (error) {
+        assert.ok(error.message.search('invalid opcode'),'Invalid opcode error must be returned');
+      }
+    })
+
+    it('should not accept purchase if cap has reached', async () => {
+      await token.setOwnership(agiCrowdsale.address)
+      await agiCrowdsale.updateWhitelist([firstContributor,secondContributor], true, {from:miner})
+      await agiCrowdsale.setBlockTimestamp(latestTime() + duration.days(2))
+
+      await agiCrowdsale.sendTransaction({ value: new web3.BigNumber(web3.toWei(14, 'ether')), from: secondContributor })          
+      const {logs} = await agiCrowdsale.sendTransaction({ value: new web3.BigNumber(web3.toWei(2, 'ether')), from: firstContributor })
+      const event = logs.find(e => {e.event === 'TokenRefund'});
+      assert.isNotNull(event)
+      try {
+      await agiCrowdsale.sendTransaction({ value: new web3.BigNumber(web3.toWei(3, 'ether')), from: secondContributor })                
+        assert.fail('should have thrown before')
+      } catch (error) {
+        assert.ok(error.message.search('invalid opcode'),'Invalid opcode error must be returned');
+      }
+
+      //Now we check the balances
+      console.log(await web3.eth.getBalance(firstContributor))      
+    })
+
     it('should accept payments during the sale and issue tokens', async () => {
       await agiCrowdsale.updateWhitelist([firstContributor], true)
 
@@ -125,18 +160,18 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
         await token.transfer(secondContributor, 100)
         assert.fail('should have thrown before')
       } catch (error) {
-        assert.isAbove(error.message.search('invalid opcode'), -1, 'Invalid opcode error must be returned');
+        assert.ok(error.message.search('invalid opcode'), 'Invalid opcode error must be returned');
       }
 
 
       const isFinalized = await agiCrowdsale.isFinalized()
-
-      assert.isFalse(isFinalized, "isFinalized should be true")
+      assert.isFalse(isFinalized, "isFinalized should be false")   
     })
 
     it('Passig a null beneficiary to crowdsale should throw ', async () => {
-      const startTime = latestTime() + duration.seconds(1)
-      await increaseTimeTo(startTime)
+      await token.setOwnership(agiCrowdsale.address)
+      await agiCrowdsale.setBlockTimestamp(latestTime() + duration.seconds(10))
+      await agiCrowdsale.updateWhitelist([firstContributor], true)
       try {
         await agiCrowdsale.buyTokens(0x0, { from: firstContributor })
         assert.fail('should have thrown before')
@@ -146,30 +181,32 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
     })
 
     it('should not accept contributions greater than the limit in the first 24 hours', async () => {
+      await token.setOwnership(agiCrowdsale.address)
       await agiCrowdsale.setBlockTimestamp(latestTime() + duration.hours(10))
       await agiCrowdsale.updateWhitelist([firstContributor], true)
-      await token.setOwnership(agiCrowdsale.address)
-
-      const value = new web3.BigNumber(web3.toWei(6, 'ether'))
+      const value = new web3.BigNumber(web3.toWei(30, 'ether'))
 
       try {
         await agiCrowdsale.sendTransaction({ value, from: firstContributor })
-
         assert.fail('should have thrown before')
       } catch (error) {
         assert.isAbove(error.message.search('invalid opcode'), -1, error.message);
       }
     })
 
-    it('should accept contributions lower or equal to the limit in the first 24 hours', async () => {
+    it('should accept contributions only lower or equal to the limit in the first 24 hours', async () => {
       await agiCrowdsale.setBlockTimestamp(latestTime() + duration.hours(10))      
       await agiCrowdsale.updateWhitelist([firstContributor], true)
       await token.setOwnership(agiCrowdsale.address)
 
-      const value = new web3.BigNumber(web3.toWei(5, 'ether'))
-
+      const value = new web3.BigNumber(web3.toWei(3, 'ether'))
+      const {logs} = await agiCrowdsale.sendTransaction({ value, from: firstContributor })
+      const event = logs.find(e => e.event === 'TokenPurchase');
+      assert.isNotNull(event)
+      //Now should trhow
+      const value2 = new web3.BigNumber(web3.toWei(2.5, 'ether'))
       try {
-        await agiCrowdsale.sendTransaction({ value, from: firstContributor })
+        await agiCrowdsale.sendTransaction({ value2, from: firstContributor })
         assert.fail('should have thrown before')
       } catch (error) {
         assert.ok(error.message.search('invalid opcode'), error.message);
@@ -177,8 +214,9 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
     })
 
 
-    it('Tokens should not be able to be refunded before the Crowdsale is finalized', async () => {
-      await agiCrowdsale.setBlockTimestamp(latestTime() + duration.seconds(1))
+    it('should not be able to be refunded before the Crowdsale is finalized', async () => {
+      await agiCrowdsale.setBlockTimestamp(latestTime() + duration.weeks(2))
+      assert.isTrue(await agiCrowdsale.hasEnded())
       try {
         await token.claimRefund()
         assert.fail('should have thrown before')
@@ -192,16 +230,17 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
       await agiCrowdsale.updateWhitelist([firstContributor], true)
       await token.setOwnership(agiCrowdsale.address)
 
+      await agiCrowdsale.setBlockTimestamp(latestTime() + duration.seconds(1))
+      
       const value = new web3.BigNumber(web3.toWei(1, 'ether'))
-
       await agiCrowdsale.sendTransaction({ value, from: firstContributor })
+
       await agiCrowdsale.setBlockTimestamp(latestTime() + duration.weeks(2))
       await agiCrowdsale.finalize()
 
       const before = web3.fromWei(web3.eth.getBalance(firstContributor), 'ether')
-
+      
       await agiCrowdsale.claimRefund({ from: firstContributor })
-
       const after = web3.fromWei(web3.eth.getBalance(firstContributor), 'ether')
 
       assert.equal(Math.round(after - before), web3.fromWei(value, 'ether').toString())
@@ -231,18 +270,38 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
         await token.unpause({ from: firstContributor })
         assert.fail('should have thrown before')
       } catch (error) {
-        assert.isAbove(error.message.search('invalid opcode'), -1, error.message);
+        assert.ok(error.message.search('invalid opcode'), error.message);
       }
 
       try {
         await token.unpause({ from: secondContributor })
         assert.fail('should have thrown before')
       } catch (error) {
-        assert.isAbove(error.message.search('invalid opcode'), -1, error.message);
+        assert.ok(error.message.search('invalid opcode'), error.message);
       }
     })
 
   })
+
+  describe('after sale', async () => {
+    it('the owner can finalize the crowdsale and close the vault', async () => {
+      await agiCrowdsale.updateWhitelist([firstContributor], true)
+      await token.setOwnership(agiCrowdsale.address)
+
+      await agiCrowdsale.setBlockTimestamp(latestTime() + duration.seconds(1))
+      
+      const value = new web3.BigNumber(web3.toWei(4, 'ether'))
+      await agiCrowdsale.sendTransaction({ value, from: firstContributor })
+
+      await agiCrowdsale.setBlockTimestamp(latestTime() + duration.weeks(2))
+
+      await agiCrowdsale.finalize()    
+      assert.isTrue(await agiCrowdsale.isFinalized.call())
+    })
+  })
 })  
+
+
+
 
 

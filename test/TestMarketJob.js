@@ -25,7 +25,7 @@ contract('Market Job', function ([payer, firstAgent, secondAgent, thirdAgent]) {
     const amount = new web3.BigNumber(1000)
     const watch = token.Approval()
     //APPROVE
-    await token.approve(escrow, amount, { from: payer })
+    await token.approve(escrow, amount)
     const allowance = await token.allowance.call(payer, escrow)
 
 
@@ -33,7 +33,7 @@ contract('Market Job', function ([payer, firstAgent, secondAgent, thirdAgent]) {
     assert.equal(watch.get()[0].args.spender, escrow)
 
     //DEPOSIT
-    const result = await marketJob.deposit(amount, { from: payer })
+    const result = await marketJob.deposit(amount)
 
     assert.strictEqual(
       (await token.balanceOf.call(escrow)).toNumber(),

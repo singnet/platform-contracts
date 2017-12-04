@@ -70,7 +70,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     }
 
     // fallback function can be used to buy tokens
-    function () payable {
+    function () external payable {
         buyTokens(msg.sender);
     }
 
@@ -93,20 +93,18 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
             weiAmount = remainingToFund;
         }
         uint256 weiToReturn = msg.value.sub(weiAmount);
+        //Forward funs to the vault 
+        forwardFunds(weiAmount);
+        //refund if the contribution exceed the cap
+        if (weiToReturn > 0) {
+            msg.sender.transfer(weiToReturn);
+            TokenRefund(beneficiary, weiToReturn);
+        }
         //derive how many tokens
         uint256 tokens = getTokens(weiAmount);
         //update the state of weiRaised
         weiRaised = weiRaised.add(weiAmount);
-
-       //Forward funs to the vault 
-        forwardFunds();
-        //refund if the contribution exceed the cap
-        if (weiToReturn > 0) {
-            beneficiary.transfer(weiToReturn);
-            TokenRefund(beneficiary, weiToReturn);
-        }
-
-        
+     
         //Trigger the event of TokenPurchase
         TokenPurchase(
             msg.sender,
@@ -167,15 +165,18 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     } 
 
     // send ether to the fund collection wallet, the vault in this case
-    function forwardFunds() internal {
-        vault.deposit.value(msg.value)(msg.sender);
+    function forwardFunds(uint256 weiAmount) internal {
+        vault.deposit.value(weiAmount)(msg.sender);
     }
 
     // @return true if crowdsale event has ended or cap reached
     function hasEnded() public constant returns (bool) {
-        bool capReached = weiRaised >= cap;
         bool passedEndTime = getBlockTimestamp() > endTime;
-        return passedEndTime || capReached;
+        return passedEndTime || capReached();
+    }
+
+    function capReached() public constant returns (bool) {
+        return weiRaised >= cap;
     }
 
     function goalReached() public constant returns (bool) {
@@ -190,8 +191,8 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     function validPurchase() internal constant returns (bool) {
         bool withinPeriod = getBlockTimestamp() >= startTime && getBlockTimestamp() <= endTime;
         bool nonZeroPurchase = msg.value != 0;
-        bool withinCap = weiRaised.add(msg.value) <= cap;
-        return withinPeriod && withinCap && nonZeroPurchase;
+        bool capNotReached = weiRaised < cap;
+        return withinPeriod && nonZeroPurchase && capNotReached;
     }
 
     function getBlockTimestamp() internal constant returns (uint256) {

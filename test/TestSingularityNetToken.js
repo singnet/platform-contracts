@@ -48,7 +48,7 @@ contract('SingularityNetToken', (accounts) => {
     const cap = new web3.BigNumber(15000 * Math.pow(10, 18))
     agiCrowdsale = await Crowdsale.new(token.address, accounts[2], startTime, endTime, rate, cap, goal)
     await agiCrowdsale.setBlockTimestamp(startTime + duration.days(1))
-    
+
     //should be the new owner and start the sale
     await token.setOwnership(agiCrowdsale.address)
     //Check the new token owner
@@ -58,15 +58,15 @@ contract('SingularityNetToken', (accounts) => {
     const balanceAfter = await token.balanceOf(miner)
     const balanceOfCrowdsale = await token.balanceOf(agiCrowdsale.address)
   })
-  
+
 
   it('should be able to transfer 100 if transfers are unpaused', async function () {
     await token.pause()
     await token.unpause()
 
     const startingBalance = await token.balanceOf(accounts[0])
-    await token.transfer(accounts[1], 100, {from:accounts[0]})
-    
+    await token.transfer(accounts[1], 100, { from: accounts[0] })
+
     const balance0 = await token.balanceOf(accounts[0])
     assert.equal(balance0.toNumber(), startingBalance - 100)
 
@@ -102,17 +102,17 @@ contract('SingularityNetToken', (accounts) => {
     const cap = new web3.BigNumber(15000 * Math.pow(10, 18))
     agiCrowdsale = await Crowdsale.new(token.address, accounts[2], startTime, endTime, rate, cap, goal)
     await agiCrowdsale.setBlockTimestamp(startTime + duration.days(1))
-   
-   // First time should be ok
+
+    // First time should be ok
     await token.setOwnership(agiCrowdsale.address)
 
     // Callisg anthoer time, not
     try {
-    await token.setOwnership(agiCrowdsale.address)
-    
+      await token.setOwnership(agiCrowdsale.address)
+
       assert.fail('should have thrown before')
     } catch (error) {
-      assert.ok(error.message.search('invalid opcode'),'Invalid opcode error must be returned');
+      assert.ok(error.message.search('invalid opcode'), 'Invalid opcode error must be returned');
     }
 
   })
@@ -121,6 +121,25 @@ contract('SingularityNetToken', (accounts) => {
     await token.transferTokens(accounts[2], 50)
     const balance2 = await token.balanceOf(accounts[2])
     assert.equal(balance2.toNumber(), 50)
+  })
+
+  it('owner should be able to burn tokens', async function () {
+    const { logs } = await token.burn(1000000000, { from: accounts[0] });
+
+    const balance = await token.balanceOf(accounts[0]);
+    assert.equal(balance, 1e17 - 1000000000, 'should be the same')
+
+    const event = logs.find(e => e.event === 'Burn');
+    assert.isNotNull(event)
+  })
+
+  it('cannot burn more tokens than your balance', async function () {
+    try {
+      await token.burn(2e17, { from: accounts[0] })
+      assert(false)
+    } catch (error) {
+      assert.ok(error.message.search('invalid opcode'), 'Invalid opcode error must be returned');
+    }
   })
 
 })
