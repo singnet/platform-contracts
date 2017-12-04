@@ -35,6 +35,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     uint256 public weiRaised;
 
     mapping(address => bool) public whitelist;
+    mapping(address => uint256) public amounts;
     
     event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
     event TokenRelease(address indexed beneficiary, uint256 amount);
@@ -85,7 +86,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
 
         // check if contribution is in the first 24h hours
         if (getBlockTimestamp() <= limitedContributionTime) {
-            require(weiAmount <= CONTRIBUTION_LIMIT);
+            require((amounts[beneficiary] + weiAmount) <= CONTRIBUTION_LIMIT);
         }
         //check if there is enough funds 
         uint256 remainingToFund = cap.sub(weiRaised);
@@ -104,6 +105,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         uint256 tokens = getTokens(weiAmount);
         //update the state of weiRaised
         weiRaised = weiRaised.add(weiAmount);
+        amounts[beneficiary] = amounts[beneficiary].add(weiAmount);
      
         //Trigger the event of TokenPurchase
         TokenPurchase(

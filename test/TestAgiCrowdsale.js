@@ -206,13 +206,12 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
       //Now should trhow
       const value2 = new web3.BigNumber(web3.toWei(2.5, 'ether'))
       try {
-        await agiCrowdsale.sendTransaction({ value2, from: firstContributor })
+        await agiCrowdsale.sendTransaction({ value: value2, from: firstContributor })
         assert.fail('should have thrown before')
       } catch (error) {
-        assert.ok(error.message.search('invalid opcode'), error.message);
+        assert.isAbove(error.message.search('invalid opcode'), -1,  error.message);
       }
     })
-
 
     it('should not be able to be refunded before the Crowdsale is finalized', async () => {
       await agiCrowdsale.setBlockTimestamp(latestTime() + duration.weeks(2))
@@ -299,9 +298,4 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
       assert.isTrue(await agiCrowdsale.isFinalized.call())
     })
   })
-})  
-
-
-
-
-
+})
