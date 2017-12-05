@@ -1,0 +1,8 @@
+build
+node_modules
+yarn-error.log
+/.DS_Store
+npm-debug.log
+addresses.json
+package-lock.json
+/.vscode
