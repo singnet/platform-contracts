@@ -18,7 +18,7 @@ contract SimpleMarketJob {
     event JobCompleted();
     event JobAccepted();
 
-     modifier jobDone {
+    modifier jobDone {
         require(jobCompleted == true);
         _;
     }
