@@ -3,7 +3,7 @@ const AgiCrowdsale = artifacts.require("foundation/AgiCrowdsale.sol")
 const SingularityNetToken = artifacts.require("token/SingularityNetToken.sol")
 
 function latestTime() {
-  return web3.eth.getBlock('latest').timestamp;
+  return web3.eth.getBlock('latest').timestamp
 }
 
 const duration = {
@@ -16,12 +16,13 @@ const duration = {
 }
 
 module.exports = function(deployer, network, accounts) {
-  const startTime = latestTime() + duration.minutes(5);
-  const endTime = startTime + duration.days(20);
-  const rate = new web3.BigNumber(1000);
-  const wallet = web3.eth.accounts[0];
-  const goal = new web3.BigNumber(3000 * Math.pow(10, 18));
-  const cap = new web3.BigNumber(15000 * Math.pow(10, 18));
+  const startTime = latestTime() + duration.minutes(5)
+  const endTime = startTime + duration.days(20)
+  const rate = new web3.BigNumber(1000)
+  const wallet = web3.eth.accounts[0]
+  const goal = new web3.BigNumber(3000 * Math.pow(10, 18))
+  const cap = new web3.BigNumber(15000 * Math.pow(10, 18))
+  const firstDayCap = new web3.BigNumber(5 * Math.pow(10, 18))
 
   deployer.deploy(
     AgiCrowdsale,
@@ -31,6 +32,7 @@ module.exports = function(deployer, network, accounts) {
     endTime,
     rate,
     cap,
+    firstDayCap,
     goal
   ).then(() => {
     const fileName = "addresses.json"

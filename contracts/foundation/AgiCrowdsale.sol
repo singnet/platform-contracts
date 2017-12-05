@@ -19,8 +19,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
 
     // We have a window in the first 24hrs that permits to allocate all whitelist 
     // participants with an equal distribution => firstDayCap = cap / whitelist participants.
-
-    uint256 public firstDayCap = 5 * 10**uint256(18);
+    uint256 public firstDayCap;
     uint256 public cap;
     uint256 public goal;
     uint256 public rate;
@@ -54,6 +53,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         uint256 _endTime,
         uint256 _rate,
         uint256 _cap,
+        uint256 _firstDayCap,
         uint256 _goal
     ) {
         require(_startTime >= getBlockTimestamp());
@@ -69,6 +69,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         startTime = _startTime;
         endTime = _endTime;
         firstDay = startTime + 1 * 1 days;
+        firstDayCap = _firstDayCap;
         rate = _rate;
         goal = _goal;
         cap = _cap;
@@ -143,7 +144,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         }
     }
 
-    // add to whitelist array of addresses
+    // add/remove to whitelist array of addresses based on boolean status
     function updateWhitelist(address[] addresses, bool status) public onlyOwner {
         for (uint256 i = 0; i < addresses.length; i++) {
             address contributorAddress = addresses[i];
@@ -151,6 +152,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         }
     }
 
+    //Only owner can manually finalize the sale
     function finalize() onlyOwner {
         require(!isFinalized);
         require(hasEnded());

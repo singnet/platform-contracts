@@ -21,7 +21,8 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
     const rate = new web3.BigNumber(1000)
     const goal = new web3.BigNumber(3 * Math.pow(10, 18))
     const cap = new web3.BigNumber(15 * Math.pow(10, 18))
-    agiCrowdsale = await Crowdsale.new(token.address, wallet, startTime, endTime, rate, cap, goal, { from: miner })
+    const firstDayCap = new web3.BigNumber(5 * Math.pow(10, 18))
+    agiCrowdsale = await Crowdsale.new(token.address, wallet, startTime, endTime, rate, cap, firstDayCap, goal, { from: miner })
     await agiCrowdsale.setBlockTimestamp(startTime + duration.days(2))
   })
 

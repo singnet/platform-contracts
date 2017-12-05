@@ -1,7 +1,7 @@
 const SingularityNetToken = artifacts.require('./helpers/SingularityNetTokenMock.sol')
 const Crowdsale = artifacts.require('./helpers/AgiCrowdsaleMock.sol')
 
-
+const assertFail = require('./helpers/assertFail.js')
 const { latestTime, duration } = require('./helpers/latestTime')
 
 contract('SingularityNetToken', (accounts) => {
@@ -46,7 +46,8 @@ contract('SingularityNetToken', (accounts) => {
     const rate = new web3.BigNumber(1000)
     const goal = new web3.BigNumber(3000 * Math.pow(10, 18))
     const cap = new web3.BigNumber(15000 * Math.pow(10, 18))
-    agiCrowdsale = await Crowdsale.new(token.address, accounts[2], startTime, endTime, rate, cap, goal)
+    const firstDayCap = new web3.BigNumber(5000 * Math.pow(10, 18))
+    agiCrowdsale = await Crowdsale.new(token.address, accounts[2], startTime, endTime, rate, cap, firstDayCap, goal)
     await agiCrowdsale.setBlockTimestamp(startTime + duration.days(1))
 
     //should be the new owner and start the sale
@@ -100,21 +101,16 @@ contract('SingularityNetToken', (accounts) => {
     const rate = new web3.BigNumber(1000)
     const goal = new web3.BigNumber(3000 * Math.pow(10, 18))
     const cap = new web3.BigNumber(15000 * Math.pow(10, 18))
-    agiCrowdsale = await Crowdsale.new(token.address, accounts[2], startTime, endTime, rate, cap, goal)
+    const firstDayCap = new web3.BigNumber(5 * Math.pow(10, 18))
+    
+    agiCrowdsale = await Crowdsale.new(token.address, accounts[2], startTime, endTime, rate, cap, firstDayCap, goal)
     await agiCrowdsale.setBlockTimestamp(startTime + duration.days(1))
 
     // First time should be ok
     await token.setOwnership(agiCrowdsale.address)
 
     // Callisg anthoer time, not
-    try {
-      await token.setOwnership(agiCrowdsale.address)
-
-      assert.fail('should have thrown before')
-    } catch (error) {
-      assert.ok(error.message.search('invalid opcode'), 'Invalid opcode error must be returned');
-    }
-
+    await assertFail(async () => await token.setOwnership(agiCrowdsale.address), 'should have thrown before')
   })
 
   it('should transfer tokens to someone if owner', async function () {
