@@ -1,5 +1,5 @@
 const Market = artifacts.require('market/MarketJob.sol')
-const AGIToken = artifacts.require('tokens/SingularityNetTokenMock.sol')
+const AGIToken = artifacts.require('tokens/SingularityNetToken.sol')
 
 contract('Market Job', function ([payer, firstAgent, secondAgent, thirdAgent]) {
 
