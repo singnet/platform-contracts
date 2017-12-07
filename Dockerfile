@@ -1,7 +1,3 @@
-FROM node:6
+FROM node:8
 
-WORKDIR /code
-
-ADD . /code
-
-RUN npm install -g truffle
+RUN npm install

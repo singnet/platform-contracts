@@ -8,8 +8,8 @@ module.exports = {
       provider: () => {
         return new HDWalletProvider(mnemonic, host)
       },
-      gas: 4700000,
-      network_id: "*" // Match any network id
+      gas: 127000,
+      network_id: "42" // Match any network id
     }
   },
 }
