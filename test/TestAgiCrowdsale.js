@@ -40,6 +40,13 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
       assert.equal(cap.toNumber(), web3.toWei(15, 'ether'), "cap is incorrect")
     })
 
+    it('first day is 24 hours after startTime', async () => {
+      const firstDay = new Date(await this.agiCrowdsale.firstDay() * 1000)
+      const startTime = new Date(await this.agiCrowdsale.startTime() * 1000)
+      const timeDiff = Math.abs(firstDay.getTime() - startTime.getTime())
+      assert.equal(Math.ceil(timeDiff / (1000 * 3600)), 24, 'should be 24 hours')
+    })
+
     it('crowdsale contract should be the owner of AGI token', async () => {
       assert.equal(await this.token.owner(), this.agiCrowdsale.address, 'Crowdsale is not the owner of the token')
     })
