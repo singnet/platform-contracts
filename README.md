@@ -13,18 +13,14 @@ Includes contracts, migrations, tests, user interface and webpack build pipeline
 
 ## Install
 
-### Truffle
+### Dependencies
 ```bash
-npm i -g truffle
+npm install
 ```
 
-### Ethereum  
-You can choose between Parity or local testrpc
+### Test 
 
-### testRPC
-```bash
-npm install -g ethereumjs-testrpc
-```
+
 
 ### Parity
   **Parity requires Rust version 1.19.0 to build**
@@ -69,14 +65,6 @@ npm install -g ethereumjs-testrpc
   ```bash
     cp /target/release/parity /usr/local/bin 
   ```
-
-
-## Build 
-1.  First `cd dao && npm i`
-2.  `truffle compile` and run on separated tab `parity` or `testrpc`
-3.  `truffle migrate` to deploy the contracts onto your network of choice (default "development").
-5. `truffle test`
-
 
 ## Usage
 
