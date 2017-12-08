@@ -6,13 +6,13 @@ RUN apt-get update \
   && ln -s /usr/bin/python3 python \
   && pip3 install --upgrade pip
 
-RUN  pip3 install web3
-
 ADD package.json /core/
 WORKDIR /core/
 
 RUN npm install -g ganache-cli \
     && npm install
+
+RUN  pip3 install web3
 
 ADD . /core/
 
