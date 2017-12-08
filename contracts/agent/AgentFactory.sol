@@ -4,7 +4,11 @@ import "./Agent.sol";
 
 contract AgentFactory {
 
-    function create() public returns (Agent) {
-        return new Agent();
+    event agent_created(address agent_address);
+
+    function create() public returns (address new_agent) {
+        new_agent = new Agent();
+        agent_created(new_agent);
+        return new_agent;
     }
 }
