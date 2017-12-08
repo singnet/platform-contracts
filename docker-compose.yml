@@ -1,0 +1,9 @@
+
+version: "3"
+
+services:
+
+    truffle:
+      container_name: truffle_core
+      build: .
+      command: bash -l -c './truffle_tools.sh'
