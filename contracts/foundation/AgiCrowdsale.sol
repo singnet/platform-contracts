@@ -32,7 +32,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
 
     uint256 public startTime;
     uint256 public endTime;
-    uint256 firstDay;
+    uint256 public firstDay;
 
     bool public isFinalized = false;
     uint256 public weiRaised;
