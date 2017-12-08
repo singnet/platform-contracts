@@ -10,7 +10,7 @@ contract MarketJob is MarketJobInterface {
 
     SingularityNetToken public token;
     address public masterAgent;
-    bytes public jobDescriptor;
+    bytes public jobDescriptorHash;
     bool public jobCompleted;
     bool public jobAccepted;
     bytes public jobResult;
@@ -60,13 +60,13 @@ contract MarketJob is MarketJobInterface {
         uint256[] _services,
         address _token,
         address _payer,
-        bytes _jobDescriptor
+        bytes _jobDescriptorHash
     ) {
         require(_agents.length == _amounts.length);
         require(_amounts.length == _services.length);
         masterAgent = msg.sender;
         payer = _payer;
-        jobDescriptor = _jobDescriptor;
+        jobDescriptorHash = _jobDescriptorHash;
         jobCompleted = false;
         token = SingularityNetToken(_token);
 
@@ -99,5 +99,90 @@ contract MarketJob is MarketJobInterface {
         amounts[agent].amount = 0;
         require(token.transfer(agent,amount));
         Withdrew(agent,amount);
+    }
+}
+
+contract SimpleJob is MarketJobInterface {
+    using SafeMath for uint256;
+
+    SingularityNetToken public token;
+    address public masterAgent;
+    bytes public jobDescriptorHash;
+    bool public jobCompleted;
+    bool public jobAccepted;
+    bytes public jobResult;
+    address public payer;
+
+    uint256 public amount;
+
+    event Deposited(address payer, uint256 _amount);
+    event Withdrew(address payee, uint256 _amount);
+    event JobCompleted();
+    event JobAccepted();
+
+    modifier jobDone {
+        require(jobCompleted == true);
+        _;
+    }
+
+    modifier jobApproved {
+        require(jobAccepted == true);
+        _;
+    }
+
+    modifier jobPending {
+        require(jobCompleted == false);
+        _;
+    }
+
+    modifier onlyPayer {
+        require(msg.sender == payer);
+        _;
+    }
+
+    modifier onlyMasterAgent {
+        require(msg.sender == masterAgent);
+        _;
+    }
+
+    function SimpleJob(
+        address _agent,
+        uint256 _amount,
+        address _token,
+        address _payer,
+        bytes _jobDescriptorHash
+    )
+    {
+        masterAgent = msg.sender;
+        payer = _payer;
+        jobDescriptorHash = _jobDescriptorHash;
+        jobCompleted = false;
+        token = SingularityNetToken(_token);
+        amount = _amount;
+    }
+
+    function deposit(uint256 _amount) onlyPayer jobPending public {
+        require(token.transferFrom(msg.sender, address(this), _amount));
+        Deposited(msg.sender, _amount);
+    }
+
+    function setJobCompleted(bytes _jobResult) onlyMasterAgent jobPending public {
+        jobCompleted = true;
+        jobResult = _jobResult;
+        JobCompleted();
+    }
+
+    function setJobAccepted() onlyPayer jobDone public {
+        jobAccepted = true;
+        JobAccepted();
+    }
+
+    function withdraw() jobDone jobApproved public {
+        address agent = msg.sender;
+        require(amount > 0);
+
+        amount = 0;
+        require(token.transfer(agent, amount));
+        Withdrew(agent, amount);
     }
 }

@@ -4,12 +4,17 @@ const host = "http://localhost:8545"//NODE
 
 module.exports = {
   networks: {
+    ganache: {
+      host: "truffle",
+      port: 8545,
+      network_id: "*" // Match any network id
+    },
     kovan: {
       provider: () => {
         return new HDWalletProvider(mnemonic, host)
       },
       gas: 127000,
-      network_id: "42" // Match any network id
+      network_id: "42"
     }
   },
 }
