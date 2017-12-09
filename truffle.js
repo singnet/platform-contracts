@@ -5,7 +5,12 @@ const host = "http://localhost:8545"//NODE
 module.exports = {
   networks: {
     ganache: {
-      host: "truffle",
+      host: "localhost",
+      port: 7545,
+      network_id: "*" // Match any network id
+    },
+    testrpc: {
+      host: "testrpc",
       port: 8545,
       network_id: "*" // Match any network id
     },
