@@ -47,7 +47,7 @@ deploy)
     cp addresses.json "${DEPLOY_TO_DIRECTORY}"
     ;;
 
-*) echo "No operation specified"
+*) echo "Command '$1' not found - No operation specified"
     exit 0;
     ;;
 
