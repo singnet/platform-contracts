@@ -9,6 +9,12 @@ module.exports = {
       port: 7545,
       network_id: "*"
     },
+  networks: {
+    docker_host_mac: {
+      host: "docker.for.mac.localhost",
+      port: 7545,
+      network_id: "*"
+    },
     ganache: {
       host: "localhost",
       port: 7545,
