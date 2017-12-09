@@ -55,7 +55,8 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
         uint256 _cap,
         uint256 _firstDayCap,
         uint256 _goal
-    ) {
+    ) public
+    {
         require(_startTime >= getBlockTimestamp());
         require(_endTime >= _startTime);
         require(_rate > 0);
@@ -128,14 +129,14 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     }
 
     // contributors can claim refund if the goal is not reached
-    function claimRefund() nonReentrant external {
+    function claimRefund() external nonReentrant  {
         require(isFinalized);
         require(!goalReached());
         vault.refund(msg.sender);
     }
 
     //in case of endTime before the reach of the cap, the owner can claim the unsold tokens
-    function claimUnsold() onlyOwner {
+    function claimUnsold() public onlyOwner {
         require(endTime <= getBlockTimestamp());
         uint256 unsold = token.balanceOf(this);
 
@@ -153,7 +154,7 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
     }
 
     //Only owner can manually finalize the sale
-    function finalize() onlyOwner {
+    function finalize() public onlyOwner {
         require(!isFinalized);
         require(hasEnded());
 

@@ -28,7 +28,7 @@ contract AgentRegistry is AgentRegistryInterface {
         uint service, 
         uint unit, 
         uint price, 
-        address agent ) external 
+        address agent ) external
     {
         services[service].push(Service(unit, price));
         

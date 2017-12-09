@@ -47,7 +47,8 @@ contract SimpleMarketJob {
         address _agent,
         address _token,
         bytes32 _jobDescriptor
-    ) {
+    ) public
+    {
         require(_token != 0x0);
         require(_agent != 0x0);
 
@@ -59,23 +60,23 @@ contract SimpleMarketJob {
 
     }
 
-    function deposit(uint256 amount) onlyPayer jobPending public {
+    function deposit(uint256 amount) public onlyPayer jobPending {
         require(token.transferFrom(msg.sender, address(this), amount));
         Deposited(msg.sender,amount);
     }
 
-    function setJobCompleted(bytes32 _jobResult) onlyAgent jobPending public {
+    function setJobCompleted(bytes32 _jobResult) public onlyAgent jobPending {
         jobCompleted = true;
         jobResult = _jobResult;
         JobCompleted();
     }
 
-    function setJobAccepted() onlyPayer jobDone public {
+    function setJobAccepted() public onlyPayer jobDone {
         jobAccepted = true;
         JobAccepted();
     }
 
-    function withdraw() jobDone jobApproved public {
+    function withdraw() public jobDone jobApproved {
         uint256 _amount = token.balanceOf(address(this));
         require(_amount > 0);
         require(msg.sender == agent);

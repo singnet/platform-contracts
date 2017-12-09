@@ -61,7 +61,8 @@ contract MarketJob is MarketJobInterface {
         address _token,
         address _payer,
         bytes _jobDescriptorHash
-    ) {
+    ) public
+    {
         require(_agents.length == _amounts.length);
         require(_amounts.length == _services.length);
         masterAgent = msg.sender;
@@ -80,18 +81,18 @@ contract MarketJob is MarketJobInterface {
         Deposited(msg.sender,amount);
     }
 
-    function setJobCompleted(bytes _jobResult) onlyMasterAgent jobPending public {
+    function setJobCompleted(bytes _jobResult) public onlyMasterAgent jobPending {
         jobCompleted = true;
         jobResult = _jobResult;
         JobCompleted();
     }
 
-    function setJobAccepted() onlyPayer jobDone public {
+    function setJobAccepted() public onlyPayer jobDone {
         jobAccepted = true;
         JobAccepted();
     }
 
-    function withdraw() jobDone jobApproved public {
+    function withdraw() public jobDone jobApproved {
         address agent = msg.sender;
         uint256 amount = amounts[agent].amount;
         require(amount > 0);
@@ -146,12 +147,11 @@ contract SimpleJob is MarketJobInterface {
     }
 
     function SimpleJob(
-        address _agent,
         uint256 _amount,
         address _token,
         address _payer,
         bytes _jobDescriptorHash
-    )
+    ) public
     {
         masterAgent = msg.sender;
         payer = _payer;
@@ -161,23 +161,23 @@ contract SimpleJob is MarketJobInterface {
         amount = _amount;
     }
 
-    function deposit(uint256 _amount) onlyPayer jobPending public {
+    function deposit(uint256 _amount) public onlyPayer jobPending {
         require(token.transferFrom(msg.sender, address(this), _amount));
         Deposited(msg.sender, _amount);
     }
 
-    function setJobCompleted(bytes _jobResult) onlyMasterAgent jobPending public {
+    function setJobCompleted(bytes _jobResult) public onlyMasterAgent jobPending {
         jobCompleted = true;
         jobResult = _jobResult;
         JobCompleted();
     }
 
-    function setJobAccepted() onlyPayer jobDone public {
+    function setJobAccepted() public onlyPayer jobDone {
         jobAccepted = true;
         JobAccepted();
     }
 
-    function withdraw() jobDone jobApproved public {
+    function withdraw() public jobDone jobApproved {
         address agent = msg.sender;
         require(amount > 0);
 
