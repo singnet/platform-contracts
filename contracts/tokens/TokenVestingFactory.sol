@@ -8,7 +8,7 @@ contract TokenVestingFactory is Ownable {
 
     event Created(TokenVesting vesting);
 
-    function create(address _beneficiary, uint256 _start, uint256 _cliff, uint256 _duration, bool _revocable) onlyOwner public returns (TokenVesting) {
+    function create(address _beneficiary, uint256 _start, uint256 _cliff, uint256 _duration, bool _revocable) public onlyOwner returns (TokenVesting) {
 
         TokenVesting vesting = new TokenVesting(_beneficiary, _start, _cliff, _duration, _revocable);
 

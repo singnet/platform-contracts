@@ -9,11 +9,11 @@ contract Escrow is Ownable {
 
     event Deposited(address indexed from, uint amount);
 
-    function Escrow(address _beneficiary) {
+    function Escrow(address _beneficiary) public {
         beneficiary = _beneficiary;
     }
 
-    function () payable {
+    function () public payable {
         if (msg.value <= 0) {
             return;
         }
@@ -21,7 +21,7 @@ contract Escrow is Ownable {
         Deposited(msg.sender, msg.value);
     }
 
-    function releaseFunds() onlyOwner {
+    function releaseFunds() public onlyOwner {
         beneficiary.transfer(this.balance);
     }
 }

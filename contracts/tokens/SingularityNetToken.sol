@@ -35,12 +35,12 @@ contract SingularityNetToken is PausableToken, BurnableToken {
     * @dev SingularityNetToken Constructor
     */
 
-    function SingularityNetToken() {
+    function SingularityNetToken() public {
         totalSupply = INITIAL_SUPPLY;   
         balances[msg.sender] = INITIAL_SUPPLY;
     }
 
-    function setOwnership(address _owner) onlyOwner {
+    function setOwnership(address _owner) public onlyOwner {
         require(_owner != owner);
         require(address(_owner) != address(0));
         pause();
@@ -51,7 +51,7 @@ contract SingularityNetToken is PausableToken, BurnableToken {
         balances[owner] = PUBLIC_SUPPLY;
     } 
 
-    function transferTokens(address beneficiary, uint256 amount) onlyOwner returns (bool) {
+    function transferTokens(address beneficiary, uint256 amount) public onlyOwner returns (bool) {
         require(amount > 0);
 
         balances[owner] = balances[owner].sub(amount);

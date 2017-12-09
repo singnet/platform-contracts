@@ -30,19 +30,17 @@ contract MarketJobFactory {
         return marketJob;
     }
 
-    function set_token(address _token)
+    function set_token(address _token) public
     {
         token = _token;
     }
 
     function create_simple(
-        address _agent,
         uint256 _amount,
         address _payer,
         bytes _jobDescriptorHash ) public returns (SimpleJob)
     {
         SimpleJob marketJob = new SimpleJob(
-            _agent,
             _amount,
             token,
             _payer,
@@ -53,7 +51,5 @@ contract MarketJobFactory {
 
         return marketJob;
     }
-
-
 
 }
