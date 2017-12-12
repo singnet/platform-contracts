@@ -1,4 +1,4 @@
-const Agent = artifacts.require('agent/Agentfactory.sol')
+const Agent = artifacts.require('agent/AgentFactory.sol')
 
 
 contract('AgentFactory', function () {

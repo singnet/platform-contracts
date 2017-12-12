@@ -1,0 +1,11 @@
+
+version: "3"
+
+services:
+
+    truffle:
+      container_name: truffle_core
+      build: .
+      volumes:
+        - ./data:/data
+      command: bash -l -c './truffle_tools.sh test testrpc && ./truffle_tools.sh deploy testrpc /data'

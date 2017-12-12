@@ -10,10 +10,10 @@ contract MarketJob is MarketJobInterface {
 
     SingularityNetToken public token;
     address public masterAgent;
-    bytes public jobDescriptor;
+    uint256 public jobDescriptorHash;
     bool public jobCompleted;
     bool public jobAccepted;
-    bytes public jobResult;
+    uint256 public jobResult;
     address public payer;
 
     event Deposited(address payer, uint256 amount);
@@ -60,13 +60,14 @@ contract MarketJob is MarketJobInterface {
         uint256[] _services,
         address _token,
         address _payer,
-        bytes _jobDescriptor
-    ) {
+        uint256 _jobDescriptorHash
+    ) public
+    {
         require(_agents.length == _amounts.length);
         require(_amounts.length == _services.length);
         masterAgent = msg.sender;
         payer = _payer;
-        jobDescriptor = _jobDescriptor;
+        jobDescriptorHash = _jobDescriptorHash;
         jobCompleted = false;
         token = SingularityNetToken(_token);
 
@@ -75,23 +76,23 @@ contract MarketJob is MarketJobInterface {
         }
     }
 
-    function deposit(uint256 amount) onlyPayer jobPending public {
+    function deposit(uint256 amount) onlyPayer jobPending external payable {
         require(token.transferFrom(msg.sender, address(this), amount));
         Deposited(msg.sender,amount);
     }
 
-    function setJobCompleted(bytes _jobResult) onlyMasterAgent jobPending public {
+    function setJobCompleted(uint256 _jobResult) external onlyMasterAgent jobPending {
         jobCompleted = true;
         jobResult = _jobResult;
         JobCompleted();
     }
 
-    function setJobAccepted() onlyPayer jobDone public {
+    function setJobAccepted() external onlyPayer jobDone {
         jobAccepted = true;
         JobAccepted();
     }
 
-    function withdraw() jobDone jobApproved public {
+    function withdraw() external jobDone jobApproved {
         address agent = msg.sender;
         uint256 amount = amounts[agent].amount;
         require(amount > 0);

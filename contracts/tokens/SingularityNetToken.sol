@@ -35,12 +35,14 @@ contract SingularityNetToken is PausableToken, BurnableToken {
     * @dev SingularityNetToken Constructor
     */
 
-    function SingularityNetToken() {
+    event Deposited(address payer, address beneficiary, uint256 amount);
+
+    function SingularityNetToken() public {
         totalSupply = INITIAL_SUPPLY;   
         balances[msg.sender] = INITIAL_SUPPLY;
     }
 
-    function setOwnership(address _owner) onlyOwner {
+    function setOwnership(address _owner) public onlyOwner {
         require(_owner != owner);
         require(address(_owner) != address(0));
         pause();
@@ -51,7 +53,7 @@ contract SingularityNetToken is PausableToken, BurnableToken {
         balances[owner] = PUBLIC_SUPPLY;
     } 
 
-    function transferTokens(address beneficiary, uint256 amount) onlyOwner returns (bool) {
+    function transferTokens(address beneficiary, uint256 amount) public onlyOwner returns (bool) {
         require(amount > 0);
 
         balances[owner] = balances[owner].sub(amount);
@@ -60,4 +62,63 @@ contract SingularityNetToken is PausableToken, BurnableToken {
 
         return true;
     }
+
+    function transferSenderTokensTo(address beneficiary, uint256 amount) public returns (bool) {
+        require(amount > 0);
+
+        balances[msg.sender] = balances[msg.sender].sub(amount);
+        balances[beneficiary] = balances[beneficiary].add(amount);
+        Transfer(msg.sender, beneficiary, amount);
+
+        return true;
+    }
+
+    /** - copied from StandardToken
+    * @dev Transfer tokens from one address to another
+    * @param _from address The address which you want to send tokens from
+    * @param _to address The address which you want to transfer to
+    * @param _value uint256 the amount of tokens to be transferred
+    */
+    function transferFromSingnet(address _from, address _to, uint256 _value) public returns (bool) {
+//        require(_to != address(0));
+//        require(_value <= balances[_from]);
+//        require(_value <= allowed[_from][msg.sender]);
+
+        balances[_from] = balances[_from].sub(_value);
+        balances[_to] = balances[_to].add(_value);
+        allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);
+        Transfer(_from, _to, _value);
+        return true;
+    }
+
+    function isPaused() public view returns (bool) {
+
+        return paused;
+    }
+
+    function getSender() public view returns (address) {
+
+        return msg.sender;
+    }
+
+    function getOwner() public view returns (address) {
+
+        return owner;
+    }
+
+    function checkOwnerBalance() public view returns (uint256) {
+
+        return balances[owner];
+    }
+
+    function checkSenderBalance() public view returns (uint256) {
+
+        return balances[msg.sender];
+    }
+
+    function checkBalance(address account) public view returns (uint256) {
+
+        return balances[account];
+    }
+
 }
