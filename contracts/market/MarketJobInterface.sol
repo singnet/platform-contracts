@@ -9,9 +9,9 @@ contract MarketJobInterface {
     event JobAccepted();
 
 
-    function withdraw() public;
-    function setJobCompleted(bytes lastPacket) public;
-    function setJobAccepted() public;
-    function deposit(uint256 amount) public;
+    function withdraw() external;
+    function setJobCompleted(uint256 jobResultHash) external;
+    function setJobAccepted() external;
+    function deposit(uint256 amount) external payable;
 
 }
