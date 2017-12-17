@@ -12,15 +12,15 @@ contract('SingularityNetToken', (accounts) => {
   })
 
   it('should have the name Singularity Network Token', async () => {
-    assert.equal(await this.token.NAME.call(), 'SingularityNET Token', "Singularity Network Token wasn't the name")
+    assert.equal(await this.token.name.call(), 'SingularityNET Token', "Singularity Network Token wasn't the name")
   })
 
   it('should have the symbol AGI', async () => {
-    assert.equal(await this.token.SYMBOL.call(), 'AGI', "AGI wasn't the symbol")
+    assert.equal(await this.token.symbol.call(), 'AGI', "AGI wasn't the symbol")
   })
 
   it('should have decimals set to 8', async () => {
-    assert.equal(await this.token.DECIMALS.call(), 8, "8 wasn't the value of decimals")
+    assert.equal(await this.token.decimals.call(), 8, "8 wasn't the value of decimals")
   })
 
   it('should have INITIAL_SUPPLY set to 1e17 cogs', async () => {

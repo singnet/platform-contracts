@@ -23,13 +23,13 @@ import "zeppelin-solidity/contracts/token/BurnableToken.sol";
  */
 contract SingularityNetToken is PausableToken, BurnableToken {
 
-    string public constant NAME = "SingularityNET Token";
-    string public constant SYMBOL = "AGI";
-    uint8 public constant DECIMALS = 8;
-    uint256 public constant INITIAL_SUPPLY = 1000000000 * 10**uint256(DECIMALS);
-    uint256 public constant PRIVATE_SUPPLY =  100000000 * 10**uint256(DECIMALS);
-    uint256 public constant FOUNDER_SUPPLY =  500000000 * 10**uint256(DECIMALS); 
-    uint256 public constant PUBLIC_SUPPLY  =  400000000 * 10**uint256(DECIMALS);
+    string public constant name = "SingularityNET Token";
+    string public constant symbol = "AGI";
+    uint8 public constant decimals = 8;
+    uint256 public constant INITIAL_SUPPLY = 1000000000 * 10**uint256(decimals);
+    uint256 public constant PRIVATE_SUPPLY =  100000000 * 10**uint256(decimals);
+    uint256 public constant FOUNDER_SUPPLY =  500000000 * 10**uint256(decimals); 
+    uint256 public constant PUBLIC_SUPPLY  =  400000000 * 10**uint256(decimals);
     
     /**
     * @dev SingularityNetToken Constructor
