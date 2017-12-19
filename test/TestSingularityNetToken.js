@@ -1,5 +1,7 @@
 const SingularityNetToken = artifacts.require('./helpers/SingularityNetToken.sol')
 const Crowdsale = artifacts.require('./helpers/AgiCrowdsale.sol')
+const PUBLIC_SUPPLY = new web3.BigNumber(150000000 *  Math.pow(10, 8))
+
 
 const assertFail = require('./helpers/assertFail.js')
 const { increaseTimeTo } = require('./helpers/increaseTime')
@@ -12,15 +14,15 @@ contract('SingularityNetToken', (accounts) => {
   })
 
   it('should have the name Singularity Network Token', async () => {
-    assert.equal(await this.token.NAME.call(), 'SingularityNET Token', "Singularity Network Token wasn't the name")
+    assert.equal(await this.token.name.call(), 'SingularityNET Token', "Singularity Network Token wasn't the name")
   })
 
   it('should have the symbol AGI', async () => {
-    assert.equal(await this.token.SYMBOL.call(), 'AGI', "AGI wasn't the symbol")
+    assert.equal(await this.token.symbol.call(), 'AGI', "AGI wasn't the symbol")
   })
 
   it('should have decimals set to 8', async () => {
-    assert.equal(await this.token.DECIMALS.call(), 8, "8 wasn't the value of decimals")
+    assert.equal(await this.token.decimals.call(), 8, "8 wasn't the value of decimals")
   })
 
   it('should have INITIAL_SUPPLY set to 1e17 cogs', async () => {
@@ -46,12 +48,12 @@ contract('SingularityNetToken', (accounts) => {
     await increaseTimeTo(startTime + duration.days(1))
 
     //should be the new owner and start the sale
-    await this.token.setOwnership(agiCrowdsale.address)
+    await this.token.transfer(agiCrowdsale.address, PUBLIC_SUPPLY, {from:accounts[0]})
+    await this.token.pause()
+    await this.token.transferOwnership(agiCrowdsale.address)
     //Check the new token owner
     assert.equal(await this.token.owner.call(), agiCrowdsale.address, 'Crowdsale is not the owner of the token')
-    //Check the balances
-    const balanceAfter = await this.token.balanceOf(miner)
-    const balanceOfCrowdsale = await this.token.balanceOf(agiCrowdsale.address)
+ 
   })
 
 
@@ -104,10 +106,10 @@ contract('SingularityNetToken', (accounts) => {
     await increaseTimeTo(startTime + duration.days(1))
 
     // First time should be ok
-    await this.token.setOwnership(agiCrowdsale.address)
+    await this.token.transferOwnership(agiCrowdsale.address)
 
     // Callisg anthoer time, not
-    await assertFail(async () => await this.token.setOwnership(agiCrowdsale.address), 'should have thrown before')
+    await assertFail(async () => await this.token.transferOwnership(agiCrowdsale.address), 'should have thrown before')
   })
 
   it('should transfer tokens to someone if owner', async () => {
