@@ -162,6 +162,8 @@ contract AgiCrowdsale is Ownable, ReentrancyGuard {
             vault.close();
             //Unpause the token 
             token.unpause();
+            //give ownership back to deployer
+            token.transferOwnership(owner);
         } else {
             //else enable refunds
             vault.enableRefunds();

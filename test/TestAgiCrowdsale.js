@@ -274,8 +274,6 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
       await increaseTimeTo(latestTime() + duration.weeks(2))
 
       await this.agiCrowdsale.finalize()    
-      await this.agiCrowdsale.transferOwnership(miner)
-      
 
       assert.isTrue(await this.agiCrowdsale.isFinalized.call())
 
@@ -296,7 +294,6 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
 
       await increaseTimeTo(latestTime() + duration.weeks(2))
       await this.agiCrowdsale.finalize()
-      await this.agiCrowdsale.transferOwnership(miner)
 
       const before = web3.fromWei(web3.eth.getBalance(firstContributor), 'ether')
       
@@ -310,9 +307,7 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
       await increaseTimeTo(latestTime() + duration.weeks(2))
 
       await this.agiCrowdsale.finalize()
-      await this.agiCrowdsale.transferOwnership(miner)
       
-
       const initialSupply = await this.token.balanceOf(this.agiCrowdsale.address)
       const balanceBeforeClaim = await this.token.balanceOf(miner)
 
@@ -334,8 +329,7 @@ contract('AgiCrowdsale', async ([miner, firstContributor, secondContributor, whi
 
       await increaseTimeTo(latestTime() + duration.weeks(2))
 
-      await this.agiCrowdsale.finalize()
-      await this.agiCrowdsale.transferOwnership(miner)      
+      await this.agiCrowdsale.finalize()   
 
       assert.isFalse(await this.token.paused.call(), 'token should be unpaused')
     })
