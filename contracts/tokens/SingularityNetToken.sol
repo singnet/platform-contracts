@@ -27,9 +27,6 @@ contract SingularityNetToken is PausableToken, BurnableToken {
     string public constant symbol = "AGI";
     uint8 public constant decimals = 8;
     uint256 public constant INITIAL_SUPPLY = 1000000000 * 10**uint256(decimals);
-    uint256 public constant PRIVATE_SUPPLY =  350000000 * 10**uint256(decimals);
-    uint256 public constant FOUNDER_SUPPLY =  500000000 * 10**uint256(decimals); 
-    uint256 public constant PUBLIC_SUPPLY  =  150000000 * 10**uint256(decimals);
     
     /**
     * @dev SingularityNetToken Constructor
