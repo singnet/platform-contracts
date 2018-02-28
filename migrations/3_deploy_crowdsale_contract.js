@@ -16,6 +16,7 @@ const duration = {
 }
 
 module.exports = function(deployer, network, accounts) {
+  if (network!=='live') return;
   const startTime = latestTime() + duration.minutes(5)
   const endTime = startTime + duration.days(20)
   const rate = new web3.BigNumber(1000)
