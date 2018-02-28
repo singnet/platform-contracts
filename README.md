@@ -1,5 +1,5 @@
 # SingularityNetwork
-Includes contracts, migrations, tests, user interface and webpack build pipeline.
+Includes contracts, migrations, tests
 
 ## Design Specifications
 
