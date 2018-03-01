@@ -1,12 +1,11 @@
-const Job = artifacts.require('market/Job.sol')
+const Escrow = artifacts.require('market/Escrow.sol')
 
 
-contract('Job', function ([payee, payer]) {
+contract('Escrow', function ([payee, payer]) {
 
   beforeEach(async () => {
     const jobDescriptor = "0x0"
-    this.job = await Job.new(payer, payee, jobDescriptor, 800, 0)
-    console.log(this.job)
+    this.job = await Escrow.new(payer, payee, jobDescriptor, 800, 0)
   })
 
 
@@ -20,7 +19,7 @@ contract('Job', function ([payee, payer]) {
 
     const found2 = result.logs.find(e => e.event === 'Completed')
     assert.strictEqual(found2.event, 'Completed', 'Completed event not fired')
-    
+
   })
 
 
