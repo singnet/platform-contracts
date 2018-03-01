@@ -102,7 +102,7 @@ contract('SingularityNetToken', (accounts) => {
     const cap = new web3.BigNumber(15000 * Math.pow(10, 18))
     const firstDayCap = new web3.BigNumber(5 * Math.pow(10, 18))
     
-    agiCrowdsale = await Crowdsale.new(token.address, accounts[2], startTime, endTime, rate, cap, firstDayCap, goal)
+    agiCrowdsale = await Crowdsale.new(this.token.address, accounts[2], startTime, endTime, rate, cap, firstDayCap, goal)
     await increaseTimeTo(startTime + duration.days(1))
 
     // First time should be ok

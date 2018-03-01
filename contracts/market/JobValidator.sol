@@ -1,6 +1,6 @@
 pragma solidity ^0.4.18;
 
-import './JobInterface.sol';
+import "./JobInterface.sol";
 
 /**
  * @title The Job Validator contract 

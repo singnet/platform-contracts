@@ -1,6 +1,6 @@
 pragma solidity ^0.4.18;
 
-import './JobValidator.sol';
+import "./JobValidator.sol";
 /**
  * @title The wrapped Job contract 
  */
@@ -49,7 +49,6 @@ contract Job is JobValidator {
     function setResult(bytes32 _result) public returns (bool) {
         require(msg.sender == payee);
         require(descriptor.length > 0);
-        require(result.length == 0);
 
         end = now;
  

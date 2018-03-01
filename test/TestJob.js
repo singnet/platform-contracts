@@ -1,29 +1,26 @@
 const Job = artifacts.require('market/Job.sol')
 
 
-contract('Job', function ([payer, payee]) {
+contract('Job', function ([payee, payer]) {
 
   beforeEach(async () => {
-    this.job = await Job.new()
-  })
-  
-  it('JOB STARTED', async () => {
     const jobDescriptor = "0x0"
-
-    const { logs } = await this.job.setJobStarted(payer, payee, jobDescriptor)
-    const found = logs.find(e => e.event === 'JobStarted')
-    assert.strictEqual(found.event, 'JobStarted', 'Job not started')
+    this.job = await Job.new(payer, payee, jobDescriptor, 800, 0)
+    console.log(this.job)
   })
 
-  it('JOB COMPLETED', async () => {
-    const jobDescriptor = "0x0"
-    const jobResult = "0x0102"
 
-    await this.job.setJobStarted(payer, payee, jobDescriptor)
+  it('JOB COMPLETED - set result', async () => {
+    const jobResult = "0x101"
     //Complete jobs
-    const { logs } = await this.job.setJobCompleted(jobResult, {from:payee})
-    const found = logs.find(e => e.event === 'JobCompleted')
-    assert.strictEqual(found.event, 'JobCompleted', 'Job not completed')
+    const result = await this.job.setResult(jobResult, {from:payee})
+
+    const found = result.logs.find(e => e.event === 'Result')
+    assert.strictEqual(found.event, 'Result', 'Result event not fired')
+
+    const found2 = result.logs.find(e => e.event === 'Completed')
+    assert.strictEqual(found2.event, 'Completed', 'Completed event not fired')
+    
   })
 
 
