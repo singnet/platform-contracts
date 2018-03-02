@@ -7,14 +7,20 @@ import "./JobValidator.sol";
 contract Job is JobValidator {
 
     /**
+     * @dev Determines if job is completed
+     */
+    bool public isCompleted = false; 
+
+    /**
      * @dev Who can set the result
      */
-     address provider;
+    address public provider;
+    
     /**
-     * @dev Cost in AGI for the exection of the job
+     * @dev Price in AGI for the exection of the job
      * (10**8 cogs === 1 AGI)
      */
-    uint256 public cost;
+    uint256 public price;
 
     /**
      * @dev Started event
@@ -35,6 +41,7 @@ contract Job is JobValidator {
         result = _result;
 
         Completed();
+        isCompleted = true;
 
         return true;
     }

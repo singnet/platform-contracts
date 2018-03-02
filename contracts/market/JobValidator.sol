@@ -1,12 +1,12 @@
 pragma solidity ^0.4.18;
 
-import "./JobInterface.sol";
+import "./JobStandard.sol";
 
 /**
  * @title The Job Validator contract 
  */
 
-contract JobValidator is JobInterface {
+contract JobValidator is JobStandard {
 
     /**
      * @dev Reward for validator in AGI.
@@ -14,10 +14,9 @@ contract JobValidator is JobInterface {
     address public validator; 
 
     /**
-     * @dev Validation status
-     * 0 == pending && 1 == accepted && 2 == rejected 
+     * @dev rejection status
      */
-    address public status = 0; 
+    bool public isRejected = false; 
     
     /**
      * @dev Reward for validator in AGI.
@@ -45,8 +44,6 @@ contract JobValidator is JobInterface {
      */
     function accept() public {
         validator = msg.sender;
-        status = 1;
-
         Accepted();
     }
 
@@ -54,9 +51,8 @@ contract JobValidator is JobInterface {
      * @dev Reject job result
      */
     function reject() public {
-        validator = msg.sender;
-        status = 2;
-
+        require(msg.sender==validator);
+        isRejected = true;
         Rejected();
     }
 

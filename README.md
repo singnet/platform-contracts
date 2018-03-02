@@ -29,3 +29,8 @@ or
 ```bash
 truffle test
 ```
+
+## Flattening
+
+`solidity_flattener contracts/Contract.sol --solc-paths=zeppelin-solidity=$(pwd)/node_modules/zeppelin-solidity/ --output contract.sol`
+
