@@ -1,39 +1,61 @@
 pragma solidity ^0.4.18;
 
-contract Job {
-    uint256 public status = 0;
-    bytes32 public jobDescriptor;
-    bytes32 public jobResult;
+import "./JobValidator.sol";
+/**
+ * @title The wrapped Job contract 
+ */
+contract Job is JobValidator {
 
-    uint256 public start;
-    uint256 public end;
+    /**
+     * @dev Determines if job is completed
+     */
+    bool public isCompleted = false; 
 
-    address public payer;
-    address public payee;
+    /**
+     * @dev Who can set the result
+     */
+    address public provider;
+    
+    /**
+     * @dev Price in AGI for the exection of the job
+     * (10**8 cogs === 1 AGI)
+     */
+    uint256 public price;
 
-    event JobStarted(address indexed payer, address indexed payee, bytes32 jobDescriptor, address jobAddress);
-    event JobCompleted(bytes32 jobResult, address jobAddress);
+    /**
+     * @dev Started event
+     */
+    event Started(address indexed payer, address indexed payee, bytes32 descriptor, address job);
 
-    function setJobStarted(address _payer, address _payee, bytes32 _jobDescriptor) public {
-        require(status < 1);
-        payer = _payer;
-        payee = _payee;
-        jobDescriptor = _jobDescriptor;
-        status = 1;
-        start = now;
+    /**
+     * @dev Set result of this Job
+     * @param _result Result data hash
+     */
+    function setResult(bytes32 _result) public returns (bool) {
+        require(msg.sender == provider);
+        require(descriptor.length > 0);
 
-        JobStarted(payer, payee, jobDescriptor, address(this));
-    }
-
-    function setJobCompleted(bytes32 _jobResult) public {
-        require(msg.sender == payee);
-        require(status < 2);        
-        status = 2;
-        jobResult = _jobResult;
         end = now;
+ 
+        Result(_result);
+        result = _result;
 
-        JobCompleted(jobResult, address(this));
+        Completed();
+        isCompleted = true;
 
+        return true;
     }
+
+    /**
+     * @dev The payee can change the provider address
+     * @param _provider New provider
+     */
+     function setProvider(address _provider) public returns(bool) {
+         require(msg.sender == payee);
+         provider = _provider;
+         return true;
+     }
+
+
 
 }

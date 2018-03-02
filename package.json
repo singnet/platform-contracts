@@ -9,7 +9,7 @@
   "scripts": {
     "compile": "node_modules/.bin/truffle compile",
     "deploy": "node_modules/.bin/truffle migrate",
-    "test": "node_modules/.bin/truffle test"
+    "test": "rm -rf build && node_modules/.bin/truffle test"
   },
   "author": "tiero",
   "license": "MIT",
