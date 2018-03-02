@@ -68,6 +68,21 @@ contract('Escrow', function ([payee, payer, validator]) {
     await assertFail(async () => await this.escrow.withdraw({ from: payee }), 'should have thrown before')
   })
 
+
+  it('WITHDRAWAL - allowed if payer accept before timelock', async () => {
+    const jobDescriptor = "0x01"    
+    const jobResult = "0x202"
+    await this.token.approve(this.escrow.address, amount, { from: payer })   
+    await this.escrow.deposit(amount, jobDescriptor, { from: payer })
+    await this.escrow.setResult(jobResult, { from: payee })
+    const result = await this.escrow.accept({from: payer})
+
+    const found = result.logs.find(e => e.event === 'Accepted')
+    assert.strictEqual(found.event, 'Accepted', 'Accepted event not fired')
+  })
+
+
+
   it('WITHDRAWAL - allowed after timelock', async () => {
     const jobDescriptor = "0x01"    
     const jobResult = "0x202"

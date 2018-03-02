@@ -41,9 +41,11 @@ contract JobValidator is JobStandard {
 
     /**
      * @dev Confirm job result
+     * Is optional, even if not called by the payer at the expiration time 
+     * funds will be available for to payee
      */
     function accept() public {
-        validator = msg.sender;
+        require(msg.sender == payer);
         Accepted();
     }
 
@@ -51,7 +53,7 @@ contract JobValidator is JobStandard {
      * @dev Reject job result
      */
     function reject() public {
-        require(msg.sender==validator);
+        require(msg.sender == payer);
         isRejected = true;
         Rejected();
     }
