@@ -1,4 +1,5 @@
 const { duration, latestTime } = require('./helpers/latestTime.js');
+const { logGasUsed } = require('./helpers/gas.js')
 
 const Escrow = artifacts.require('market/Escrow.sol')
 const Token = artifacts.require('tokens/SingularityNetToken.sol')
@@ -22,9 +23,11 @@ contract('Escrow', function ([payee, payer, validator]) {
     const jobDescriptor = "0x01"
     //Complete jobs
 
-    await this.token.approve(this.escrow.address, amount, { from: payer })
+    const approveResult = await this.token.approve(this.escrow.address, amount, { from: payer })
+    logGasUsed('token.approve',approveResult)
+    
     const result = await this.escrow.deposit(amount, jobDescriptor, { from: payer })
-
+    logGasUsed('escrow.deposit',result)
 
     const found2 = result.logs.find(e => e.event === 'Deposited')
     assert.strictEqual(found2.event, 'Deposited', 'Deposited event not fired')
@@ -76,6 +79,7 @@ contract('Escrow', function ([payee, payer, validator]) {
     await this.escrow.deposit(amount, jobDescriptor, { from: payer })
     await this.escrow.setResult(jobResult, { from: payee })
     const result = await this.escrow.accept({from: payer})
+    logGasUsed('escrow.setResult',result)
 
     const found = result.logs.find(e => e.event === 'Accepted')
     assert.strictEqual(found.event, 'Accepted', 'Accepted event not fired')
@@ -92,6 +96,7 @@ contract('Escrow', function ([payee, payer, validator]) {
     const time = (await this.escrow.end.call()) + duration.minutes(10)
     await increaseTimeTo(time)    
     let result = await this.escrow.withdraw({ from: payee })
+    logGasUsed('escrow.withdraw',result)
     const found = result.logs.find(e => e.event === 'Withdrew')
     assert.strictEqual(found.event, 'Withdrew', 'Withdrew event not fired')     
 
