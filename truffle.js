@@ -1,15 +1,28 @@
-const HDWalletProvider = require("truffle-hdwallet-provider")
-const mnemonic = "word word word" //MNEMONIC
-const host = "http://localhost:8545"//NODE
+let HDWalletProvider = require("truffle-hdwallet-provider");
+let Web3 = require("Web3");
+
+let provider = (endpoint) => {
+    if (process.env.HDWALLET_MNEMONIC) {
+        return new HDWalletProvider(process.env.HDWALLET_MNEMONIC, endpoint);
+    } else {
+        return new Web3.providers.HttpProvider(endpoint);
+    }
+}
 
 module.exports = {
-  networks: {
-    kovan: {
-      provider: () => {
-        return new HDWalletProvider(mnemonic, host)
-      },
-      gas: 127000,
-      network_id: "42" // Match any network id
-    }
-  },
+    networks: {
+        local: {
+            host: "127.0.0.1",
+            port: 8545,
+            network_id: "*" // Any network ID
+        },
+        localhd: {
+            provider: () => provider("http://127.0.0.1:8545"),
+            network_id: "*" // Any network ID
+        },
+        kovan: {
+            provider: () => provider("https://kovan.infura.io"),
+            network_id: "42" // Kovan network ID
+        },
+    },
 }

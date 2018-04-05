@@ -1,14 +1,8 @@
-# SingularityNetwork
-Includes contracts, migrations, tests
-
-## Design Specifications
-
-[Smart Contracts Design ](./docs/SNContractsDesignSpecs.md)
-
+# alpha-blockchain
+Includes alpha blockchain contracts, migrations, tests
 
 ## Requirements
-
-* [Node.js](https://github.com/nodejs/node) (7.6 +)
+* [Node.js](https://github.com/nodejs/node) (8+)
 * [Npm](https://www.npmjs.com/package/npm)
 
 ## Install
@@ -19,18 +13,11 @@ npm install
 ```
 
 ### Test 
-
 ```bash
 npm run test
 ```
 
-or 
-
+## Package
 ```bash
-truffle test
+npm run package-npm
 ```
-
-## Flattening
-
-`solidity_flattener contracts/Contract.sol --solc-paths=zeppelin-solidity=$(pwd)/node_modules/zeppelin-solidity/ --output contract.sol`
-

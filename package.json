@@ -1,26 +1,38 @@
 {
-  "name": "singnet-contracts",
+  "name": "singularitynet-alpha-blockchain",
   "version": "1.0.0",
-  "description": "Includes contracts, migrations, tests",
+  "private": true,
+  "description": "Includes alpha blockchain contracts, migrations, tests",
   "directories": {
-    "doc": "docs",
     "test": "test"
   },
   "scripts": {
+    "package-npm": "node scripts/package-npm.js",
     "compile": "node_modules/.bin/truffle compile",
     "deploy": "node_modules/.bin/truffle migrate",
     "test": "rm -rf build && node_modules/.bin/truffle test"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erickearns/alpha-blockchain.git"
+  },
   "author": "tiero",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/erickearns/alpha-blockchain/issues"
+  },
+  "homepage": "https://github.com/erickearns/alpha-blockchain#readme",
   "dependencies": {
-    "truffle": "4.0.1",
+    "singularitynet-token-contracts": "1.0.0",
+    "truffle": "4.1.5",
+    "truffle-contract": "3.0.4",
+    "truffle-hdwallet-provider": "0.0.3",
     "zeppelin-solidity": "1.4.0"
   },
   "devDependencies": {
+    "fs-extra": "^5.0.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
-    "chai-bignumber": "^2.0.2",
-    "truffle-hdwallet-provider": "^0.0.3"
+    "chai-bignumber": "^2.0.2"
   }
 }
