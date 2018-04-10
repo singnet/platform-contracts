@@ -4,4 +4,4 @@ echo "Enter BIP-39 mnemonic: "
 read HDWALLET_MNEMONIC
 echo "Enter target network name (as defined in truffle.js): "
 read NETWORK
-node_modules/.bin/truffle migrate --network $NETWORK
+HDWALLET_MNEMONIC=$HDWALLET_MNEMONIC node_modules/.bin/truffle migrate --network $NETWORK

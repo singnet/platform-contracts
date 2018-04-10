@@ -21,6 +21,7 @@ module.exports = {
             network_id: "*" // Any network ID
         },
         kovan: {
+            gasPrice: 500000000,
             provider: () => provider("https://kovan.infura.io"),
             network_id: "42" // Kovan network ID
         },
