@@ -81,8 +81,8 @@ contract("All", async (accounts) => {
         balance = await tokenInstance.balanceOf.call(owner);
         assert.equal(8, balance);
 
-        // Disable agent
-        await agentInstance.disable({from: accounts[1]});
+        // Deprecate record
+        await registryInstance.deprecateRecord("Agent1", {from: accounts[1]});
         agents = await registryInstance.listRecords.call();
         assert.equal(0, agents[1][0]);
     });

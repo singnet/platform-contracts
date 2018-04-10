@@ -8,20 +8,20 @@
   },
   "scripts": {
     "package-npm": "node scripts/package-npm.js",
+    "deploy": "scripts/truffle-migrate",
     "compile": "node_modules/.bin/truffle compile",
-    "deploy": "node_modules/.bin/truffle migrate",
     "test": "rm -rf build && node_modules/.bin/truffle test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/erickearns/alpha-blockchain.git"
+    "url": "git+https://github.com/singnet/alpha-blockchain.git"
   },
-  "author": "tiero",
+  "author": "SingularityNET",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/erickearns/alpha-blockchain/issues"
+    "url": "https://github.com/singnet/alpha-blockchain/issues"
   },
-  "homepage": "https://github.com/erickearns/alpha-blockchain#readme",
+  "homepage": "https://github.com/singnet/alpha-blockchain#readme",
   "dependencies": {
     "singularitynet-token-contracts": "1.0.0",
     "truffle": "4.1.5",

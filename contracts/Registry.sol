@@ -59,7 +59,7 @@ contract Registry {
         address[] memory agents = new address[](agentRecords.length - 1);
         uint j = 0;
         for (uint i = 1; i < agentRecords.length; i++) {
-            if (agentRecords[i].state == RecordState.ALIVE && Agent(agentRecords[i].agent).state() == Agent.AgentState.ENABLED) {
+            if (agentRecords[i].state == RecordState.ALIVE) {
                 names[j] = agentRecords[i].name;
                 agents[j] = agentRecords[i].agent;
                 j++;
