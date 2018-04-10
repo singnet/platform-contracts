@@ -16,17 +16,21 @@ contract("All", async (accounts) => {
         let tokenInstance = Token.at(tokenAddress);
 
         // Create agent with owner accounts[1] price 8
-        let createAgentResult = await agentFactoryInstance.createAgent(8, {from: accounts[1]});
+        let createAgentResult = await agentFactoryInstance.createAgent(8, "http://fake.url", {from: accounts[1]});
         let agentInstance = Agent.at(createAgentResult.logs[0].args.agent);
+        let state = await agentInstance.state.call();
         let owner = await agentInstance.owner.call();
         let currentPrice = await agentInstance.currentPrice.call();
+        let endpoint = await agentInstance.endpoint.call();
+        assert.equal(0, state);
         assert.equal(accounts[1], owner);
         assert.equal(8, currentPrice);
+        assert.equal("http://fake.url", endpoint);
 
         // Register agent with name Agent1
         let registryInstance = await Registry.deployed();
-        await registryInstance.registerAgent("Agent1", agentInstance.address, {from: accounts[1]});
-        let agents = await registryInstance.listAgents.call();
+        await registryInstance.createRecord("Agent1", agentInstance.address, {from: accounts[1]});
+        let agents = await registryInstance.listRecords.call();
         assert.equal(1, agents[0].length);
 
         // Create job with consumer accounts[0]
@@ -35,19 +39,19 @@ contract("All", async (accounts) => {
         let jobPrice = await jobInstance.jobPrice.call();
         let consumer = await jobInstance.consumer.call();
         let agent = await jobInstance.agent.call();
-        let status = await jobInstance.status.call();
+        state = await jobInstance.state.call();
         assert.equal(8, jobPrice);
         assert.equal(accounts[0], consumer);
         assert.equal(agentInstance.address, agent);
-        assert.equal(0, status);
+        assert.equal(0, state);
 
         // Fund job by consumer accounts[0]
         await tokenInstance.approve(jobInstance.address, 8, {from: accounts[0]});
         let fundJobResult = await jobInstance.fundJob({from: accounts[0]});
         let balance = await tokenInstance.balanceOf.call(jobInstance.address);
-        status = await jobInstance.status.call();
+        state = await jobInstance.state.call();
         assert.equal(8, balance);
-        assert.equal(1, status);
+        assert.equal(1, state);
 
         // Sign job address by consumer accounts[0]
         let [v, r, s] = signAddress(jobInstance.address, accounts[0]);
@@ -63,11 +67,11 @@ contract("All", async (accounts) => {
         jobPrice = await jobInstance.jobPrice.call();
         consumer = await jobInstance.consumer.call();
         agent = await jobInstance.agent.call();
-        status = await jobInstance.status.call();
+        state = await jobInstance.state.call();
         assert.equal(8, jobPrice);
         assert.equal(accounts[0], consumer);
         assert.equal(agentInstance.address, agent);
-        assert.equal(2, status);
+        assert.equal(2, state);
 
         owner = await agentInstance.owner.call();
         currentPrice = await agentInstance.currentPrice.call();
@@ -78,8 +82,8 @@ contract("All", async (accounts) => {
         assert.equal(8, balance);
 
         // Disable agent
-        await registryInstance.disableAgent("Agent1", {from: accounts[1]});
-        agents = await registryInstance.listAgents.call();
+        await agentInstance.disable({from: accounts[1]});
+        agents = await registryInstance.listRecords.call();
         assert.equal(0, agents[1][0]);
     });
 });

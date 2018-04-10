@@ -4,7 +4,7 @@ import "zeppelin-solidity/contracts/token/ERC20.sol";
 import "./Agent.sol";
 
 contract Job {
-    enum JobStatus {
+    enum JobState {
         PENDING,
         FUNDED,
         COMPLETED
@@ -14,7 +14,7 @@ contract Job {
     uint public jobPrice;
     address public consumer;
     Agent public agent;
-    JobStatus public status;
+    JobState public state;
     
     event JobFunded();
     event JobCompleted();
@@ -24,22 +24,22 @@ contract Job {
         jobPrice = _jobPrice;
         consumer = tx.origin;
         agent = Agent(msg.sender);
-        status = JobStatus.PENDING;
+        state = JobState.PENDING;
     }
 
     function fundJob() public {
-        require(status == JobStatus.PENDING);
+        require(state == JobState.PENDING);
         require(token.transferFrom(consumer, this, jobPrice));
         agent.fundJob();
-        status = JobStatus.FUNDED;
+        state = JobState.FUNDED;
         emit JobFunded();
     }
 
     function completeJob(uint8 v, bytes32 r, bytes32 s) public returns (bool) {
-        require(status == JobStatus.FUNDED);
+        require(state == JobState.FUNDED);
         require(ecrecover(keccak256("\x19Ethereum Signed Message:\n32", keccak256(this)), v, r, s) == consumer);
         require(token.approve(address(agent), jobPrice));
-        status = JobStatus.COMPLETED;
+        state = JobState.COMPLETED;
         emit JobCompleted();
         return true;
     }
