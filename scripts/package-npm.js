@@ -15,6 +15,8 @@ const mapFiles = {
     "contracts/Registry.sol": "Registry.sol",
     "build/contracts/AgentFactory.json": "AgentFactory.json",
     "build/contracts/Registry.json": "Registry.json",
+    "build/contracts/Agent.json": "Agent.json",
+    "build/contracts/Job.json": "Job.json",
     "resources/npm-README.md": "README.md",
     "LICENSE": "LICENSE"
 };
