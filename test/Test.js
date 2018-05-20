@@ -16,16 +16,18 @@ contract("All", async (accounts) => {
         let tokenInstance = Token.at(tokenAddress);
 
         // Create agent with owner accounts[1] price 8
-        let createAgentResult = await agentFactoryInstance.createAgent(8, "http://fake.url", {from: accounts[1]});
+        let createAgentResult = await agentFactoryInstance.createAgent(8, "http://fake.url", "/ipfs/whatever", {from: accounts[1]});
         let agentInstance = Agent.at(createAgentResult.logs[0].args.agent);
         let state = await agentInstance.state.call();
         let owner = await agentInstance.owner.call();
         let currentPrice = await agentInstance.currentPrice.call();
         let endpoint = await agentInstance.endpoint.call();
+        let metadataURI = await agentInstance.metadataURI.call();
         assert.equal(0, state);
         assert.equal(accounts[1], owner);
         assert.equal(8, currentPrice);
         assert.equal("http://fake.url", endpoint);
+        assert.equal("/ipfs/whatever", metadataURI);
 
         // Register agent with name Agent1
         let registryInstance = await Registry.deployed();
@@ -62,6 +64,18 @@ contract("All", async (accounts) => {
 
         // Complete job by owner accounts[1]
         await agentInstance.completeJob(jobInstance.address, v, r, s, {from: accounts[1]});
+
+        // Set agent endpoint with owner accounts[1]
+        let newEndpoint = "http://new.fake.url:80";
+        let setEndpointResult = await agentInstance.setEndpoint.sendTransaction(newEndpoint, {from: accounts[1]});
+        let updatedEndpoint = await agentInstance.endpoint.call();
+        assert.equal(updatedEndpoint, newEndpoint);
+
+        // Set agent metadataURI with owner accounts[1]
+        let newMetadataURI = "/ipfs/whateverElse";
+        let setMetadataURIResult = await agentInstance.setMetadataURI.sendTransaction(newMetadataURI, {from: accounts[1]});
+        let updatedMetadataURI = await agentInstance.metadataURI.call();
+        assert.equal(updatedMetadataURI, newMetadataURI);
 
         // Check all states
         jobPrice = await jobInstance.jobPrice.call();

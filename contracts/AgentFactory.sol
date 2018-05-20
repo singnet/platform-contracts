@@ -12,8 +12,8 @@ contract AgentFactory {
         token = _token;
     }
 
-    function createAgent(uint price, string endpoint) public returns (address) {
-        address agent = new Agent(token, price, endpoint);
+    function createAgent(uint price, string endpoint, string metadataURI) public returns (address) {
+        address agent = new Agent(token, price, endpoint, metadataURI);
         createdAgents.push(agent);
         emit AgentCreated(agent);
         return agent;

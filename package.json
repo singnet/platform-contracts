@@ -10,7 +10,7 @@
     "package-npm": "node scripts/package-npm.js",
     "deploy": "scripts/truffle-migrate",
     "compile": "node_modules/.bin/truffle compile",
-    "test": "rm -rf build && node_modules/.bin/truffle test"
+    "test": "node_modules/.bin/truffle test"
   },
   "repository": {
     "type": "git",
