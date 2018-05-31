@@ -7,6 +7,7 @@ let Job = artifacts.require("Job");
 let Contract = require("truffle-contract");
 let TokenJson = require("singularitynet-token-contracts/SingularityNetToken.json");
 let Token = Contract(TokenJson);
+let RegistryNew = artifacts.require("RegistryImpl");
 
 /**
  * Enums are not supported by the ABI, they are just supported by Solidity.
@@ -186,4 +187,4 @@ let trimByChar = (string, character) => {
     const first = [...string].findIndex(char => char !== character);
     const last = [...string].reverse().findIndex(char => char !== character);
     return string.substring(first, string.length - last);
-}
+};
