@@ -9,7 +9,7 @@ let provider = (endpoint) => {
     }
 }
 
-module.exports = {
+let truffleOptions = {
     networks: {
         local: {
             host: "127.0.0.1",
@@ -26,4 +26,13 @@ module.exports = {
             network_id: "42" // Kovan network ID
         },
     },
+};
+
+let reporterArg = process.argv.indexOf('--reporter');
+if (reporterArg >= 0) {
+    truffleOptions['mocha'] = {
+        reporter: process.argv[reporterArg + 1]
+    };
 }
+
+module.exports = truffleOptions;

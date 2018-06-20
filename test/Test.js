@@ -8,83 +8,155 @@ let Contract = require("truffle-contract");
 let TokenJson = require("singularitynet-token-contracts/SingularityNetToken.json");
 let Token = Contract(TokenJson);
 
+/**
+ * Enums are not supported by the ABI, they are just supported by Solidity.
+ * You have to do the mapping yourself for now, we might provide some help later.
+ *
+ * https://solidity.readthedocs.io/en/latest/frequently-asked-questions.html
+ */
+let AgentState = Object.freeze({
+    "ENABLED" : 0,
+    "DISABLED" : 1
+});
+
+let JobState = Object.freeze({
+    "PENDING"   : 0,
+    "FUNDED"    : 1,
+    "COMPLETED" : 2
+});
+
+Token.setProvider(web3.currentProvider);
+
+// use triple equals for all equality and inequality checks
+assert.equal    = assert.strictEqual;
+assert.notEqual = assert.notStrictEqual;
+
 contract("All", async (accounts) => {
-    it("End-to-end", async () => {
-        Token.setProvider(web3.currentProvider);
-        let agentFactoryInstance = await AgentFactory.deployed();
-        let tokenAddress = await agentFactoryInstance.token.call();
-        let tokenInstance = Token.at(tokenAddress);
+    const testConstants = Object.freeze({
+        "CreatorAccount"  : accounts[1], // creator of agent
+        "ConsumerAccount" : accounts[0], // consumer of agent
+        "AgentName"       : "Mr. Smith", // name of the agent
+        "AgentPrice"      : 8          , // price that agent demands for services
+        "AgentUrl"        : "http://fake.url", // agent's hosted service url
 
-        // Create agent with owner accounts[1] price 8
-        let createAgentResult = await agentFactoryInstance.createAgent(8, "http://fake.url", {from: accounts[1]});
-        let agentInstance = Agent.at(createAgentResult.logs[0].args.agent);
-        let state = await agentInstance.state.call();
-        let owner = await agentInstance.owner.call();
-        let currentPrice = await agentInstance.currentPrice.call();
-        let endpoint = await agentInstance.endpoint.call();
-        assert.equal(0, state);
-        assert.equal(accounts[1], owner);
-        assert.equal(8, currentPrice);
-        assert.equal("http://fake.url", endpoint);
+    });
 
-        // Register agent with name Agent1
-        let registryInstance = await Registry.deployed();
-        await registryInstance.createRecord("Agent1", agentInstance.address, {from: accounts[1]});
-        let agents = await registryInstance.listRecords.call();
-        assert.equal(1, agents[0].length);
+    const testState = Object.seal({
+        // blockchain info
+        TokenAddress         : null,
+        AgentFactoryInstance : null,
+        TokenInstance        : null,
+        AgentInstance        : null,
+        RegistryInstance     : null,
+        JobInstance          : null,
+        // signature outputs
+        Signature : {
+            v: null,
+            r: null,
+            s: null
+        }
+    });
 
-        // Create job with consumer accounts[0]
-        let createJobResult = await agentInstance.createJob({from: accounts[0]});
-        let jobInstance = Job.at(createJobResult.logs[0].args.job);
-        let jobPrice = await jobInstance.jobPrice.call();
-        let consumer = await jobInstance.consumer.call();
-        let agent = await jobInstance.agent.call();
-        state = await jobInstance.state.call();
-        assert.equal(8, jobPrice);
-        assert.equal(accounts[0], consumer);
-        assert.equal(agentInstance.address, agent);
-        assert.equal(0, state);
+    before(async () => {
+        testState.AgentFactoryInstance = await AgentFactory.deployed();
+        testState.TokenAddress         = await testState.AgentFactoryInstance.token.call();
 
-        // Fund job by consumer accounts[0]
-        await tokenInstance.approve(jobInstance.address, 8, {from: accounts[0]});
-        let fundJobResult = await jobInstance.fundJob({from: accounts[0]});
-        let balance = await tokenInstance.balanceOf.call(jobInstance.address);
-        state = await jobInstance.state.call();
-        assert.equal(8, balance);
-        assert.equal(1, state);
+        testState.TokenInstance = Token.at(testState.TokenAddress);
+    });
 
-        // Sign job address by consumer accounts[0]
-        let [v, r, s] = signAddress(jobInstance.address, accounts[0]);
+    it(`Creates agent with owner ${testConstants.CreatorAccount}, price ${testConstants.AgentPrice}, and url ${testConstants.AgentUrl}`, async () => {
+        const createAgentResult = await testState.AgentFactoryInstance.createAgent(testConstants.AgentPrice, testConstants.AgentUrl, {from: testConstants.CreatorAccount});
+        testState.AgentInstance = Agent.at(createAgentResult.logs[0].args.agent);
 
-        // Validate signature by owner accounts[1]
-        let validated = await agentInstance.validateJobInvocation(jobInstance.address, v, r, s);
-        assert.equal(true, validated);
+        const state        = (await testState.AgentInstance.state.call()).toNumber();
+        const owner        = await testState.AgentInstance.owner.call();
+        const currentPrice = (await testState.AgentInstance.currentPrice.call()).toNumber();
+        const endpoint     = await testState.AgentInstance.endpoint.call();
 
-        // Complete job by owner accounts[1]
-        await agentInstance.completeJob(jobInstance.address, v, r, s, {from: accounts[1]});
+        assert.equal(AgentState.ENABLED          , state       , "Agent state should be ENABLED");
+        assert.equal(testConstants.CreatorAccount, owner       , "Agent's owner was not saved correctly");
+        assert.equal(testConstants.AgentPrice    , currentPrice, "Agent price was not saved correctly");
+        assert.equal(testConstants.AgentUrl      , endpoint    , "Agent endpoint was not saved correctly");
+    });
 
-        // Check all states
-        jobPrice = await jobInstance.jobPrice.call();
-        consumer = await jobInstance.consumer.call();
-        agent = await jobInstance.agent.call();
-        state = await jobInstance.state.call();
-        assert.equal(8, jobPrice);
-        assert.equal(accounts[0], consumer);
-        assert.equal(agentInstance.address, agent);
-        assert.equal(2, state);
+    it(`Registers agent with name ${testConstants.AgentName}`, async () => {
+        testState.RegistryInstance = await Registry.deployed();
+        await testState.RegistryInstance.createRecord(testConstants.AgentName, testState.AgentInstance.address, {from: testConstants.CreatorAccount});
 
-        owner = await agentInstance.owner.call();
-        currentPrice = await agentInstance.currentPrice.call();
-        assert.equal(accounts[1], owner);
-        assert.equal(8, currentPrice);
+        const agents       = await testState.RegistryInstance.listRecords.call();
+        const agentName    = trimByChar(hex2ascii(agents[0][0]),'\0');
+        const agentAddress = trimByChar(agents[1][0], '\0');
 
-        balance = await tokenInstance.balanceOf.call(owner);
-        assert.equal(8, balance);
+        assert.equal(1                              , agents[0].length, `Registry does not list exactly 1 agent`);
+        assert.equal(testConstants.AgentName        , agentName       , `Registry does not list Agent ${testConstants.AgentName}`)
+        assert.equal(testState.AgentInstance.address, agentAddress    , "Registry does not list the correct agent address");
+    });
 
-        // Deprecate record
-        await registryInstance.deprecateRecord("Agent1", {from: accounts[1]});
-        agents = await registryInstance.listRecords.call();
-        assert.equal(0, agents[1][0]);
+    it(`Creates job with consumer account ${testConstants.ConsumerAccount}`, async () => {
+        const createJobResult = await testState.AgentInstance.createJob({from: testConstants.ConsumerAccount});
+        testState.JobInstance = Job.at(createJobResult.logs[0].args.job);
+
+        const jobPrice = (await testState.JobInstance.jobPrice.call()).toNumber();
+        const consumer = await testState.JobInstance.consumer.call();
+        const agent    = await testState.JobInstance.agent.call();
+        const state    = (await testState.JobInstance.state.call()).toNumber();
+
+        assert.equal(testConstants.AgentPrice       , jobPrice, "Job price was not copied correctly from the AgentInstance");
+        assert.equal(testConstants.ConsumerAccount  , consumer, "Job consumer was not saved correctly");
+        assert.equal(testState.AgentInstance.address, agent   , "Agent address is mismatched between JobInstance and AgentInstance");
+        assert.equal(JobState.PENDING               , state   , "Job state should be PENDING");
+    });
+
+    it(`Funds job by consumer ${testConstants.ConsumerAccount} with ${testConstants.AgentPrice} AGI`, async () => {
+        await testState.TokenInstance.approve(testState.JobInstance.address, testConstants.AgentPrice, {from: testConstants.ConsumerAccount});
+        const fundJobResult = await testState.JobInstance.fundJob({from: testConstants.ConsumerAccount});
+        const balance       = (await testState.TokenInstance.balanceOf.call(testState.JobInstance.address)).toNumber();
+        const state         = (await testState.JobInstance.state.call()).toNumber();
+
+        assert.equal(testConstants.AgentPrice, balance, `Job was not funded with ${testConstants.AgentPrice} AGI`);
+        assert.equal(JobState.FUNDED         , state  , "Job state should be FUNDED");
+    });
+
+    it(`Signs job address by consumer ${testConstants.ConsumerAccount} and validate signature by owner ${testConstants.CreatorAccount}`, async () => {
+        [testState.Signature.v, testState.Signature.r, testState.Signature.s] = signAddress(testState.JobInstance.address, testConstants.ConsumerAccount);
+
+        const validated = await testState.AgentInstance.validateJobInvocation(testState.JobInstance.address
+            , testState.Signature.v, testState.Signature.r, testState.Signature.s);
+        assert.equal(true, validated, "Signature should be validated");
+    });
+
+    it(`Completes job by owner ${testConstants.CreatorAccount} and checks contract states`, async () => {
+        // complete the job
+        await testState.AgentInstance.completeJob(testState.JobInstance.address
+            , testState.Signature.v, testState.Signature.r, testState.Signature.s
+            , {from: testConstants.CreatorAccount});
+
+        // verify Job-side state
+        const jobPrice    = (await testState.JobInstance.jobPrice.call()).toNumber();
+        const jobConsumer = await testState.JobInstance.consumer.call();
+        const jobAgent    = await testState.JobInstance.agent.call();
+        const jobState    = (await testState.JobInstance.state.call()).toNumber();
+
+        assert.equal(testConstants.AgentPrice       , jobPrice   , "Job price was changed");
+        assert.equal(testConstants.ConsumerAccount  , jobConsumer, "Job consumer account was changed");
+        assert.equal(testState.AgentInstance.address, jobAgent   , "Job's reference to AgentInstance was changed");
+        assert.equal(JobState.COMPLETED             , jobState   , "Job should be in COMPLETED state");
+
+        // verify Agent-side state
+        const agentOwner        = await testState.AgentInstance.owner.call();
+        const agentPrice        = (await testState.AgentInstance.currentPrice.call()).toNumber();
+        const agentOwnerBalance = (await testState.TokenInstance.balanceOf.call(agentOwner)).toNumber();
+
+        assert.equal(testConstants.CreatorAccount, agentOwner       , "Agent owner was changed");
+        assert.equal(testConstants.AgentPrice    , agentPrice       , "AgentPrice was changed");
+        assert.equal(testConstants.AgentPrice    , agentOwnerBalance, `Agent owner does not have ${testConstants.AgentPrice} AGI`);
+
+    });
+
+    it(`Deprecates the Agent record in the registry`, async () => {
+        await testState.RegistryInstance.deprecateRecord(testConstants.AgentName, {from: testConstants.CreatorAccount});
+        let agents = await testState.RegistryInstance.listRecords.call();
+        assert.equal('0x0000000000000000000000000000000000000000', agents[1][0]);
     });
 });
 
@@ -98,3 +170,20 @@ let signAddress = (address, account) => {
 
     return [v, r, s];
 };
+
+let hex2ascii = (hexx) => {
+    const hex = hexx.toString();
+    let str = '';
+    for (var i = 0; (i < hex.length && hex.substr(i, 2) !== '00'); i += 2)
+        str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+    return str;
+};
+
+/**
+ * Trims character from the beginning and end of string. Useful for trimming \u0000 from smart contract fields.
+ */
+let trimByChar = (string, character) => {
+    const first = [...string].findIndex(char => char !== character);
+    const last = [...string].reverse().findIndex(char => char !== character);
+    return string.substring(first, string.length - last);
+}
