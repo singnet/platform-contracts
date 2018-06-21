@@ -42,7 +42,7 @@ interface IRegistry {
     function listTypeRepositoriesForTag(bytes32 tag) external view returns(bytes32[] orgNames, bytes32[] repositoryNames);
 }
 
-contract RegistryImpl {
+contract RegistryImpl is IRegistry {
 
     struct OrganizationRegistration {
         bytes32 organizationName;
