@@ -16,7 +16,7 @@ interface IRegistry {
     */
     function createServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 servicePath, address agentAddress, bytes32[] tags) external returns (bool success);
     function addTagsToServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32[] tags) external returns (bool success);
-    function removeTagsFromServiceRegistration(bytes orgName, bytes32 serviceName, bytes32[] tags) external returns (bool success);
+    function removeTagsFromServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32[] tags) external returns (bool success);
     function deleteServiceRegistration(bytes32 orgName, bytes32 serviceName) external returns (bool success);
 
     /*
@@ -24,7 +24,7 @@ interface IRegistry {
     */
     function createTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath, bytes32[] tags) external returns(bool success);
     function addTagsToTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32[] tags) external returns (bool success);
-    function removeTagsFromTypeRepositoryRegistration(bytes orgName, bytes32 repositoryName, bytes32[] tags) external returns (bool success);
+    function removeTagsFromTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32[] tags) external returns (bool success);
     function deleteTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName) external returns (bool success);
 
     /*
@@ -390,7 +390,7 @@ contract RegistryImpl {
     */
 
     function createTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath,
-        bytes32 tags) external returns (bool success) {
+        bytes32[] tags) external returns (bool success) {
 
         // check to see if this organization name exists
         if(orgsByName[orgName].organizationName == bytes32(0x0)) {
