@@ -7,7 +7,6 @@ let Job = artifacts.require("Job");
 let Contract = require("truffle-contract");
 let TokenJson = require("singularitynet-token-contracts/SingularityNetToken.json");
 let Token = Contract(TokenJson);
-let RegistryNew = artifacts.require("RegistryImpl");
 
 /**
  * Enums are not supported by the ABI, they are just supported by Solidity.
@@ -39,7 +38,6 @@ contract("All", async (accounts) => {
         "AgentName"       : "Mr. Smith", // name of the agent
         "AgentPrice"      : 8          , // price that agent demands for services
         "AgentUrl"        : "http://fake.url", // agent's hosted service url
-
     });
 
     const testState = Object.seal({
