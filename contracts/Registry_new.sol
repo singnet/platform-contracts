@@ -15,6 +15,7 @@ interface IRegistry {
     *   Service Management
     */
     function createServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 servicePath, address agentAddress, bytes32[] tags) external returns (bool success);
+    function updateServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 servicePath, address agentAddress) external returns (bool success);
     function addTagsToServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32[] tags) external returns (bool success);
     function removeTagsFromServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32[] tags) external returns (bool success);
     function deleteServiceRegistration(bytes32 orgName, bytes32 serviceName) external returns (bool success);
@@ -22,7 +23,8 @@ interface IRegistry {
     /*
     *   Type Repository Management
     */
-    function createTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath, bytes32[] tags) external returns(bool success);
+    function createTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath, bytes repositoryURI, bytes32[] tags) external returns(bool success);
+    function updateTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath, bytes repositoryURI) external returns (bool success);
     function addTagsToTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32[] tags) external returns (bool success);
     function removeTagsFromTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32[] tags) external returns (bool success);
     function deleteTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName) external returns (bool success);
@@ -239,6 +241,31 @@ contract RegistryImpl is IRegistry {
         return true;
     }
 
+    function updateServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 servicePath,
+        address agentAddress) external returns (bool success) {
+
+        // check to see if this organization name exists
+        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
+            return false;
+        }
+
+        // validate owner or member
+        if(msg.sender != orgsByName[orgName].owner && !orgsByName[orgName].members[msg.sender]) {
+            return false;
+        }
+
+        // check to see if this service name exists within the organization
+        if(orgsByName[orgName].servicesByName[serviceName].serviceName == bytes32(0x0)) {
+            return false;
+        }
+
+        // update the servicePath and agentAddress
+        orgsByName[orgName].servicesByName[serviceName].servicePath = servicePath;
+        orgsByName[orgName].servicesByName[serviceName].agentAddress = agentAddress;
+
+        return true;
+    }
+
     function addTagsToServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32[] tags) external returns (bool success) {
 
         // check to see if this organization name exists
@@ -390,7 +417,7 @@ contract RegistryImpl is IRegistry {
     */
 
     function createTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath,
-        bytes32[] tags) external returns (bool success) {
+        bytes repositoryURI, bytes32[] tags) external returns (bool success) {
 
         // check to see if this organization name exists
         if(orgsByName[orgName].organizationName == bytes32(0x0)) {
@@ -411,12 +438,37 @@ contract RegistryImpl is IRegistry {
         orgsByName[orgName].typeReposByName[repositoryName] = typeRepo;
         orgsByName[orgName].typeReposByName[repositoryName].repositoryName = repositoryName;
         orgsByName[orgName].typeReposByName[repositoryName].repositoryPath = repositoryPath;
+        orgsByName[orgName].typeReposByName[repositoryName].repositoryURI = repositoryURI;
         orgsByName[orgName].typeReposByName[repositoryName].orgTypeRepoIndex = orgsByName[orgName].typeRepoKeys.length;
         orgsByName[orgName].typeRepoKeys.push(repositoryName);
 
         for(uint i = 0; i < tags.length; i++) {
             addTagToTypeRepositoryRegistration(orgName, repositoryName, tags[i]);
         }
+        return true;
+    }
+
+    function updateTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath,
+        bytes repositoryURI) external returns (bool success) {
+
+        // check to see if this organization name exists
+        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
+            return false;
+        }
+
+        // validate owner or member
+        if(msg.sender != orgsByName[orgName].owner && !orgsByName[orgName].members[msg.sender]) {
+            return false;
+        }
+
+        // check to see if this repo name exists within the organization
+        if(orgsByName[orgName].typeReposByName[repositoryName].repositoryName == bytes32(0x0)) {
+            return false;
+        }
+
+        orgsByName[orgName].typeReposByName[repositoryName].repositoryPath = repositoryPath;
+        orgsByName[orgName].typeReposByName[repositoryName].repositoryURI = repositoryURI;
+
         return true;
     }
 
@@ -638,7 +690,7 @@ contract RegistryImpl is IRegistry {
     }
 
     function getTypeRepositoryByName(bytes32 orgName, bytes32 repositoryName) external view
-        returns (bool found, bytes32 name, bytes32 path, bytes32[] tags) {
+        returns (bool found, bytes32 name, bytes32 path, bytes32 uri, bytes32[] tags) {
 
         // check to see if this organization exists
         if(orgsByName[orgName].organizationName == bytes32(0x0)) {
@@ -655,6 +707,7 @@ contract RegistryImpl is IRegistry {
         found = true;
         name = repositoryName;
         path = orgsByName[orgName].typeReposByName[repositoryName].repositoryPath;
+        uri = orgsByName[orgName].typeReposByName[repositoryName].repositoryURI;
         tags = orgsByName[orgName].typeReposByName[repositoryName].tags;
     }
 
