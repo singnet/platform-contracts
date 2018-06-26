@@ -1,5 +1,5 @@
 let HDWalletProvider = require("truffle-hdwallet-provider");
-let Web3 = require("Web3");
+let Web3 = require("web3");
 
 let provider = (endpoint) => {
     if (process.env.HDWALLET_MNEMONIC) {
