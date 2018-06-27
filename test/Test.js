@@ -7,23 +7,7 @@ let Job = artifacts.require("Job");
 let Contract = require("truffle-contract");
 let TokenJson = require("singularitynet-token-contracts/SingularityNetToken.json");
 let Token = Contract(TokenJson);
-
-/**
- * Enums are not supported by the ABI, they are just supported by Solidity.
- * You have to do the mapping yourself for now, we might provide some help later.
- *
- * https://solidity.readthedocs.io/en/latest/frequently-asked-questions.html
- */
-let AgentState = Object.freeze({
-    "ENABLED" : 0,
-    "DISABLED" : 1
-});
-
-let JobState = Object.freeze({
-    "PENDING"   : 0,
-    "FUNDED"    : 1,
-    "COMPLETED" : 2
-});
+let { STRINGS, AGENT_STATE, JOB_STATE } = require("./util.js");
 
 Token.setProvider(web3.currentProvider);
 
@@ -31,13 +15,13 @@ Token.setProvider(web3.currentProvider);
 assert.equal    = assert.strictEqual;
 assert.notEqual = assert.notStrictEqual;
 
-contract("All", async (accounts) => {
+contract("Old Registry Test", async (accounts) => {
     const testConstants = Object.freeze({
-        "CreatorAccount"  : accounts[1], // creator of agent
-        "ConsumerAccount" : accounts[0], // consumer of agent
-        "AgentName"       : "Mr. Smith", // name of the agent
-        "AgentPrice"      : 8          , // price that agent demands for services
-        "AgentUrl"        : "http://fake.url", // agent's hosted service url
+        CreatorAccount  : accounts[1], // creator of agent
+        ConsumerAccount : accounts[0], // consumer of agent
+        AgentName       : "Mr. Smith", // name of the agent
+        AgentPrice      : 8          , // price that agent demands for services
+        AgentUrl        : "http://fake.url", // agent's hosted service url
     });
 
     const testState = Object.seal({
@@ -72,7 +56,7 @@ contract("All", async (accounts) => {
         const currentPrice = (await testState.AgentInstance.currentPrice.call()).toNumber();
         const endpoint     = await testState.AgentInstance.endpoint.call();
 
-        assert.equal(AgentState.ENABLED          , state       , "Agent state should be ENABLED");
+        assert.equal(AGENT_STATE.ENABLED         , state       , "Agent state should be ENABLED");
         assert.equal(testConstants.CreatorAccount, owner       , "Agent's owner was not saved correctly");
         assert.equal(testConstants.AgentPrice    , currentPrice, "Agent price was not saved correctly");
         assert.equal(testConstants.AgentUrl      , endpoint    , "Agent endpoint was not saved correctly");
@@ -103,7 +87,7 @@ contract("All", async (accounts) => {
         assert.equal(testConstants.AgentPrice       , jobPrice, "Job price was not copied correctly from the AgentInstance");
         assert.equal(testConstants.ConsumerAccount  , consumer, "Job consumer was not saved correctly");
         assert.equal(testState.AgentInstance.address, agent   , "Agent address is mismatched between JobInstance and AgentInstance");
-        assert.equal(JobState.PENDING               , state   , "Job state should be PENDING");
+        assert.equal(JOB_STATE.PENDING              , state   , "Job state should be PENDING");
     });
 
     it(`Funds job by consumer ${testConstants.ConsumerAccount} with ${testConstants.AgentPrice} AGI`, async () => {
@@ -113,7 +97,7 @@ contract("All", async (accounts) => {
         const state         = (await testState.JobInstance.state.call()).toNumber();
 
         assert.equal(testConstants.AgentPrice, balance, `Job was not funded with ${testConstants.AgentPrice} AGI`);
-        assert.equal(JobState.FUNDED         , state  , "Job state should be FUNDED");
+        assert.equal(JOB_STATE.FUNDED        , state  , "Job state should be FUNDED");
     });
 
     it(`Signs job address by consumer ${testConstants.ConsumerAccount} and validate signature by owner ${testConstants.CreatorAccount}`, async () => {
@@ -139,7 +123,7 @@ contract("All", async (accounts) => {
         assert.equal(testConstants.AgentPrice       , jobPrice   , "Job price was changed");
         assert.equal(testConstants.ConsumerAccount  , jobConsumer, "Job consumer account was changed");
         assert.equal(testState.AgentInstance.address, jobAgent   , "Job's reference to AgentInstance was changed");
-        assert.equal(JobState.COMPLETED             , jobState   , "Job should be in COMPLETED state");
+        assert.equal(JOB_STATE.COMPLETED            , jobState   , "Job should be in COMPLETED state");
 
         // verify Agent-side state
         const agentOwner        = await testState.AgentInstance.owner.call();
@@ -155,7 +139,7 @@ contract("All", async (accounts) => {
     it(`Deprecates the Agent record in the registry`, async () => {
         await testState.RegistryInstance.deprecateRecord(testConstants.AgentName, {from: testConstants.CreatorAccount});
         let agents = await testState.RegistryInstance.listRecords.call();
-        assert.equal('0x0000000000000000000000000000000000000000', agents[1][0]);
+        assert.equal(STRINGS.NULL_ADDRESS, agents[1][0]);
     });
 });
 
