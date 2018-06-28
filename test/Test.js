@@ -7,7 +7,7 @@ let Job = artifacts.require("Job");
 let Contract = require("truffle-contract");
 let TokenJson = require("singularitynet-token-contracts/SingularityNetToken.json");
 let Token = Contract(TokenJson);
-let { STRINGS, AGENT_STATE, JOB_STATE } = require("./util.js");
+let { STRINGS, AGENT_STATE, JOB_STATE, HELPERS : { signAddress, hex2ascii, trimByChar }} = require("./util.js");
 
 Token.setProvider(web3.currentProvider);
 
@@ -142,31 +142,3 @@ contract("Old Registry Test", async (accounts) => {
         assert.equal(STRINGS.NULL_ADDRESS, agents[1][0]);
     });
 });
-
-let signAddress = (address, account) => {
-    let valueHex = "0x" + address.slice(2);
-    let h = web3.sha3(valueHex, {encoding: "hex"});
-    let sig = web3.eth.sign(account, h).slice(2);
-    let r = `0x${sig.slice(0, 64)}`;
-    let s = `0x${sig.slice(64, 128)}`;
-    let v = web3.toDecimal(sig.slice(128, 130)) + 27;
-
-    return [v, r, s];
-};
-
-let hex2ascii = (hexx) => {
-    const hex = hexx.toString();
-    let str = '';
-    for (var i = 0; (i < hex.length && hex.substr(i, 2) !== '00'); i += 2)
-        str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-    return str;
-};
-
-/**
- * Trims character from the beginning and end of string. Useful for trimming \u0000 from smart contract fields.
- */
-let trimByChar = (string, character) => {
-    const first = [...string].findIndex(char => char !== character);
-    const last = [...string].reverse().findIndex(char => char !== character);
-    return string.substring(first, string.length - last);
-};
