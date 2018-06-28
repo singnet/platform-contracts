@@ -67,7 +67,7 @@ contract("Old Registry Test", async (accounts) => {
         await testState.RegistryInstance.createRecord(testConstants.AgentName, testState.AgentInstance.address, {from: testConstants.CreatorAccount});
 
         const agents       = await testState.RegistryInstance.listRecords.call();
-        const agentName    = trimByChar(hex2ascii(agents[0][0]),'\0');
+        const agentName    = trimByChar(web3.toAscii(agents[0][0]),'\0');
         const agentAddress = trimByChar(agents[1][0], '\0');
 
         assert.equal(1                              , agents[0].length, `Registry does not list exactly 1 agent`);
