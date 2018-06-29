@@ -59,10 +59,12 @@ contract RegistryImpl is IRegistry {
     mapping(bytes32 => ServiceOrTypeRepositoryList) servicesByTag;
     mapping(bytes32 => ServiceOrTypeRepositoryList) typeReposByTag;
 
-
-    /*
-    *   Organization Management
-    */
+    //    ___                        _          _   _                   __  __                 _
+    //   / _ \ _ __ __ _  __ _ _ __ (_)______ _| |_(_) ___  _ __       |  \/  | __ _ _ __ ___ | |_
+    //  | | | | '__/ _` |/ _` | '_ \| |_  / _` | __| |/ _ \| '_ \      | |\/| |/ _` | '_ ` _ \| __|
+    //  | |_| | | | (_| | (_| | | | | |/ / (_| | |_| | (_) | | | |     | |  | | (_| | | | | | | |_
+    //   \___/|_|  \__, |\__,_|_| |_|_/___\__,_|\__|_|\___/|_| |_|     |_|  |_|\__, |_| |_| |_|\__|
+    //             |___/                                                       |___/
 
     function createOrganization(bytes32 orgName, address[] members) external returns (bool success) {
 
@@ -162,10 +164,12 @@ contract RegistryImpl is IRegistry {
         return true;
     }
 
-
-    /*
-    *   Service Management
-    */
+    //   ____                  _                __  __                 _
+    //  / ___|  ___ _ ____   ___) ___ ___      |  \/  | __ _ _ __ ___ | |_
+    //  \___ \ / _ \ '__\ \ / / |/ __/ _ \     | |\/| |/ _` | '_ ` _ \| __|
+    //   ___) |  __/ |   \ V /| | (__  __/     | |  | | (_| | | | | | | |_
+    //  |____/ \___|_|    \_/ |_|\___\___|     |_|  |_|\__, |_| |_| |_|\__|
+    //                                                 |___/
 
     function createServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 servicePath,
         address agentAddress, bytes32[] tags) external returns (bool success) {
@@ -369,10 +373,12 @@ contract RegistryImpl is IRegistry {
         return true;
     }
 
-
-    /*
-    *   Type Repository Management
-    */
+    //   _____                        ____                        __  __                 _
+    //  |_   _|   _ _ __   ___       |  _ \ ___ _ __   ___       |  \/  | __ _ _ __ ___ | |_
+    //    | || | | | '_ \ / _ \      | |_) / _ \ '_ \ / _ \      | |\/| |/ _` | '_ ` _ \| __|
+    //    | || |_| | |_) |  __/      |  _ <  __/ |_) | (_) |     | |  | | (_| | | | | | | |_
+    //    |_| \__, | .__/ \___|      |_| \_\___| .__/ \___/      |_|  |_|\__, |_| |_| |_|\__|
+    //        |___/|_|                         |_|                       |___/
 
     function createTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath,
         bytes repositoryURI, bytes32[] tags) external returns (bool success) {
@@ -576,10 +582,12 @@ contract RegistryImpl is IRegistry {
         return true;
     }
 
-
-    /*
-    *   List and Retrieval Functions
-    */
+    //    ____      _   _
+    //   / ___| ___| |_| |_ ___ _ __ ___
+    //  | |  _ / _ \ __| __/ _ \ '__/ __|
+    //  | |_| |  __/ |_| |_  __/ |  \__ \
+    //   \____|\___|\__|\__\___|_|  |___/
+    //
 
     function listOrganizations() external view returns(bytes32[] orgNames) {
         return orgKeys;
