@@ -24,9 +24,9 @@
   "homepage": "https://github.com/singnet/alpha-blockchain#readme",
   "dependencies": {
     "singularitynet-token-contracts": "1.0.0",
-    "truffle": "4.1.5",
-    "truffle-contract": "3.0.4",
-    "truffle-hdwallet-provider": "0.0.3",
+    "truffle": "4.1.13",
+    "truffle-contract": "3.0.6",
+    "truffle-hdwallet-provider": "0.0.5",
     "zeppelin-solidity": "1.4.0"
   },
   "devDependencies": {
