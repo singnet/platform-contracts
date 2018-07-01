@@ -26,6 +26,20 @@ let truffleOptions = {
             network_id: "42" // Kovan network ID
         },
     },
+    mocha: {
+        reporter: 'eth-gas-reporter',
+        reporterOptions : {
+            currency: 'USD',
+            onlyCalledMethods: 'true',
+            showTimeSpent: 'true'
+        }
+    },
+    solc: {
+        optimizer: {
+            enabled: true,
+            runs: 200
+        }
+    }
 };
 
 let reporterArg = process.argv.indexOf('--reporter');
