@@ -1,4 +1,4 @@
-pragma solidity ^0.4.21;
+pragma solidity ^0.4.24;
 
 import "./IRegistry.sol";
 
@@ -59,6 +59,56 @@ contract RegistryImpl is IRegistry {
     mapping(bytes32 => ServiceOrTypeRepositoryList) servicesByTag;
     mapping(bytes32 => ServiceOrTypeRepositoryList) typeReposByTag;
 
+    /**
+      * @dev Guard function that forces a revert if the tx sender is unauthorized.
+      *      Always authorizes org owner. Can also authorize org members.
+      *
+      * @param membersAllowed if true, revert when sender is non-owner and non-member, else revert when sender is non-owner
+      */
+    function requireAuthorization(bytes32 orgName, bool membersAllowed) internal view {
+        require(msg.sender == orgsByName[orgName].owner || (membersAllowed && orgsByName[orgName].members[msg.sender])
+            , "unauthorized invocation");
+    }
+
+    /**
+      * @dev Guard function that forces a revert if the referenced org does not meet an existence criteria.
+      *
+      * @param exists if true, revert when org does not exist, else revert when org exists
+      */
+    function requireOrgExistenceConstraint(bytes32 orgName, bool exists) internal view {
+        if (exists) {
+            require(orgsByName[orgName].organizationName != bytes32(0x0), "org does not exist");
+        } else {
+            require(orgsByName[orgName].organizationName == bytes32(0x0), "org already exists");
+        }
+    }
+
+    /**
+      * @dev Guard function that forces a revert if the referenced service does not meet an existence criteria.
+      *
+      * @param exists if true, revert when service does not exist, else revert when service exists
+      */
+    function requireServiceExistenceConstraint(bytes32 orgName, bytes32 serviceName, bool exists) internal view {
+        if (exists) {
+            require(orgsByName[orgName].servicesByName[serviceName].serviceName != bytes32(0x0), "service does not exist");
+        } else {
+            require(orgsByName[orgName].servicesByName[serviceName].serviceName == bytes32(0x0), "service already exists");
+        }
+    }
+
+    /**
+      * @dev Guard function that forces a revert if the referenced type repository does not meet an existence criteria.
+      *
+      * @param exists if true, revert when type repo does not exist, else revert when type repo exists
+      */
+    function requireTypeRepositoryExistenceConstraint(bytes32 orgName, bytes32 repositoryName, bool exists) internal view {
+        if (exists) {
+            require(orgsByName[orgName].typeReposByName[repositoryName].repositoryName != bytes32(0x0), "type repo does not exist");
+        } else {
+            require(orgsByName[orgName].typeReposByName[repositoryName].repositoryName == bytes32(0x0), "type repo already exists");
+        }
+    }
+
     //    ___                        _          _   _                   __  __                 _
     //   / _ \ _ __ __ _  __ _ _ __ (_)______ _| |_(_) ___  _ __       |  \/  | __ _ _ __ ___ | |_
     //  | | | | '__/ _` |/ _` | '_ \| |_  / _` | __| |/ _ \| '_ \      | |\/| |/ _` | '_ ` _ \| __|
@@ -66,12 +116,9 @@ contract RegistryImpl is IRegistry {
     //   \___/|_|  \__, |\__,_|_| |_|_/___\__,_|\__|_|\___/|_| |_|     |_|  |_|\__, |_| |_| |_|\__|
     //             |___/                                                       |___/
 
-    function createOrganization(bytes32 orgName, address[] members) external returns (bool success) {
+    function createOrganization(bytes32 orgName, address[] members) external {
 
-        // check to see if this organization name is in use
-        if(orgsByName[orgName].organizationName != bytes32(0x0)) {
-            return false;
-        }
+        requireOrgExistenceConstraint(orgName, false);
 
         OrganizationRegistration memory organization;
         orgsByName[orgName] = organization;
@@ -80,75 +127,43 @@ contract RegistryImpl is IRegistry {
         orgsByName[orgName].globalOrgIndex = orgKeys.length;
         orgKeys.push(orgName);
 
-        for(uint i = 0; i < members.length; i++){
+        for (uint i = 0; i < members.length; i++) {
             orgsByName[orgName].members[members[i]] = true;
         }
-
-        return true;
     }
 
-    function changeOrganizationOwner(bytes32 orgName, address newOwner) external returns (bool success) {
+    function changeOrganizationOwner(bytes32 orgName, address newOwner) external {
 
-        // check to see if this organization exists
-        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
-            return false;
-        }
-
-        // validate owner
-        if(msg.sender != orgsByName[orgName].owner) {
-            return false;
-        }
+        requireOrgExistenceConstraint(orgName, true);
+        requireAuthorization(orgName, false);
 
         orgsByName[orgName].owner = newOwner;
-        return true;
     }
 
-    function addOrganizationMembers(bytes32 orgName, address[] newMembers) external returns (bool success)  {
+    function addOrganizationMembers(bytes32 orgName, address[] newMembers) external {
 
-        // check to see if this organization exists
-        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
-            return false;
-        }
+        requireOrgExistenceConstraint(orgName, true);
+        requireAuthorization(orgName, true);
 
-        // validate owner or member
-        if(msg.sender != orgsByName[orgName].owner && !orgsByName[orgName].members[msg.sender]) {
-            return false;
-        }
-
-        for(uint i = 0; i < newMembers.length; i++){
+        for (uint i = 0; i < newMembers.length; i++) {
             orgsByName[orgName].members[newMembers[i]] = true;
         }
-        return true;
     }
 
-    function removeOrganizationMembers(bytes32 orgName, address[] existingMembers) external returns (bool success) {
+    function removeOrganizationMembers(bytes32 orgName, address[] existingMembers) external {
 
-        // check to see if this organization exists
-        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
-            return false;
-        }
+        requireOrgExistenceConstraint(orgName, true);
+        requireAuthorization(orgName, true);
 
-        // validate owner or member
-        if(msg.sender != orgsByName[orgName].owner && !orgsByName[orgName].members[msg.sender]) {
-            return false;
-        }
-
-        for(uint i = 0; i < existingMembers.length; i++){
+        for (uint i = 0; i < existingMembers.length; i++) {
             orgsByName[orgName].members[existingMembers[i]] = false;
         }
-        return true;
     }
 
-    function deleteOrganization(bytes32 orgName) external returns (bool success) {
+    function deleteOrganization(bytes32 orgName) external {
 
-        // check to see if this organization exists
-        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
-            return false;
-        }
-
-        if(msg.sender != orgsByName[orgName].owner) {
-            return false;
-        }
+        requireOrgExistenceConstraint(orgName, true);
+        requireAuthorization(orgName, false);
 
         // swap lut entries
         uint    indexToUpdate = orgsByName[orgName].globalOrgIndex;
@@ -160,8 +175,6 @@ contract RegistryImpl is IRegistry {
 
         // delete contents of organization registration
         delete orgsByName[orgName];
-
-        return true;
     }
 
     //   ____                  _                __  __                 _
@@ -171,23 +184,11 @@ contract RegistryImpl is IRegistry {
     //  |____/ \___|_|    \_/ |_|\___\___|     |_|  |_|\__, |_| |_| |_|\__|
     //                                                 |___/
 
-    function createServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 servicePath,
-        address agentAddress, bytes32[] tags) external returns (bool success) {
+    function createServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 servicePath, address agentAddress, bytes32[] tags) external {
 
-        // check to see if this organization name exists
-        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
-            return false;
-        }
-
-        // validate owner or member
-        if(msg.sender != orgsByName[orgName].owner && !orgsByName[orgName].members[msg.sender]) {
-            return false;
-        }
-
-        // check to see if this service name exists within the organization
-        if(orgsByName[orgName].servicesByName[serviceName].serviceName != bytes32(0x0)) {
-            return false;
-        }
+        requireOrgExistenceConstraint(orgName, true);
+        requireAuthorization(orgName, true);
+        requireServiceExistenceConstraint(orgName, serviceName, false);
 
         ServiceRegistration memory service;
         orgsByName[orgName].servicesByName[serviceName] = service;
@@ -197,165 +198,107 @@ contract RegistryImpl is IRegistry {
         orgsByName[orgName].servicesByName[serviceName].orgServiceIndex = orgsByName[orgName].serviceKeys.length;
         orgsByName[orgName].serviceKeys.push(serviceName);
 
-        for(uint i = 0; i < tags.length; i++) {
+        for (uint i = 0; i < tags.length; i++) {
             addTagToServiceRegistration(orgName, serviceName, tags[i]);
         }
-        return true;
     }
 
-    function updateServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 servicePath,
-        address agentAddress) external returns (bool success) {
+    function updateServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 servicePath, address agentAddress) external {
 
-        // check to see if this organization name exists
-        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
-            return false;
-        }
-
-        // validate owner or member
-        if(msg.sender != orgsByName[orgName].owner && !orgsByName[orgName].members[msg.sender]) {
-            return false;
-        }
-
-        // check to see if this service name exists within the organization
-        if(orgsByName[orgName].servicesByName[serviceName].serviceName == bytes32(0x0)) {
-            return false;
-        }
+        requireOrgExistenceConstraint(orgName, true);
+        requireAuthorization(orgName, true);
+        requireServiceExistenceConstraint(orgName, serviceName, true);
 
         // update the servicePath and agentAddress
         orgsByName[orgName].servicesByName[serviceName].servicePath = servicePath;
         orgsByName[orgName].servicesByName[serviceName].agentAddress = agentAddress;
-
-        return true;
     }
 
-    function addTagsToServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32[] tags) external returns (bool success) {
+    function addTagsToServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32[] tags) external {
 
-        // check to see if this organization name exists
-        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
-            return false;
-        }
+        requireOrgExistenceConstraint(orgName, true);
+        requireAuthorization(orgName, true);
+        requireServiceExistenceConstraint(orgName, serviceName, true);
 
-        // validate owner or member
-        if(msg.sender != orgsByName[orgName].owner && !orgsByName[orgName].members[msg.sender]) {
-            return false;
-        }
-
-        // check to see if this service name exists within the organization
-        if(orgsByName[orgName].servicesByName[serviceName].serviceName == bytes32(0x0)) {
-            return false;
-        }
-
-        for(uint i = 0; i < tags.length; i++) {
+        for (uint i = 0; i < tags.length; i++) {
             addTagToServiceRegistration(orgName, serviceName, tags[i]);
         }
-        return true;
     }
 
-    function addTagToServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 tagName) internal returns (bool success) {
+    function addTagToServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 tagName) internal {
 
-        // check if this service already has this tag
-        if(orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName].tagName != bytes32(0x0)) {
-            return true;
+        // no-op if tag already exists
+        if (orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName].tagName == bytes32(0x0)) {
+            // add the service to the org level tag index
+            Tag memory tagObj;
+            orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName] = tagObj;
+            orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName].tagName = tagName;
+            orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName].itemTagIndex = orgsByName[orgName].servicesByName[serviceName].tags.length;
+            orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName].globalTagIndex = servicesByTag[tagName].orgNames.length;
+            orgsByName[orgName].servicesByName[serviceName].tags.push(tagName);
+
+            // add the service to the global tag index creating a list object for this tag if it does not already exist
+            if (!servicesByTag[tagName].valid) {
+                ServiceOrTypeRepositoryList memory listObj;
+                listObj.valid = true;
+                servicesByTag[tagName] = listObj;
+                serviceTags.push(tagName);
+            }
+            servicesByTag[tagName].orgNames.push(orgName);
+            servicesByTag[tagName].itemNames.push(serviceName);
         }
-
-        // add the service to the org level tag index
-        Tag memory tagObj;
-        orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName] = tagObj;
-        orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName].tagName = tagName;
-        orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName].itemTagIndex = orgsByName[orgName].servicesByName[serviceName].tags.length;
-        orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName].globalTagIndex = servicesByTag[tagName].orgNames.length;
-        orgsByName[orgName].servicesByName[serviceName].tags.push(tagName);
-
-        // add the service to the global tag index creating a list object for this tag if it does not already exist
-        if(!servicesByTag[tagName].valid) {
-            ServiceOrTypeRepositoryList memory listObj;
-            listObj.valid = true;
-            servicesByTag[tagName] = listObj;
-            serviceTags.push(tagName);
-        }
-        servicesByTag[tagName].orgNames.push(orgName);
-        servicesByTag[tagName].itemNames.push(serviceName);
-
-        return true;
     }
 
-    function removeTagsFromServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32[] tags) external returns (bool success) {
+    function removeTagsFromServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32[] tags) external {
 
-        // check to see if this organization name exists
-        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
-            return false;
-        }
+        requireOrgExistenceConstraint(orgName, true);
+        requireAuthorization(orgName, true);
+        requireServiceExistenceConstraint(orgName, serviceName, true);
 
-        // validate owner or member
-        if(msg.sender != orgsByName[orgName].owner && !orgsByName[orgName].members[msg.sender]) {
-            return false;
-        }
-
-        // check to see if this service name exists within the organization
-        if(orgsByName[orgName].servicesByName[serviceName].serviceName == bytes32(0x0)) {
-            return false;
-        }
-
-        for(uint i = 0; i < tags.length; i++) {
+        for (uint i = 0; i < tags.length; i++) {
             removeTagFromServiceRegistration(orgName, serviceName, tags[i]);
         }
-        return true;
     }
 
-    function removeTagFromServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 tagName) internal returns (bool success)  {
+    function removeTagFromServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 tagName) internal {
 
-        // check if this service has this tag
-        if(orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName].tagName == bytes32(0x0)) {
-            return true;
+        // no-op if tag does not exist
+        if (orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName].tagName != bytes32(0x0)) {
+            // swap service registration lut entries
+            uint tagIndexToReplace = orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName].itemTagIndex;
+            bytes32 tagNameToMove = orgsByName[orgName].servicesByName[serviceName].tags[orgsByName[orgName].servicesByName[serviceName].tags.length-1];
+
+            orgsByName[orgName].servicesByName[serviceName].tags[tagIndexToReplace] = tagNameToMove;
+            orgsByName[orgName].servicesByName[serviceName].tagsByName[tagNameToMove].itemTagIndex = tagIndexToReplace;
+            orgsByName[orgName].servicesByName[serviceName].tags.length--;
+
+            // swap global tag index lut entries
+            tagIndexToReplace = orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName].globalTagIndex;
+            uint tagIndexToMove = servicesByTag[tagName].orgNames.length-1;
+
+            servicesByTag[tagName].orgNames[tagIndexToReplace] = servicesByTag[tagName].orgNames[tagIndexToMove];
+            servicesByTag[tagName].itemNames[tagIndexToReplace] = servicesByTag[tagName].itemNames[tagIndexToMove];
+
+            bytes32 orgToUpdate  = servicesByTag[tagName].orgNames[tagIndexToReplace];
+            bytes32 itemToUpdate = servicesByTag[tagName].itemNames[tagIndexToReplace];
+            orgsByName[orgToUpdate].servicesByName[itemToUpdate].tagsByName[tagName].globalTagIndex = tagIndexToReplace;
+
+            servicesByTag[tagName].orgNames.length--;
+            servicesByTag[tagName].itemNames.length--;
+
+            // delete contents of the tag entry
+            delete orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName];
         }
-
-        // swap service registration lut entries
-        uint tagIndexToReplace = orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName].itemTagIndex;
-        bytes32 tagNameToMove = orgsByName[orgName].servicesByName[serviceName].tags[orgsByName[orgName].servicesByName[serviceName].tags.length-1];
-
-        orgsByName[orgName].servicesByName[serviceName].tags[tagIndexToReplace] = tagNameToMove;
-        orgsByName[orgName].servicesByName[serviceName].tagsByName[tagNameToMove].itemTagIndex = tagIndexToReplace;
-        orgsByName[orgName].servicesByName[serviceName].tags.length--;
-
-        // swap global tag index lut entries
-        tagIndexToReplace = orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName].globalTagIndex;
-        uint tagIndexToMove = servicesByTag[tagName].orgNames.length-1;
-
-        servicesByTag[tagName].orgNames[tagIndexToReplace] = servicesByTag[tagName].orgNames[tagIndexToMove];
-        servicesByTag[tagName].itemNames[tagIndexToReplace] = servicesByTag[tagName].itemNames[tagIndexToMove];
-
-        bytes32 orgToUpdate = servicesByTag[tagName].orgNames[tagIndexToReplace];
-        bytes32 itemToUpdate = servicesByTag[tagName].itemNames[tagIndexToReplace];
-        orgsByName[orgToUpdate].servicesByName[itemToUpdate].tagsByName[tagName].globalTagIndex = tagIndexToReplace;
-
-        servicesByTag[tagName].orgNames.length--;
-        servicesByTag[tagName].itemNames.length--;
-
-        // delete contents of the tag entry
-        delete orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName];
-
-        return true;
     }
 
-    function deleteServiceRegistration(bytes32 orgName, bytes32 serviceName) external returns (bool success) {
+    function deleteServiceRegistration(bytes32 orgName, bytes32 serviceName) external {
 
-        // check to see if this organization exists
-        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
-            return false;
-        }
-
-        // validate owner or member
-        if(msg.sender != orgsByName[orgName].owner && !orgsByName[orgName].members[msg.sender]) {
-            return false;
-        }
-
-        // check to see if this service name exists within the organization
-        if(orgsByName[orgName].servicesByName[serviceName].serviceName == bytes32(0x0)) {
-            return false;
-        }
+        requireOrgExistenceConstraint(orgName, true);
+        requireAuthorization(orgName, true);
+        requireServiceExistenceConstraint(orgName, serviceName, true);
 
         // delete the tags associated with the service
-        for(uint i = 0; i < orgsByName[orgName].servicesByName[serviceName].tags.length; i++) {
+        for (uint i = 0; i < orgsByName[orgName].servicesByName[serviceName].tags.length; i++) {
             removeTagFromServiceRegistration(orgName, serviceName, orgsByName[orgName].servicesByName[serviceName].tags[i]);
         }
 
@@ -369,8 +312,6 @@ contract RegistryImpl is IRegistry {
 
         // delete contents of service registration
         delete orgsByName[orgName].servicesByName[serviceName];
-
-        return true;
     }
 
     //   _____                        ____                        __  __                 _
@@ -381,22 +322,11 @@ contract RegistryImpl is IRegistry {
     //        |___/|_|                         |_|                       |___/
 
     function createTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath,
-        bytes repositoryURI, bytes32[] tags) external returns (bool success) {
+            bytes repositoryURI, bytes32[] tags) external {
 
-        // check to see if this organization name exists
-        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
-            return false;
-        }
-
-        // validate owner or member
-        if(msg.sender != orgsByName[orgName].owner && !orgsByName[orgName].members[msg.sender]) {
-            return false;
-        }
-
-        // check to see if this repo name exists within the organization
-        if(orgsByName[orgName].typeReposByName[repositoryName].repositoryName != bytes32(0x0)) {
-            return false;
-        }
+        requireOrgExistenceConstraint(orgName, true);
+        requireAuthorization(orgName, true);
+        requireTypeRepositoryExistenceConstraint(orgName, repositoryName, false);
 
         TypeRepositoryRegistration memory typeRepo;
         orgsByName[orgName].typeReposByName[repositoryName] = typeRepo;
@@ -406,165 +336,108 @@ contract RegistryImpl is IRegistry {
         orgsByName[orgName].typeReposByName[repositoryName].orgTypeRepoIndex = orgsByName[orgName].typeRepoKeys.length;
         orgsByName[orgName].typeRepoKeys.push(repositoryName);
 
-        for(uint i = 0; i < tags.length; i++) {
+        for (uint i = 0; i < tags.length; i++) {
             addTagToTypeRepositoryRegistration(orgName, repositoryName, tags[i]);
         }
-        return true;
     }
 
     function updateTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath,
-        bytes repositoryURI) external returns (bool success) {
+        bytes repositoryURI) external {
 
-        // check to see if this organization name exists
-        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
-            return false;
-        }
-
-        // validate owner or member
-        if(msg.sender != orgsByName[orgName].owner && !orgsByName[orgName].members[msg.sender]) {
-            return false;
-        }
-
-        // check to see if this repo name exists within the organization
-        if(orgsByName[orgName].typeReposByName[repositoryName].repositoryName == bytes32(0x0)) {
-            return false;
-        }
+        requireOrgExistenceConstraint(orgName, true);
+        requireAuthorization(orgName, true);
+        requireTypeRepositoryExistenceConstraint(orgName, repositoryName, true);
 
         orgsByName[orgName].typeReposByName[repositoryName].repositoryPath = repositoryPath;
         orgsByName[orgName].typeReposByName[repositoryName].repositoryURI = repositoryURI;
-
-        return true;
     }
 
-    function addTagsToTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32[] tags) external returns(bool success) {
+    function addTagsToTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32[] tags) external {
 
-        // check to see if this organization name exists
-        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
-            return false;
-        }
+        requireOrgExistenceConstraint(orgName, true);
+        requireAuthorization(orgName, true);
+        requireTypeRepositoryExistenceConstraint(orgName, repositoryName, true);
 
-        // validate owner or member
-        if(msg.sender != orgsByName[orgName].owner && !orgsByName[orgName].members[msg.sender]) {
-            return false;
-        }
-
-        // check to see if this repo name exists within the organization
-        if(orgsByName[orgName].typeReposByName[repositoryName].repositoryName == bytes32(0x0)) {
-            return false;
-        }
-
-        for(uint i = 0; i < tags.length; i++) {
+        for (uint i = 0; i < tags.length; i++) {
             addTagToTypeRepositoryRegistration(orgName, repositoryName, tags[i]);
         }
-        return true;
     }
 
-    function addTagToTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 tagName) internal returns (bool success) {
+    function addTagToTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 tagName) internal {
 
-        // check if this repo already has this tag
-        if(orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName].tagName != bytes32(0x0)) {
-            return true;
+        // no-op if tag already exists
+        if (orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName].tagName == bytes32(0x0)) {
+            // add the type repository to the org level tag index
+            Tag memory tagObj;
+            orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName] = tagObj;
+            orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName].tagName = tagName;
+            orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName].itemTagIndex = orgsByName[orgName].typeReposByName[repositoryName].tags.length;
+            orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName].globalTagIndex = typeReposByTag[tagName].orgNames.length;
+            orgsByName[orgName].typeReposByName[repositoryName].tags.push(tagName);
+
+            // add the type repository to the global tag index creating a list object for this tag if it does not already exist
+            if (!typeReposByTag[tagName].valid) {
+                ServiceOrTypeRepositoryList memory listObj;
+                listObj.valid = true;
+                typeReposByTag[tagName] = listObj;
+                typeRepoTags.push(tagName);
+            }
+            typeReposByTag[tagName].orgNames.push(orgName);
+            typeReposByTag[tagName].itemNames.push(repositoryName);
         }
-
-        // add the type repository to the org level tag index
-        Tag memory tagObj;
-        orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName] = tagObj;
-        orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName].tagName = tagName;
-        orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName].itemTagIndex = orgsByName[orgName].typeReposByName[repositoryName].tags.length;
-        orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName].globalTagIndex = typeReposByTag[tagName].orgNames.length;
-        orgsByName[orgName].typeReposByName[repositoryName].tags.push(tagName);
-
-        // add the type repository to the global tag index creating a list object for this tag if it does not already exist
-        if(!typeReposByTag[tagName].valid) {
-            ServiceOrTypeRepositoryList memory listObj;
-            listObj.valid = true;
-            typeReposByTag[tagName] = listObj;
-            typeRepoTags.push(tagName);
-        }
-        typeReposByTag[tagName].orgNames.push(orgName);
-        typeReposByTag[tagName].itemNames.push(repositoryName);
-
-        return true;
     }
 
-    function removeTagsFromTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32[] tags) external returns (bool success) {
+    function removeTagsFromTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32[] tags) external {
 
-        // check to see if this organization name exists
-        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
-            return false;
-        }
+        requireOrgExistenceConstraint(orgName, true);
+        requireAuthorization(orgName, true);
+        requireTypeRepositoryExistenceConstraint(orgName, repositoryName, true);
 
-        // validate owner or member
-        if(msg.sender != orgsByName[orgName].owner && !orgsByName[orgName].members[msg.sender]) {
-            return false;
-        }
-
-        // check to see if this repo name exists within the organization
-        if(orgsByName[orgName].typeReposByName[repositoryName].repositoryName != bytes32(0x0)) {
-            return false;
-        }
-
-        for(uint i = 0; i < tags.length; i++) {
+        for (uint i = 0; i < tags.length; i++) {
             removeTagFromTypeRepositoryRegistration(orgName, repositoryName, tags[i]);
         }
-        return true;
     }
 
-    function removeTagFromTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 tagName) internal returns (bool success) {
+    function removeTagFromTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 tagName) internal {
 
-        // check if this repo has this tag
-        if(orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName].tagName == bytes32(0x0)) {
-            return true;
+        // no-op if tag doesnt exist
+        if (orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName].tagName != bytes32(0x0)) {
+            // swap lut entries
+            // swap service registration lut entries
+            uint tagIndexToReplace = orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName].itemTagIndex;
+            bytes32 tagNameToMove = orgsByName[orgName].typeReposByName[repositoryName].tags[orgsByName[orgName].typeReposByName[repositoryName].tags.length-1];
+
+            orgsByName[orgName].typeReposByName[repositoryName].tags[tagIndexToReplace] = tagNameToMove;
+            orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagNameToMove].itemTagIndex = tagIndexToReplace;
+            orgsByName[orgName].typeReposByName[repositoryName].tags.length--;
+
+            // swap global tag index lut entries
+            tagIndexToReplace = orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName].globalTagIndex;
+            uint tagIndexToMove = typeReposByTag[tagName].orgNames.length-1;
+
+            typeReposByTag[tagName].orgNames[tagIndexToReplace] = typeReposByTag[tagName].orgNames[tagIndexToMove];
+            typeReposByTag[tagName].itemNames[tagIndexToReplace] = typeReposByTag[tagName].itemNames[tagIndexToMove];
+
+            bytes32 orgToUpdate = typeReposByTag[tagName].orgNames[tagIndexToReplace];
+            bytes32 itemToUpdate = typeReposByTag[tagName].itemNames[tagIndexToReplace];
+            orgsByName[orgToUpdate].typeReposByName[itemToUpdate].tagsByName[tagName].globalTagIndex = tagIndexToReplace;
+
+            typeReposByTag[tagName].orgNames.length--;
+            typeReposByTag[tagName].itemNames.length--;
+
+            // delete contents of the tag entry
+            delete orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName];
         }
-
-        // swap lut entries
-        // swap service registration lut entries
-        uint tagIndexToReplace = orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName].itemTagIndex;
-        bytes32 tagNameToMove = orgsByName[orgName].typeReposByName[repositoryName].tags[orgsByName[orgName].typeReposByName[repositoryName].tags.length-1];
-
-        orgsByName[orgName].typeReposByName[repositoryName].tags[tagIndexToReplace] = tagNameToMove;
-        orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagNameToMove].itemTagIndex = tagIndexToReplace;
-        orgsByName[orgName].typeReposByName[repositoryName].tags.length--;
-
-        // swap global tag index lut entries
-        tagIndexToReplace = orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName].globalTagIndex;
-        uint tagIndexToMove = typeReposByTag[tagName].orgNames.length-1;
-
-        typeReposByTag[tagName].orgNames[tagIndexToReplace] = typeReposByTag[tagName].orgNames[tagIndexToMove];
-        typeReposByTag[tagName].itemNames[tagIndexToReplace] = typeReposByTag[tagName].itemNames[tagIndexToMove];
-
-        bytes32 orgToUpdate = typeReposByTag[tagName].orgNames[tagIndexToReplace];
-        bytes32 itemToUpdate = typeReposByTag[tagName].itemNames[tagIndexToReplace];
-        orgsByName[orgToUpdate].typeReposByName[itemToUpdate].tagsByName[tagName].globalTagIndex = tagIndexToReplace;
-
-        typeReposByTag[tagName].orgNames.length--;
-        typeReposByTag[tagName].itemNames.length--;
-
-        // delete contents of the tag entry
-        delete orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName];
-
-        return true;
     }
 
-    function deleteTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName) external returns(bool success) {
+    function deleteTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName) external {
 
-        // check to see if this organization exists
-        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
-            return false;
-        }
-
-        // validate owner or member
-        if(msg.sender != orgsByName[orgName].owner && !orgsByName[orgName].members[msg.sender]) {
-            return false;
-        }
-
-        // check to see if this repo name exists within the organization
-        if(orgsByName[orgName].typeReposByName[repositoryName].repositoryName == bytes32(0x0)) {
-            return false;
-        }
+        requireOrgExistenceConstraint(orgName, true);
+        requireAuthorization(orgName, true);
+        requireTypeRepositoryExistenceConstraint(orgName, repositoryName, true);
 
         // delete the tags associated with the type repo
-        for(uint i = 0; i < orgsByName[orgName].typeReposByName[repositoryName].tags.length; i++) {
+        for (uint i = 0; i < orgsByName[orgName].typeReposByName[repositoryName].tags.length; i++) {
             removeTagFromTypeRepositoryRegistration(orgName, repositoryName, orgsByName[orgName].typeReposByName[repositoryName].tags[i]);
         }
 
@@ -578,8 +451,6 @@ contract RegistryImpl is IRegistry {
 
         // delete contents of repo registration
         delete orgsByName[orgName].typeReposByName[repositoryName];
-
-        return true;
     }
 
     //    ____      _   _
@@ -589,12 +460,12 @@ contract RegistryImpl is IRegistry {
     //   \____|\___|\__|\__\___|_|  |___/
     //
 
-    function listOrganizations() external view returns(bytes32[] orgNames) {
+    function listOrganizations() external view returns (bytes32[] orgNames) {
         return orgKeys;
     }
 
     function getOrganizationByName(bytes32 orgName) external view
-        returns(bool found, bytes32 name, address owner, bytes32[] serviceNames, bytes32[] repositoryNames) {
+            returns(bool found, bytes32 name, address owner, bytes32[] serviceNames, bytes32[] repositoryNames) {
 
         // check to see if this organization exists
         if(orgsByName[orgName].organizationName == bytes32(0x0)) {
@@ -609,7 +480,7 @@ contract RegistryImpl is IRegistry {
         repositoryNames = orgsByName[orgName].typeRepoKeys;
     }
 
-    function listServicesForOrganization(bytes32 orgName) external view returns(bool found, bytes32[] serviceNames) {
+    function listServicesForOrganization(bytes32 orgName) external view returns (bool found, bytes32[] serviceNames) {
 
         // check to see if this organization exists
         if(orgsByName[orgName].organizationName == bytes32(0x0)) {
@@ -622,7 +493,7 @@ contract RegistryImpl is IRegistry {
     }
 
     function getServiceRegistrationByName(bytes32 orgName, bytes32 serviceName) external view
-        returns(bool found, bytes32 name, bytes32 path, address agentAddress, bytes32[] tags) {
+            returns (bool found, bytes32 name, bytes32 path, address agentAddress, bytes32[] tags) {
 
         // check to see if this organization exists
         if(orgsByName[orgName].organizationName == bytes32(0x0)) {
@@ -643,7 +514,7 @@ contract RegistryImpl is IRegistry {
         tags = orgsByName[orgName].servicesByName[serviceName].tags;
     }
 
-    function listTypeRepositoriesForOrganization(bytes32 orgName) external view returns(bool found, bytes32[] repositoryNames) {
+    function listTypeRepositoriesForOrganization(bytes32 orgName) external view returns (bool found, bytes32[] repositoryNames) {
 
         // check to see if this organization exists
         if(orgsByName[orgName].organizationName == bytes32(0x0)) {
@@ -656,7 +527,7 @@ contract RegistryImpl is IRegistry {
     }
 
     function getTypeRepositoryByName(bytes32 orgName, bytes32 repositoryName) external view
-        returns (bool found, bytes32 name, bytes32 path, bytes uri, bytes32[] tags) {
+            returns (bool found, bytes32 name, bytes32 path, bytes uri, bytes32[] tags) {
 
         // check to see if this organization exists
         if(orgsByName[orgName].organizationName == bytes32(0x0)) {
@@ -677,20 +548,20 @@ contract RegistryImpl is IRegistry {
         tags = orgsByName[orgName].typeReposByName[repositoryName].tags;
     }
 
-    function listServiceTags() external view returns(bytes32[] tags) {
+    function listServiceTags() external view returns (bytes32[] tags) {
         return serviceTags;
     }
 
-    function listServicesForTag(bytes32 tag) external view returns(bytes32[] orgNames, bytes32[] serviceNames) {
+    function listServicesForTag(bytes32 tag) external view returns (bytes32[] orgNames, bytes32[] serviceNames) {
         orgNames = servicesByTag[tag].orgNames;
         serviceNames = servicesByTag[tag].itemNames;
     }
 
-    function listTypeRepositoryTags() external view returns(bytes32[] tags) {
+    function listTypeRepositoryTags() external view returns (bytes32[] tags) {
         return typeRepoTags;
     }
 
-    function listTypeRepositoriesForTag(bytes32 tag) external view returns(bytes32[] orgNames, bytes32[] repositoryNames) {
+    function listTypeRepositoriesForTag(bytes32 tag) external view returns (bytes32[] orgNames, bytes32[] repositoryNames) {
         orgNames = typeReposByTag[tag].orgNames;
         repositoryNames = typeReposByTag[tag].itemNames;
     }
