@@ -9,7 +9,7 @@ const STRINGS = Object.freeze({
  * https://solidity.readthedocs.io/en/latest/frequently-asked-questions.html
  */
 const AGENT_STATE = Object.freeze({
-    "ENABLED" : 0,
+    "ENABLED"  : 0,
     "DISABLED" : 1
 });
 
@@ -17,6 +17,11 @@ const JOB_STATE = Object.freeze({
     "PENDING"   : 0,
     "FUNDED"    : 1,
     "COMPLETED" : 2
+});
+
+const TX_STATUS = Object.freeze({
+    "FAILURE" : 0,
+    "SUCCESS" : 1
 });
 
 const HELPERS = Object.freeze({
@@ -30,13 +35,6 @@ const HELPERS = Object.freeze({
 
         return [v, r, s];
     },
-    hex2ascii : (hexx) => {
-        const hex = hexx.toString();
-        let str = '';
-        for (var i = 0; (i < hex.length && hex.substr(i, 2) !== '00'); i += 2)
-            str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-        return str;
-    },
     /**
      * Trims character from the beginning and end of string. Useful for trimming \u0000 from smart contract fields.
      */
@@ -44,9 +42,40 @@ const HELPERS = Object.freeze({
         const first = [...string].findIndex(char => char !== character);
         const last = [...string].reverse().findIndex(char => char !== character);
         return string.substring(first, string.length - last);
+    },
+    /**
+     * Convert bytes retrieved from the EVM to a usable/printable javascript string.
+     */
+    bytesToString : (string) => HELPERS.trimByChar(web3.toAscii(string), '\0'),
+    /**
+     * Convert an address retrieved from the EVM to a usable/printable javascript string.
+     */
+    addressToString : (address) => HELPERS.trimByChar(address, '\0'),
+    /**
+     * Returns an array like [start, start + 1, ..., end]
+     */
+    intRange : (start, end) => {
+        return [...Array(end-start).keys()] // generates array [0, 1, ..., (end-start)
+                .map(e => start + e);       // converts array to [start, start + 1, ..., end]
+    },
+    /**
+     * Compares that the arrays given are 'equal' in length and elements according to the assertEqualFn function.
+     */
+    assertArraysEqual : (assertEqualFn, arrayExpected, arrayActual, message) => {
+        assertEqualFn(arrayExpected.length, arrayActual.length, message + ": Array length mismatch.");
+
+        const arrayExpectedSorted = arrayExpected.sort();
+        const arrayActualSorted   = arrayActual.sort();
+
+        // console.log("Expected ", arrayExpectedSorted);
+        // console.log("Actual ", arrayActualSorted);
+
+        for (let i = 0; i < arrayExpectedSorted.length; i++) {
+            assertEqualFn(arrayExpectedSorted[i], arrayActualSorted[i], message + `: sorted arrays differ at element ${i}`);
+        }
     }
 });
 
 module.exports = {
-    STRINGS, AGENT_STATE, JOB_STATE, HELPERS
+    STRINGS, AGENT_STATE, JOB_STATE, TX_STATUS, HELPERS
 };
