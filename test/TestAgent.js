@@ -2,12 +2,12 @@
 
 let AgentFactory = artifacts.require("AgentFactory");
 let Agent = artifacts.require("Agent");
-let Registry = artifacts.require("Registry");
+//let Registry = artifacts.require("Registry");
 let Job = artifacts.require("Job");
 let Contract = require("truffle-contract");
 let TokenJson = require("singularitynet-token-contracts/SingularityNetToken.json");
 let Token = Contract(TokenJson);
-let { STRINGS, AGENT_STATE, JOB_STATE, HELPERS : { signAddress, hex2ascii, trimByChar }} = require("./util.js");
+let { STRINGS, AGENT_STATE, JOB_STATE, HELPERS : { signAddress, bytesToString, addressToString }} = require("./util/Util.js");
 
 Token.setProvider(web3.currentProvider);
 
@@ -15,7 +15,7 @@ Token.setProvider(web3.currentProvider);
 assert.equal    = assert.strictEqual;
 assert.notEqual = assert.notStrictEqual;
 
-contract("Old Registry Test", async (accounts) => {
+contract("Agent Creation & Job Execution", async (accounts) => {
     const testConstants = Object.freeze({
         CreatorAccount  : accounts[1], // creator of agent
         ConsumerAccount : accounts[0], // consumer of agent
@@ -62,19 +62,6 @@ contract("Old Registry Test", async (accounts) => {
         assert.equal(testConstants.AgentUrl      , endpoint    , "Agent endpoint was not saved correctly");
     });
 
-    it(`Registers agent with name ${testConstants.AgentName}`, async () => {
-        testState.RegistryInstance = await Registry.deployed();
-        await testState.RegistryInstance.createRecord(testConstants.AgentName, testState.AgentInstance.address, {from: testConstants.CreatorAccount});
-
-        const agents       = await testState.RegistryInstance.listRecords.call();
-        const agentName    = trimByChar(web3.toAscii(agents[0][0]),'\0');
-        const agentAddress = trimByChar(agents[1][0], '\0');
-
-        assert.equal(1                              , agents[0].length, `Registry does not list exactly 1 agent`);
-        assert.equal(testConstants.AgentName        , agentName       , `Registry does not list Agent ${testConstants.AgentName}`)
-        assert.equal(testState.AgentInstance.address, agentAddress    , "Registry does not list the correct agent address");
-    });
-
     it(`Creates job with consumer account ${testConstants.ConsumerAccount}`, async () => {
         const createJobResult = await testState.AgentInstance.createJob({from: testConstants.ConsumerAccount});
         testState.JobInstance = Job.at(createJobResult.logs[0].args.job);
@@ -90,8 +77,16 @@ contract("Old Registry Test", async (accounts) => {
         assert.equal(JOB_STATE.PENDING              , state   , "Job state should be PENDING");
     });
 
-    it(`Funds job by consumer ${testConstants.ConsumerAccount} with ${testConstants.AgentPrice} AGI`, async () => {
+    it(`Approves ${testConstants.AgentPrice} AGI transfer to job from consumer ${testConstants.ConsumerAccount}`, async () => {
         await testState.TokenInstance.approve(testState.JobInstance.address, testConstants.AgentPrice, {from: testConstants.ConsumerAccount});
+        const balance       = (await testState.TokenInstance.balanceOf.call(testState.JobInstance.address)).toNumber();
+        const state         = (await testState.JobInstance.state.call()).toNumber();
+
+        assert.equal(0                , balance, "Job should not have AGI balance yet");
+        assert.equal(JOB_STATE.PENDING, state  , "Job state should be PENDING");
+    });
+
+    it(`Funds job by consumer ${testConstants.ConsumerAccount} with ${testConstants.AgentPrice} AGI`, async () => {
         const fundJobResult = await testState.JobInstance.fundJob({from: testConstants.ConsumerAccount});
         const balance       = (await testState.TokenInstance.balanceOf.call(testState.JobInstance.address)).toNumber();
         const state         = (await testState.JobInstance.state.call()).toNumber();
@@ -134,11 +129,5 @@ contract("Old Registry Test", async (accounts) => {
         assert.equal(testConstants.AgentPrice    , agentPrice       , "AgentPrice was changed");
         assert.equal(testConstants.AgentPrice    , agentOwnerBalance, `Agent owner does not have ${testConstants.AgentPrice} AGI`);
 
-    });
-
-    it(`Deprecates the Agent record in the registry`, async () => {
-        await testState.RegistryInstance.deprecateRecord(testConstants.AgentName, {from: testConstants.CreatorAccount});
-        let agents = await testState.RegistryInstance.listRecords.call();
-        assert.equal(STRINGS.NULL_ADDRESS, agents[1][0]);
     });
 });
