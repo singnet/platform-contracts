@@ -30,7 +30,6 @@ contract("Agent Creation & Job Execution", async (accounts) => {
         AgentFactoryInstance : null,
         TokenInstance        : null,
         AgentInstance        : null,
-        RegistryInstance     : null,
         JobInstance          : null,
         // signature outputs
         Signature : {
