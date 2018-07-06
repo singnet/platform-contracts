@@ -5,18 +5,31 @@ const path = require("path");
 const npmModulePath = "build/npm-module";
 const packageJson = "package.json";
 
-// relative to repo root => relative to module root
+// source dir relative to repo root => dest dir relative to module root
 const mapDirs = {
 };
 
-// relative to repo root => relative to module root
+// source file relative to repo root => dest file relative to module root
+//                                or => key to extract from source file => dest file relative to module root
 const mapFiles = {
-    "contracts/AgentFactory.sol": "AgentFactory.sol",
-    "contracts/Registry.sol": "Registry.sol",
-    "build/contracts/AgentFactory.json": "AgentFactory.json",
-    "build/contracts/Registry.json": "Registry.json",
-    "build/contracts/Agent.json": "Agent.json",
-    "build/contracts/Job.json": "Job.json",
+    "contracts/AgentFactory.sol": "sol/AgentFactory.sol",
+    "contracts/Registry.sol": "sol/Registry.sol",
+    "build/contracts/AgentFactory.json": {
+        "abi": "abi/AgentFactory.json",
+        "networks": "networks/AgentFactory.json",
+        "bytecode": "bytecode/AgentFactory.json"
+    },
+    "build/contracts/Registry.json": {
+        "abi": "abi/Registry.json",
+        "networks": "networks/Registry.json",
+        "bytecode": "bytecode/Registry.json"
+    },
+    "build/contracts/Agent.json": {
+        "abi": "abi/Agent.json"
+    },
+    "build/contracts/Job.json": {
+        "abi": "abi/Job.json"
+    },
     "resources/npm-README.md": "README.md",
     "LICENSE": "LICENSE"
 };
@@ -49,10 +62,19 @@ for (let sourceDir in mapDirs) {
 }
 
 for (let sourceFile in mapFiles) {
-    let destFile = path.join(npmModulePath, mapFiles[sourceFile]);
-    let destParent = path.resolve(destFile, "../");
-    fse.mkdirsSync(destParent);
-    fse.copySync(sourceFile, destFile);
+    if (mapFiles[sourceFile] !== null && typeof mapFiles[sourceFile] === "object") {
+        for (key in mapFiles[sourceFile]) {
+            let destFile = path.join(npmModulePath, mapFiles[sourceFile][key]);
+            let destParent = path.resolve(destFile, "../");
+            fse.mkdirsSync(destParent);
+            fse.writeJsonSync(destFile, fse.readJsonSync(sourceFile)[key]);
+        }
+    } else {
+        let destFile = path.join(npmModulePath, mapFiles[sourceFile]);
+        let destParent = path.resolve(destFile, "../");
+        fse.mkdirsSync(destParent);
+        fse.copySync(sourceFile, destFile);
+    }
 }
 
 let packageJsonIn = fse.readJsonSync(packageJson);
