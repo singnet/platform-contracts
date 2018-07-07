@@ -4,7 +4,6 @@ pragma solidity ^0.4.24;
   * @title Open registry for management of AI services run on SingularityNET
   * @author SingularityNET
   *
-  * @dev TODO: SingularityNET Registry design notes go here.
   */
 interface IRegistry {
 
@@ -58,9 +57,9 @@ interface IRegistry {
     /**
       * @dev Removes an organization from the registry.
       *      Only the organization owner can invoke this method.
-      *      Reverts if the given organization name is unregistered.
+      *      Reverts if the given organization name is unregistered
       *
-      * @param orgName  Name of organization to remove.
+      * @param orgName               Name of organization to remove.
       */
     function deleteOrganization(bytes32 orgName) external;
 
@@ -220,7 +219,8 @@ interface IRegistry {
       * @return serviceNames    Array of names of services owned by the organization.
       * @return repositoryNames Array of name of type repositories owned by the organization.
       */
-    function getOrganizationByName(bytes32 orgName) external view returns (bool found, bytes32 name, address owner, bytes32[] serviceNames, bytes32[] repositoryNames);
+    function getOrganizationByName(bytes32 orgName) external view
+            returns (bool found, bytes32 name, address owner, bytes32[] serviceNames, bytes32[] repositoryNames);
 
     /**
       * @dev Returns an array of names of all services owned by a given organization.
@@ -246,7 +246,8 @@ interface IRegistry {
       * @return agentAddress Address of deployed Agent contract for interacting with this service.
       * @return serviceTags  Optional array of tags for discoverability.
       */
-    function getServiceRegistrationByName(bytes32 orgName, bytes32 serviceName) external view returns (bool found, bytes32 name, bytes32 servicePath, address agentAddress, bytes32[] serviceTags);
+    function getServiceRegistrationByName(bytes32 orgName, bytes32 serviceName) external view
+            returns (bool found, bytes32 name, bytes32 servicePath, address agentAddress, bytes32[] serviceTags);
 
     /**
       * @dev Returns an array of names of all type repositories owned by a given organization.
@@ -272,7 +273,8 @@ interface IRegistry {
       * @return agentAddress    Address of deployed Agent contract for interacting with this repository.
       * @return repositoryTags  Optional array of tags for discoverability.
       */
-    function getTypeRepositoryByName(bytes32 orgName, bytes32 repositoryName) external view returns (bool found, bytes32 name, bytes32 repositoryPath, bytes repositoryURI, bytes32[] repositoryTags);
+    function getTypeRepositoryByName(bytes32 orgName, bytes32 repositoryName) external view
+            returns (bool found, bytes32 name, bytes32 repositoryPath, bytes repositoryURI, bytes32[] repositoryTags);
 
     /**
       * @dev Returns a list of all tags placed on any service for discoverability.
