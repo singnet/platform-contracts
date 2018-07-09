@@ -10,7 +10,8 @@
     "package-npm": "node scripts/package-npm.js",
     "deploy": "scripts/truffle-migrate",
     "compile": "node_modules/.bin/truffle compile",
-    "test": "rm -rf build && node_modules/.bin/truffle test"
+    "test": "rm -rf build && node_modules/.bin/truffle test",
+    "test-local": "rm -rf build && node_modules/.bin/truffle test --network local"
   },
   "repository": {
     "type": "git",
@@ -23,16 +24,19 @@
   },
   "homepage": "https://github.com/singnet/alpha-blockchain#readme",
   "dependencies": {
+    "moment": "^2.22.2",
     "singularitynet-token-contracts": "1.0.0",
-    "truffle": "4.1.5",
+    "truffle": "4.1.13",
     "truffle-contract": "3.0.4",
     "truffle-hdwallet-provider": "0.0.3",
     "zeppelin-solidity": "1.4.0"
   },
   "devDependencies": {
-    "fs-extra": "^5.0.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
-    "chai-bignumber": "^2.0.2"
+    "chai-bignumber": "^2.0.2",
+    "eth-gas-reporter": "^0.1.9",
+    "fs-extra": "^5.0.0",
+    "webpack-cli": "^3.0.8"
   }
 }
