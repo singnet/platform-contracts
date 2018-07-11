@@ -13,16 +13,23 @@ const mapDirs = {
 //                                or => key to extract from source file => dest file relative to module root
 const mapFiles = {
     "contracts/AgentFactory.sol": "sol/AgentFactory.sol",
-    "contracts/Registry.sol": "sol/Registry.sol",
+    "contracts/IRegistry.sol": "sol/IRegistry.sol",
     "build/contracts/AgentFactory.json": {
         "abi": "abi/AgentFactory.json",
         "networks": "networks/AgentFactory.json",
         "bytecode": "bytecode/AgentFactory.json"
     },
+    "build/contracts/AlphaRegistry.json": {
+        "abi": "abi/AlphaRegistry.json",
+        "networks": "networks/AlphaRegistry.json",
+        "bytecode": "bytecode/AlphaRegistry.json"
+    },
     "build/contracts/Registry.json": {
-        "abi": "abi/Registry.json",
         "networks": "networks/Registry.json",
         "bytecode": "bytecode/Registry.json"
+    },
+    "build/contracts/IRegistry.json": {
+        "abi": "abi/Registry.json"
     },
     "build/contracts/Agent.json": {
         "abi": "abi/Agent.json"
