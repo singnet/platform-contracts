@@ -1,0 +1,3220 @@
+{
+    "etherUsdData": [{
+            "y": 0.00,
+            "dt": "Thursday, July 30, 2015"
+        }, {
+            "y": 0.00,
+            "dt": "Friday, July 31, 2015"
+        }, {
+            "y": 0.00,
+            "dt": "Saturday, August 1, 2015"
+        }, {
+            "y": 0.00,
+            "dt": "Sunday, August 2, 2015"
+        }, {
+            "y": 0.00,
+            "dt": "Monday, August 3, 2015"
+        }, {
+            "y": 0.00,
+            "dt": "Tuesday, August 4, 2015"
+        }, {
+            "y": 0.00,
+            "dt": "Wednesday, August 5, 2015"
+        }, {
+            "y": 0.00,
+            "dt": "Thursday, August 6, 2015"
+        }, {
+            "y": 3.00,
+            "dt": "Friday, August 7, 2015"
+        }, {
+            "y": 1.20,
+            "dt": "Saturday, August 8, 2015"
+        }, {
+            "y": 1.20,
+            "dt": "Sunday, August 9, 2015"
+        }, {
+            "y": 0.00,
+            "dt": "Monday, August 10, 2015"
+        }, {
+            "y": 0.99,
+            "dt": "Tuesday, August 11, 2015"
+        }, {
+            "y": 1.29,
+            "dt": "Wednesday, August 12, 2015"
+        }, {
+            "y": 1.88,
+            "dt": "Thursday, August 13, 2015"
+        }, {
+            "y": 1.79,
+            "dt": "Friday, August 14, 2015"
+        }, {
+            "y": 1.79,
+            "dt": "Saturday, August 15, 2015"
+        }, {
+            "y": 1.30,
+            "dt": "Monday, August 17, 2015"
+        }, {
+            "y": 1.37,
+            "dt": "Sunday, August 16, 2015"
+        }, {
+            "y": 1.36,
+            "dt": "Tuesday, August 18, 2015"
+        }, {
+            "y": 1.24,
+            "dt": "Wednesday, August 19, 2015"
+        }, {
+            "y": 1.52,
+            "dt": "Thursday, August 20, 2015"
+        }, {
+            "y": 1.44,
+            "dt": "Friday, August 21, 2015"
+        }, {
+            "y": 1.40,
+            "dt": "Saturday, August 22, 2015"
+        }, {
+            "y": 1.35,
+            "dt": "Sunday, August 23, 2015"
+        }, {
+            "y": 1.24,
+            "dt": "Monday, August 24, 2015"
+        }, {
+            "y": 1.27,
+            "dt": "Tuesday, August 25, 2015"
+        }, {
+            "y": 1.18,
+            "dt": "Wednesday, August 26, 2015"
+        }, {
+            "y": 1.14,
+            "dt": "Thursday, August 27, 2015"
+        }, {
+            "y": 1.30,
+            "dt": "Friday, August 28, 2015"
+        }, {
+            "y": 1.18,
+            "dt": "Saturday, August 29, 2015"
+        }, {
+            "y": 1.32,
+            "dt": "Sunday, August 30, 2015"
+        }, {
+            "y": 1.31,
+            "dt": "Monday, August 31, 2015"
+        }, {
+            "y": 1.36,
+            "dt": "Tuesday, September 1, 2015"
+        }, {
+            "y": 1.14,
+            "dt": "Wednesday, September 2, 2015"
+        }, {
+            "y": 1.23,
+            "dt": "Thursday, September 3, 2015"
+        }, {
+            "y": 1.35,
+            "dt": "Friday, September 4, 2015"
+        }, {
+            "y": 1.37,
+            "dt": "Saturday, September 5, 2015"
+        }, {
+            "y": 1.34,
+            "dt": "Sunday, September 6, 2015"
+        }, {
+            "y": 1.28,
+            "dt": "Monday, September 7, 2015"
+        }, {
+            "y": 1.26,
+            "dt": "Tuesday, September 8, 2015"
+        }, {
+            "y": 1.21,
+            "dt": "Wednesday, September 9, 2015"
+        }, {
+            "y": 1.19,
+            "dt": "Thursday, September 10, 2015"
+        }, {
+            "y": 0.92,
+            "dt": "Friday, September 11, 2015"
+        }, {
+            "y": 1.15,
+            "dt": "Saturday, September 12, 2015"
+        }, {
+            "y": 0.89,
+            "dt": "Sunday, September 13, 2015"
+        }, {
+            "y": 0.96,
+            "dt": "Monday, September 14, 2015"
+        }, {
+            "y": 0.95,
+            "dt": "Tuesday, September 15, 2015"
+        }, {
+            "y": 0.94,
+            "dt": "Wednesday, September 16, 2015"
+        }, {
+            "y": 0.88,
+            "dt": "Thursday, September 17, 2015"
+        }, {
+            "y": 0.85,
+            "dt": "Friday, September 18, 2015"
+        }, {
+            "y": 0.89,
+            "dt": "Saturday, September 19, 2015"
+        }, {
+            "y": 0.89,
+            "dt": "Sunday, September 20, 2015"
+        }, {
+            "y": 0.94,
+            "dt": "Monday, September 21, 2015"
+        }, {
+            "y": 0.81,
+            "dt": "Tuesday, September 22, 2015"
+        }, {
+            "y": 0.91,
+            "dt": "Wednesday, September 23, 2015"
+        }, {
+            "y": 0.80,
+            "dt": "Thursday, September 24, 2015"
+        }, {
+            "y": 0.68,
+            "dt": "Friday, September 25, 2015"
+        }, {
+            "y": 0.77,
+            "dt": "Saturday, September 26, 2015"
+        }, {
+            "y": 0.70,
+            "dt": "Sunday, September 27, 2015"
+        }, {
+            "y": 0.60,
+            "dt": "Monday, September 28, 2015"
+        }, {
+            "y": 0.68,
+            "dt": "Tuesday, September 29, 2015"
+        }, {
+            "y": 0.71,
+            "dt": "Wednesday, September 30, 2015"
+        }, {
+            "y": 0.65,
+            "dt": "Thursday, October 1, 2015"
+        }, {
+            "y": 0.66,
+            "dt": "Friday, October 2, 2015"
+        }, {
+            "y": 0.68,
+            "dt": "Saturday, October 3, 2015"
+        }, {
+            "y": 0.61,
+            "dt": "Sunday, October 4, 2015"
+        }, {
+            "y": 0.61,
+            "dt": "Monday, October 5, 2015"
+        }, {
+            "y": 0.65,
+            "dt": "Tuesday, October 6, 2015"
+        }, {
+            "y": 0.60,
+            "dt": "Wednesday, October 7, 2015"
+        }, {
+            "y": 0.62,
+            "dt": "Thursday, October 8, 2015"
+        }, {
+            "y": 0.64,
+            "dt": "Friday, October 9, 2015"
+        }, {
+            "y": 0.64,
+            "dt": "Saturday, October 10, 2015"
+        }, {
+            "y": 0.60,
+            "dt": "Sunday, October 11, 2015"
+        }, {
+            "y": 0.63,
+            "dt": "Monday, October 12, 2015"
+        }, {
+            "y": 0.60,
+            "dt": "Tuesday, October 13, 2015"
+        }, {
+            "y": 0.50,
+            "dt": "Wednesday, October 14, 2015"
+        }, {
+            "y": 0.56,
+            "dt": "Thursday, October 15, 2015"
+        }, {
+            "y": 0.53,
+            "dt": "Friday, October 16, 2015"
+        }, {
+            "y": 0.52,
+            "dt": "Saturday, October 17, 2015"
+        }, {
+            "y": 0.51,
+            "dt": "Sunday, October 18, 2015"
+        }, {
+            "y": 0.50,
+            "dt": "Monday, October 19, 2015"
+        }, {
+            "y": 0.44,
+            "dt": "Tuesday, October 20, 2015"
+        }, {
+            "y": 0.61,
+            "dt": "Thursday, October 22, 2015"
+        }, {
+            "y": 0.42,
+            "dt": "Wednesday, October 21, 2015"
+        }, {
+            "y": 0.56,
+            "dt": "Friday, October 23, 2015"
+        }, {
+            "y": 0.56,
+            "dt": "Saturday, October 24, 2015"
+        }, {
+            "y": 0.62,
+            "dt": "Sunday, October 25, 2015"
+        }, {
+            "y": 0.71,
+            "dt": "Monday, October 26, 2015"
+        }, {
+            "y": 0.83,
+            "dt": "Tuesday, October 27, 2015"
+        }, {
+            "y": 0.99,
+            "dt": "Wednesday, October 28, 2015"
+        }, {
+            "y": 1.12,
+            "dt": "Thursday, October 29, 2015"
+        }, {
+            "y": 1.14,
+            "dt": "Friday, October 30, 2015"
+        }, {
+            "y": 0.87,
+            "dt": "Saturday, October 31, 2015"
+        }, {
+            "y": 0.99,
+            "dt": "Sunday, November 1, 2015"
+        }, {
+            "y": 0.99,
+            "dt": "Monday, November 2, 2015"
+        }, {
+            "y": 1.06,
+            "dt": "Tuesday, November 3, 2015"
+        }, {
+            "y": 0.80,
+            "dt": "Wednesday, November 4, 2015"
+        }, {
+            "y": 0.88,
+            "dt": "Thursday, November 5, 2015"
+        }, {
+            "y": 0.99,
+            "dt": "Friday, November 6, 2015"
+        }, {
+            "y": 0.93,
+            "dt": "Saturday, November 7, 2015"
+        }, {
+            "y": 1.00,
+            "dt": "Sunday, November 8, 2015"
+        }, {
+            "y": 1.00,
+            "dt": "Monday, November 9, 2015"
+        }, {
+            "y": 0.90,
+            "dt": "Tuesday, November 10, 2015"
+        }, {
+            "y": 0.75,
+            "dt": "Wednesday, November 11, 2015"
+        }, {
+            "y": 0.88,
+            "dt": "Thursday, November 12, 2015"
+        }, {
+            "y": 0.90,
+            "dt": "Friday, November 13, 2015"
+        }, {
+            "y": 0.88,
+            "dt": "Saturday, November 14, 2015"
+        }, {
+            "y": 0.92,
+            "dt": "Sunday, November 15, 2015"
+        }, {
+            "y": 0.93,
+            "dt": "Monday, November 16, 2015"
+        }, {
+            "y": 1.00,
+            "dt": "Tuesday, November 17, 2015"
+        }, {
+            "y": 1.00,
+            "dt": "Wednesday, November 18, 2015"
+        }, {
+            "y": 0.94,
+            "dt": "Thursday, November 19, 2015"
+        }, {
+            "y": 0.92,
+            "dt": "Friday, November 20, 2015"
+        }, {
+            "y": 0.96,
+            "dt": "Saturday, November 21, 2015"
+        }, {
+            "y": 0.97,
+            "dt": "Sunday, November 22, 2015"
+        }, {
+            "y": 0.92,
+            "dt": "Monday, November 23, 2015"
+        }, {
+            "y": 0.91,
+            "dt": "Tuesday, November 24, 2015"
+        }, {
+            "y": 0.87,
+            "dt": "Wednesday, November 25, 2015"
+        }, {
+            "y": 0.86,
+            "dt": "Thursday, November 26, 2015"
+        }, {
+            "y": 0.88,
+            "dt": "Friday, November 27, 2015"
+        }, {
+            "y": 0.91,
+            "dt": "Saturday, November 28, 2015"
+        }, {
+            "y": 0.87,
+            "dt": "Sunday, November 29, 2015"
+        }, {
+            "y": 0.88,
+            "dt": "Monday, November 30, 2015"
+        }, {
+            "y": 0.87,
+            "dt": "Tuesday, December 1, 2015"
+        }, {
+            "y": 0.83,
+            "dt": "Thursday, December 3, 2015"
+        }, {
+            "y": 0.82,
+            "dt": "Wednesday, December 2, 2015"
+        }, {
+            "y": 0.84,
+            "dt": "Friday, December 4, 2015"
+        }, {
+            "y": 0.87,
+            "dt": "Saturday, December 5, 2015"
+        }, {
+            "y": 0.83,
+            "dt": "Sunday, December 6, 2015"
+        }, {
+            "y": 0.79,
+            "dt": "Monday, December 7, 2015"
+        }, {
+            "y": 0.81,
+            "dt": "Tuesday, December 8, 2015"
+        }, {
+            "y": 0.81,
+            "dt": "Wednesday, December 9, 2015"
+        }, {
+            "y": 0.84,
+            "dt": "Thursday, December 10, 2015"
+        }, {
+            "y": 0.90,
+            "dt": "Friday, December 11, 2015"
+        }, {
+            "y": 0.96,
+            "dt": "Saturday, December 12, 2015"
+        }, {
+            "y": 0.92,
+            "dt": "Sunday, December 13, 2015"
+        }, {
+            "y": 0.99,
+            "dt": "Monday, December 14, 2015"
+        }, {
+            "y": 1.00,
+            "dt": "Tuesday, December 15, 2015"
+        }, {
+            "y": 0.80,
+            "dt": "Wednesday, December 16, 2015"
+        }, {
+            "y": 0.94,
+            "dt": "Thursday, December 17, 2015"
+        }, {
+            "y": 0.90,
+            "dt": "Friday, December 18, 2015"
+        }, {
+            "y": 0.89,
+            "dt": "Saturday, December 19, 2015"
+        }, {
+            "y": 1.07,
+            "dt": "Sunday, December 20, 2015"
+        }, {
+            "y": 0.91,
+            "dt": "Monday, December 21, 2015"
+        }, {
+            "y": 0.88,
+            "dt": "Tuesday, December 22, 2015"
+        }, {
+            "y": 0.87,
+            "dt": "Wednesday, December 23, 2015"
+        }, {
+            "y": 0.87,
+            "dt": "Thursday, December 24, 2015"
+        }, {
+            "y": 0.88,
+            "dt": "Friday, December 25, 2015"
+        }, {
+            "y": 0.85,
+            "dt": "Saturday, December 26, 2015"
+        }, {
+            "y": 0.92,
+            "dt": "Sunday, December 27, 2015"
+        }, {
+            "y": 0.87,
+            "dt": "Monday, December 28, 2015"
+        }, {
+            "y": 0.86,
+            "dt": "Tuesday, December 29, 2015"
+        }, {
+            "y": 0.89,
+            "dt": "Wednesday, December 30, 2015"
+        }, {
+            "y": 0.95,
+            "dt": "Thursday, December 31, 2015"
+        }, {
+            "y": 0.92,
+            "dt": "Friday, January 1, 2016"
+        }, {
+            "y": 0.95,
+            "dt": "Saturday, January 2, 2016"
+        }, {
+            "y": 0.96,
+            "dt": "Sunday, January 3, 2016"
+        }, {
+            "y": 0.95,
+            "dt": "Monday, January 4, 2016"
+        }, {
+            "y": 0.94,
+            "dt": "Tuesday, January 5, 2016"
+        }, {
+            "y": 0.95,
+            "dt": "Wednesday, January 6, 2016"
+        }, {
+            "y": 0.94,
+            "dt": "Thursday, January 7, 2016"
+        }, {
+            "y": 0.99,
+            "dt": "Friday, January 8, 2016"
+        }, {
+            "y": 0.99,
+            "dt": "Saturday, January 9, 2016"
+        }, {
+            "y": 1.00,
+            "dt": "Sunday, January 10, 2016"
+        }, {
+            "y": 1.08,
+            "dt": "Monday, January 11, 2016"
+        }, {
+            "y": 1.22,
+            "dt": "Tuesday, January 12, 2016"
+        }, {
+            "y": 1.14,
+            "dt": "Wednesday, January 13, 2016"
+        }, {
+            "y": 1.16,
+            "dt": "Thursday, January 14, 2016"
+        }, {
+            "y": 1.20,
+            "dt": "Friday, January 15, 2016"
+        }, {
+            "y": 1.22,
+            "dt": "Saturday, January 16, 2016"
+        }, {
+            "y": 1.31,
+            "dt": "Sunday, January 17, 2016"
+        }, {
+            "y": 1.47,
+            "dt": "Monday, January 18, 2016"
+        }, {
+            "y": 1.22,
+            "dt": "Tuesday, January 19, 2016"
+        }, {
+            "y": 1.54,
+            "dt": "Wednesday, January 20, 2016"
+        }, {
+            "y": 1.54,
+            "dt": "Thursday, January 21, 2016"
+        }, {
+            "y": 1.52,
+            "dt": "Friday, January 22, 2016"
+        }, {
+            "y": 2.03,
+            "dt": "Saturday, January 23, 2016"
+        }, {
+            "y": 2.10,
+            "dt": "Sunday, January 24, 2016"
+        }, {
+            "y": 2.50,
+            "dt": "Monday, January 25, 2016"
+        }, {
+            "y": 2.30,
+            "dt": "Tuesday, January 26, 2016"
+        }, {
+            "y": 2.42,
+            "dt": "Wednesday, January 27, 2016"
+        }, {
+            "y": 2.55,
+            "dt": "Thursday, January 28, 2016"
+        }, {
+            "y": 2.41,
+            "dt": "Friday, January 29, 2016"
+        }, {
+            "y": 2.44,
+            "dt": "Saturday, January 30, 2016"
+        }, {
+            "y": 2.20,
+            "dt": "Sunday, January 31, 2016"
+        }, {
+            "y": 2.17,
+            "dt": "Monday, February 1, 2016"
+        }, {
+            "y": 2.45,
+            "dt": "Tuesday, February 2, 2016"
+        }, {
+            "y": 2.53,
+            "dt": "Wednesday, February 3, 2016"
+        }, {
+            "y": 2.57,
+            "dt": "Thursday, February 4, 2016"
+        }, {
+            "y": 2.56,
+            "dt": "Friday, February 5, 2016"
+        }, {
+            "y": 2.53,
+            "dt": "Saturday, February 6, 2016"
+        }, {
+            "y": 3.00,
+            "dt": "Sunday, February 7, 2016"
+        }, {
+            "y": 3.16,
+            "dt": "Monday, February 8, 2016"
+        }, {
+            "y": 3.76,
+            "dt": "Tuesday, February 9, 2016"
+        }, {
+            "y": 4.35,
+            "dt": "Wednesday, February 10, 2016"
+        }, {
+            "y": 6.38,
+            "dt": "Thursday, February 11, 2016"
+        }, {
+            "y": 5.22,
+            "dt": "Saturday, February 13, 2016"
+        }, {
+            "y": 5.27,
+            "dt": "Friday, February 12, 2016"
+        }, {
+            "y": 5.20,
+            "dt": "Sunday, February 14, 2016"
+        }, {
+            "y": 5.22,
+            "dt": "Monday, February 15, 2016"
+        }, {
+            "y": 4.25,
+            "dt": "Tuesday, February 16, 2016"
+        }, {
+            "y": 3.86,
+            "dt": "Wednesday, February 17, 2016"
+        }, {
+            "y": 4.36,
+            "dt": "Thursday, February 18, 2016"
+        }, {
+            "y": 4.45,
+            "dt": "Friday, February 19, 2016"
+        }, {
+            "y": 4.37,
+            "dt": "Saturday, February 20, 2016"
+        }, {
+            "y": 4.63,
+            "dt": "Sunday, February 21, 2016"
+        }, {
+            "y": 5.60,
+            "dt": "Monday, February 22, 2016"
+        }, {
+            "y": 5.70,
+            "dt": "Tuesday, February 23, 2016"
+        }, {
+            "y": 6.23,
+            "dt": "Wednesday, February 24, 2016"
+        }, {
+            "y": 5.93,
+            "dt": "Thursday, February 25, 2016"
+        }, {
+            "y": 6.03,
+            "dt": "Friday, February 26, 2016"
+        }, {
+            "y": 6.31,
+            "dt": "Saturday, February 27, 2016"
+        }, {
+            "y": 6.50,
+            "dt": "Sunday, February 28, 2016"
+        }, {
+            "y": 6.35,
+            "dt": "Monday, February 29, 2016"
+        }, {
+            "y": 7.59,
+            "dt": "Tuesday, March 1, 2016"
+        }, {
+            "y": 8.70,
+            "dt": "Wednesday, March 2, 2016"
+        }, {
+            "y": 9.35,
+            "dt": "Thursday, March 3, 2016"
+        }, {
+            "y": 9.96,
+            "dt": "Friday, March 4, 2016"
+        }, {
+            "y": 11.00,
+            "dt": "Saturday, March 5, 2016"
+        }, {
+            "y": 10.98,
+            "dt": "Sunday, March 6, 2016"
+        }, {
+            "y": 9.50,
+            "dt": "Monday, March 7, 2016"
+        }, {
+            "y": 9.88,
+            "dt": "Tuesday, March 8, 2016"
+        }, {
+            "y": 11.55,
+            "dt": "Wednesday, March 9, 2016"
+        }, {
+            "y": 11.11,
+            "dt": "Thursday, March 10, 2016"
+        }, {
+            "y": 11.25,
+            "dt": "Friday, March 11, 2016"
+        }, {
+            "y": 13.25,
+            "dt": "Saturday, March 12, 2016"
+        }, {
+            "y": 15.00,
+            "dt": "Sunday, March 13, 2016"
+        }, {
+            "y": 12.50,
+            "dt": "Monday, March 14, 2016"
+        }, {
+            "y": 13.09,
+            "dt": "Tuesday, March 15, 2016"
+        }, {
+            "y": 12.92,
+            "dt": "Wednesday, March 16, 2016"
+        }, {
+            "y": 11.14,
+            "dt": "Thursday, March 17, 2016"
+        }, {
+            "y": 10.75,
+            "dt": "Friday, March 18, 2016"
+        }, {
+            "y": 10.55,
+            "dt": "Saturday, March 19, 2016"
+        }, {
+            "y": 10.06,
+            "dt": "Sunday, March 20, 2016"
+        }, {
+            "y": 11.97,
+            "dt": "Monday, March 21, 2016"
+        }, {
+            "y": 10.96,
+            "dt": "Tuesday, March 22, 2016"
+        }, {
+            "y": 12.29,
+            "dt": "Wednesday, March 23, 2016"
+        }, {
+            "y": 11.13,
+            "dt": "Thursday, March 24, 2016"
+        }, {
+            "y": 10.69,
+            "dt": "Friday, March 25, 2016"
+        }, {
+            "y": 11.00,
+            "dt": "Saturday, March 26, 2016"
+        }, {
+            "y": 10.50,
+            "dt": "Sunday, March 27, 2016"
+        }, {
+            "y": 11.58,
+            "dt": "Monday, March 28, 2016"
+        }, {
+            "y": 11.73,
+            "dt": "Tuesday, March 29, 2016"
+        }, {
+            "y": 11.88,
+            "dt": "Wednesday, March 30, 2016"
+        }, {
+            "y": 11.41,
+            "dt": "Thursday, March 31, 2016"
+        }, {
+            "y": 11.63,
+            "dt": "Friday, April 1, 2016"
+        }, {
+            "y": 11.61,
+            "dt": "Saturday, April 2, 2016"
+        }, {
+            "y": 11.58,
+            "dt": "Sunday, April 3, 2016"
+        }, {
+            "y": 11.10,
+            "dt": "Monday, April 4, 2016"
+        }, {
+            "y": 10.39,
+            "dt": "Tuesday, April 5, 2016"
+        }, {
+            "y": 10.79,
+            "dt": "Wednesday, April 6, 2016"
+        }, {
+            "y": 10.08,
+            "dt": "Thursday, April 7, 2016"
+        }, {
+            "y": 9.74,
+            "dt": "Friday, April 8, 2016"
+        }, {
+            "y": 9.16,
+            "dt": "Saturday, April 9, 2016"
+        }, {
+            "y": 8.80,
+            "dt": "Sunday, April 10, 2016"
+        }, {
+            "y": 8.72,
+            "dt": "Monday, April 11, 2016"
+        }, {
+            "y": 7.53,
+            "dt": "Tuesday, April 12, 2016"
+        }, {
+            "y": 8.02,
+            "dt": "Wednesday, April 13, 2016"
+        }, {
+            "y": 8.48,
+            "dt": "Thursday, April 14, 2016"
+        }, {
+            "y": 8.22,
+            "dt": "Friday, April 15, 2016"
+        }, {
+            "y": 8.48,
+            "dt": "Saturday, April 16, 2016"
+        }, {
+            "y": 9.45,
+            "dt": "Sunday, April 17, 2016"
+        }, {
+            "y": 8.92,
+            "dt": "Monday, April 18, 2016"
+        }, {
+            "y": 8.77,
+            "dt": "Tuesday, April 19, 2016"
+        }, {
+            "y": 8.54,
+            "dt": "Wednesday, April 20, 2016"
+        }, {
+            "y": 8.15,
+            "dt": "Thursday, April 21, 2016"
+        }, {
+            "y": 7.83,
+            "dt": "Friday, April 22, 2016"
+        }, {
+            "y": 8.31,
+            "dt": "Saturday, April 23, 2016"
+        }, {
+            "y": 8.00,
+            "dt": "Sunday, April 24, 2016"
+        }, {
+            "y": 7.43,
+            "dt": "Monday, April 25, 2016"
+        }, {
+            "y": 7.50,
+            "dt": "Tuesday, April 26, 2016"
+        }, {
+            "y": 7.77,
+            "dt": "Wednesday, April 27, 2016"
+        }, {
+            "y": 7.30,
+            "dt": "Thursday, April 28, 2016"
+        }, {
+            "y": 7.51,
+            "dt": "Friday, April 29, 2016"
+        }, {
+            "y": 8.83,
+            "dt": "Saturday, April 30, 2016"
+        }, {
+            "y": 8.76,
+            "dt": "Sunday, May 1, 2016"
+        }, {
+            "y": 10.03,
+            "dt": "Monday, May 2, 2016"
+        }, {
+            "y": 9.37,
+            "dt": "Tuesday, May 3, 2016"
+        }, {
+            "y": 9.43,
+            "dt": "Wednesday, May 4, 2016"
+        }, {
+            "y": 9.79,
+            "dt": "Thursday, May 5, 2016"
+        }, {
+            "y": 9.27,
+            "dt": "Friday, May 6, 2016"
+        }, {
+            "y": 9.30,
+            "dt": "Saturday, May 7, 2016"
+        }, {
+            "y": 9.44,
+            "dt": "Sunday, May 8, 2016"
+        }, {
+            "y": 9.32,
+            "dt": "Monday, May 9, 2016"
+        }, {
+            "y": 9.39,
+            "dt": "Tuesday, May 10, 2016"
+        }, {
+            "y": 9.97,
+            "dt": "Wednesday, May 11, 2016"
+        }, {
+            "y": 10.10,
+            "dt": "Thursday, May 12, 2016"
+        }, {
+            "y": 10.48,
+            "dt": "Friday, May 13, 2016"
+        }, {
+            "y": 10.14,
+            "dt": "Saturday, May 14, 2016"
+        }, {
+            "y": 9.94,
+            "dt": "Sunday, May 15, 2016"
+        }, {
+            "y": 11.04,
+            "dt": "Monday, May 16, 2016"
+        }, {
+            "y": 12.26,
+            "dt": "Tuesday, May 17, 2016"
+        }, {
+            "y": 13.29,
+            "dt": "Wednesday, May 18, 2016"
+        }, {
+            "y": 14.49,
+            "dt": "Thursday, May 19, 2016"
+        }, {
+            "y": 13.73,
+            "dt": "Friday, May 20, 2016"
+        }, {
+            "y": 13.95,
+            "dt": "Saturday, May 21, 2016"
+        }, {
+            "y": 14.21,
+            "dt": "Sunday, May 22, 2016"
+        }, {
+            "y": 13.45,
+            "dt": "Monday, May 23, 2016"
+        }, {
+            "y": 12.62,
+            "dt": "Tuesday, May 24, 2016"
+        }, {
+            "y": 12.53,
+            "dt": "Wednesday, May 25, 2016"
+        }, {
+            "y": 12.37,
+            "dt": "Thursday, May 26, 2016"
+        }, {
+            "y": 11.56,
+            "dt": "Saturday, May 28, 2016"
+        }, {
+            "y": 11.11,
+            "dt": "Friday, May 27, 2016"
+        }, {
+            "y": 12.28,
+            "dt": "Sunday, May 29, 2016"
+        }, {
+            "y": 12.48,
+            "dt": "Monday, May 30, 2016"
+        }, {
+            "y": 13.85,
+            "dt": "Tuesday, May 31, 2016"
+        }, {
+            "y": 13.83,
+            "dt": "Wednesday, June 1, 2016"
+        }, {
+            "y": 13.78,
+            "dt": "Thursday, June 2, 2016"
+        }, {
+            "y": 13.78,
+            "dt": "Friday, June 3, 2016"
+        }, {
+            "y": 13.66,
+            "dt": "Saturday, June 4, 2016"
+        }, {
+            "y": 13.85,
+            "dt": "Sunday, June 5, 2016"
+        }, {
+            "y": 13.96,
+            "dt": "Monday, June 6, 2016"
+        }, {
+            "y": 14.41,
+            "dt": "Tuesday, June 7, 2016"
+        }, {
+            "y": 14.44,
+            "dt": "Wednesday, June 8, 2016"
+        }, {
+            "y": 14.49,
+            "dt": "Thursday, June 9, 2016"
+        }, {
+            "y": 13.97,
+            "dt": "Friday, June 10, 2016"
+        }, {
+            "y": 14.01,
+            "dt": "Saturday, June 11, 2016"
+        }, {
+            "y": 15.57,
+            "dt": "Sunday, June 12, 2016"
+        }, {
+            "y": 17.55,
+            "dt": "Monday, June 13, 2016"
+        }, {
+            "y": 18.70,
+            "dt": "Tuesday, June 14, 2016"
+        }, {
+            "y": 18.30,
+            "dt": "Wednesday, June 15, 2016"
+        }, {
+            "y": 20.61,
+            "dt": "Thursday, June 16, 2016"
+        }, {
+            "y": 15.49,
+            "dt": "Friday, June 17, 2016"
+        }, {
+            "y": 11.36,
+            "dt": "Saturday, June 18, 2016"
+        }, {
+            "y": 12.33,
+            "dt": "Sunday, June 19, 2016"
+        }, {
+            "y": 11.70,
+            "dt": "Monday, June 20, 2016"
+        }, {
+            "y": 12.71,
+            "dt": "Tuesday, June 21, 2016"
+        }, {
+            "y": 13.21,
+            "dt": "Wednesday, June 22, 2016"
+        }, {
+            "y": 14.25,
+            "dt": "Friday, June 24, 2016"
+        }, {
+            "y": 13.58,
+            "dt": "Thursday, June 23, 2016"
+        }, {
+            "y": 14.28,
+            "dt": "Saturday, June 25, 2016"
+        }, {
+            "y": 13.82,
+            "dt": "Sunday, June 26, 2016"
+        }, {
+            "y": 14.04,
+            "dt": "Monday, June 27, 2016"
+        }, {
+            "y": 12.15,
+            "dt": "Tuesday, June 28, 2016"
+        }, {
+            "y": 12.76,
+            "dt": "Wednesday, June 29, 2016"
+        }, {
+            "y": 12.40,
+            "dt": "Thursday, June 30, 2016"
+        }, {
+            "y": 12.23,
+            "dt": "Friday, July 1, 2016"
+        }, {
+            "y": 12.04,
+            "dt": "Saturday, July 2, 2016"
+        }, {
+            "y": 11.85,
+            "dt": "Sunday, July 3, 2016"
+        }, {
+            "y": 11.34,
+            "dt": "Monday, July 4, 2016"
+        }, {
+            "y": 10.45,
+            "dt": "Tuesday, July 5, 2016"
+        }, {
+            "y": 10.51,
+            "dt": "Wednesday, July 6, 2016"
+        }, {
+            "y": 10.07,
+            "dt": "Thursday, July 7, 2016"
+        }, {
+            "y": 11.30,
+            "dt": "Friday, July 8, 2016"
+        }, {
+            "y": 10.92,
+            "dt": "Saturday, July 9, 2016"
+        }, {
+            "y": 10.97,
+            "dt": "Sunday, July 10, 2016"
+        }, {
+            "y": 10.58,
+            "dt": "Monday, July 11, 2016"
+        }, {
+            "y": 10.54,
+            "dt": "Tuesday, July 12, 2016"
+        }, {
+            "y": 10.44,
+            "dt": "Wednesday, July 13, 2016"
+        }, {
+            "y": 11.55,
+            "dt": "Thursday, July 14, 2016"
+        }, {
+            "y": 11.88,
+            "dt": "Friday, July 15, 2016"
+        }, {
+            "y": 11.59,
+            "dt": "Saturday, July 16, 2016"
+        }, {
+            "y": 11.19,
+            "dt": "Sunday, July 17, 2016"
+        }, {
+            "y": 11.03,
+            "dt": "Monday, July 18, 2016"
+        }, {
+            "y": 11.63,
+            "dt": "Tuesday, July 19, 2016"
+        }, {
+            "y": 12.54,
+            "dt": "Wednesday, July 20, 2016"
+        }, {
+            "y": 12.66,
+            "dt": "Thursday, July 21, 2016"
+        }, {
+            "y": 14.82,
+            "dt": "Friday, July 22, 2016"
+        }, {
+            "y": 14.40,
+            "dt": "Saturday, July 23, 2016"
+        }, {
+            "y": 12.63,
+            "dt": "Sunday, July 24, 2016"
+        }, {
+            "y": 13.84,
+            "dt": "Monday, July 25, 2016"
+        }, {
+            "y": 12.08,
+            "dt": "Tuesday, July 26, 2016"
+        }, {
+            "y": 13.05,
+            "dt": "Wednesday, July 27, 2016"
+        }, {
+            "y": 12.87,
+            "dt": "Thursday, July 28, 2016"
+        }, {
+            "y": 12.87,
+            "dt": "Friday, July 29, 2016"
+        }, {
+            "y": 12.57,
+            "dt": "Saturday, July 30, 2016"
+        }, {
+            "y": 11.86,
+            "dt": "Sunday, July 31, 2016"
+        }, {
+            "y": 11.04,
+            "dt": "Monday, August 1, 2016"
+        }, {
+            "y": 8.30,
+            "dt": "Tuesday, August 2, 2016"
+        }, {
+            "y": 10.42,
+            "dt": "Wednesday, August 3, 2016"
+        }, {
+            "y": 11.21,
+            "dt": "Thursday, August 4, 2016"
+        }, {
+            "y": 11.05,
+            "dt": "Friday, August 5, 2016"
+        }, {
+            "y": 10.95,
+            "dt": "Saturday, August 6, 2016"
+        }, {
+            "y": 10.98,
+            "dt": "Sunday, August 7, 2016"
+        }, {
+            "y": 11.29,
+            "dt": "Monday, August 8, 2016"
+        }, {
+            "y": 12.22,
+            "dt": "Wednesday, August 10, 2016"
+        }, {
+            "y": 12.22,
+            "dt": "Tuesday, August 9, 2016"
+        }, {
+            "y": 11.68,
+            "dt": "Thursday, August 11, 2016"
+        }, {
+            "y": 11.78,
+            "dt": "Friday, August 12, 2016"
+        }, {
+            "y": 11.56,
+            "dt": "Saturday, August 13, 2016"
+        }, {
+            "y": 11.21,
+            "dt": "Sunday, August 14, 2016"
+        }, {
+            "y": 11.21,
+            "dt": "Monday, August 15, 2016"
+        }, {
+            "y": 11.17,
+            "dt": "Tuesday, August 16, 2016"
+        }, {
+            "y": 10.77,
+            "dt": "Wednesday, August 17, 2016"
+        }, {
+            "y": 10.77,
+            "dt": "Thursday, August 18, 2016"
+        }, {
+            "y": 10.71,
+            "dt": "Friday, August 19, 2016"
+        }, {
+            "y": 11.28,
+            "dt": "Saturday, August 20, 2016"
+        }, {
+            "y": 11.14,
+            "dt": "Sunday, August 21, 2016"
+        }, {
+            "y": 11.07,
+            "dt": "Monday, August 22, 2016"
+        }, {
+            "y": 11.01,
+            "dt": "Tuesday, August 23, 2016"
+        }, {
+            "y": 11.01,
+            "dt": "Wednesday, August 24, 2016"
+        }, {
+            "y": 11.35,
+            "dt": "Thursday, August 25, 2016"
+        }, {
+            "y": 11.26,
+            "dt": "Friday, August 26, 2016"
+        }, {
+            "y": 11.19,
+            "dt": "Saturday, August 27, 2016"
+        }, {
+            "y": 10.99,
+            "dt": "Sunday, August 28, 2016"
+        }, {
+            "y": 10.95,
+            "dt": "Monday, August 29, 2016"
+        }, {
+            "y": 11.21,
+            "dt": "Tuesday, August 30, 2016"
+        }, {
+            "y": 11.55,
+            "dt": "Wednesday, August 31, 2016"
+        }, {
+            "y": 12.21,
+            "dt": "Thursday, September 1, 2016"
+        }, {
+            "y": 12.08,
+            "dt": "Friday, September 2, 2016"
+        }, {
+            "y": 11.85,
+            "dt": "Saturday, September 3, 2016"
+        }, {
+            "y": 11.71,
+            "dt": "Sunday, September 4, 2016"
+        }, {
+            "y": 11.75,
+            "dt": "Monday, September 5, 2016"
+        }, {
+            "y": 11.70,
+            "dt": "Tuesday, September 6, 2016"
+        }, {
+            "y": 11.59,
+            "dt": "Wednesday, September 7, 2016"
+        }, {
+            "y": 11.39,
+            "dt": "Thursday, September 8, 2016"
+        }, {
+            "y": 11.72,
+            "dt": "Friday, September 9, 2016"
+        }, {
+            "y": 12.05,
+            "dt": "Saturday, September 10, 2016"
+        }, {
+            "y": 11.64,
+            "dt": "Sunday, September 11, 2016"
+        }, {
+            "y": 11.89,
+            "dt": "Monday, September 12, 2016"
+        }, {
+            "y": 11.92,
+            "dt": "Tuesday, September 13, 2016"
+        }, {
+            "y": 11.97,
+            "dt": "Wednesday, September 14, 2016"
+        }, {
+            "y": 11.96,
+            "dt": "Thursday, September 15, 2016"
+        }, {
+            "y": 12.61,
+            "dt": "Friday, September 16, 2016"
+        }, {
+            "y": 12.83,
+            "dt": "Saturday, September 17, 2016"
+        }, {
+            "y": 12.39,
+            "dt": "Sunday, September 18, 2016"
+        }, {
+            "y": 12.93,
+            "dt": "Monday, September 19, 2016"
+        }, {
+            "y": 14.72,
+            "dt": "Tuesday, September 20, 2016"
+        }, {
+            "y": 13.72,
+            "dt": "Wednesday, September 21, 2016"
+        }, {
+            "y": 13.11,
+            "dt": "Thursday, September 22, 2016"
+        }, {
+            "y": 13.36,
+            "dt": "Friday, September 23, 2016"
+        }, {
+            "y": 12.91,
+            "dt": "Saturday, September 24, 2016"
+        }, {
+            "y": 13.05,
+            "dt": "Sunday, September 25, 2016"
+        }, {
+            "y": 12.89,
+            "dt": "Monday, September 26, 2016"
+        }, {
+            "y": 13.09,
+            "dt": "Tuesday, September 27, 2016"
+        }, {
+            "y": 13.17,
+            "dt": "Thursday, September 29, 2016"
+        }, {
+            "y": 13.30,
+            "dt": "Wednesday, September 28, 2016"
+        }, {
+            "y": 13.24,
+            "dt": "Friday, September 30, 2016"
+        }, {
+            "y": 13.21,
+            "dt": "Saturday, October 1, 2016"
+        }, {
+            "y": 13.23,
+            "dt": "Sunday, October 2, 2016"
+        }, {
+            "y": 13.45,
+            "dt": "Monday, October 3, 2016"
+        }, {
+            "y": 13.32,
+            "dt": "Tuesday, October 4, 2016"
+        }, {
+            "y": 13.09,
+            "dt": "Wednesday, October 5, 2016"
+        }, {
+            "y": 12.87,
+            "dt": "Thursday, October 6, 2016"
+        }, {
+            "y": 12.68,
+            "dt": "Friday, October 7, 2016"
+        }, {
+            "y": 12.24,
+            "dt": "Saturday, October 8, 2016"
+        }, {
+            "y": 12.06,
+            "dt": "Sunday, October 9, 2016"
+        }, {
+            "y": 11.74,
+            "dt": "Monday, October 10, 2016"
+        }, {
+            "y": 11.75,
+            "dt": "Tuesday, October 11, 2016"
+        }, {
+            "y": 11.77,
+            "dt": "Wednesday, October 12, 2016"
+        }, {
+            "y": 12.02,
+            "dt": "Thursday, October 13, 2016"
+        }, {
+            "y": 11.90,
+            "dt": "Friday, October 14, 2016"
+        }, {
+            "y": 11.96,
+            "dt": "Saturday, October 15, 2016"
+        }, {
+            "y": 11.93,
+            "dt": "Sunday, October 16, 2016"
+        }, {
+            "y": 11.98,
+            "dt": "Monday, October 17, 2016"
+        }, {
+            "y": 12.50,
+            "dt": "Tuesday, October 18, 2016"
+        }, {
+            "y": 11.98,
+            "dt": "Wednesday, October 19, 2016"
+        }, {
+            "y": 12.05,
+            "dt": "Thursday, October 20, 2016"
+        }, {
+            "y": 12.07,
+            "dt": "Friday, October 21, 2016"
+        }, {
+            "y": 12.06,
+            "dt": "Saturday, October 22, 2016"
+        }, {
+            "y": 11.95,
+            "dt": "Sunday, October 23, 2016"
+        }, {
+            "y": 11.93,
+            "dt": "Monday, October 24, 2016"
+        }, {
+            "y": 11.38,
+            "dt": "Tuesday, October 25, 2016"
+        }, {
+            "y": 11.50,
+            "dt": "Wednesday, October 26, 2016"
+        }, {
+            "y": 11.43,
+            "dt": "Thursday, October 27, 2016"
+        }, {
+            "y": 11.08,
+            "dt": "Friday, October 28, 2016"
+        }, {
+            "y": 10.39,
+            "dt": "Saturday, October 29, 2016"
+        }, {
+            "y": 11.22,
+            "dt": "Sunday, October 30, 2016"
+        }, {
+            "y": 10.91,
+            "dt": "Monday, October 31, 2016"
+        }, {
+            "y": 10.75,
+            "dt": "Tuesday, November 1, 2016"
+        }, {
+            "y": 10.82,
+            "dt": "Wednesday, November 2, 2016"
+        }, {
+            "y": 10.86,
+            "dt": "Thursday, November 3, 2016"
+        }, {
+            "y": 11.13,
+            "dt": "Friday, November 4, 2016"
+        }, {
+            "y": 11.11,
+            "dt": "Saturday, November 5, 2016"
+        }, {
+            "y": 10.97,
+            "dt": "Sunday, November 6, 2016"
+        }, {
+            "y": 10.90,
+            "dt": "Monday, November 7, 2016"
+        }, {
+            "y": 10.86,
+            "dt": "Tuesday, November 8, 2016"
+        }, {
+            "y": 10.64,
+            "dt": "Wednesday, November 9, 2016"
+        }, {
+            "y": 10.52,
+            "dt": "Thursday, November 10, 2016"
+        }, {
+            "y": 10.29,
+            "dt": "Friday, November 11, 2016"
+        }, {
+            "y": 9.96,
+            "dt": "Saturday, November 12, 2016"
+        }, {
+            "y": 10.13,
+            "dt": "Sunday, November 13, 2016"
+        }, {
+            "y": 10.22,
+            "dt": "Tuesday, November 15, 2016"
+        }, {
+            "y": 10.00,
+            "dt": "Monday, November 14, 2016"
+        }, {
+            "y": 10.01,
+            "dt": "Wednesday, November 16, 2016"
+        }, {
+            "y": 9.95,
+            "dt": "Thursday, November 17, 2016"
+        }, {
+            "y": 9.53,
+            "dt": "Friday, November 18, 2016"
+        }, {
+            "y": 9.70,
+            "dt": "Saturday, November 19, 2016"
+        }, {
+            "y": 9.57,
+            "dt": "Sunday, November 20, 2016"
+        }, {
+            "y": 9.56,
+            "dt": "Monday, November 21, 2016"
+        }, {
+            "y": 9.84,
+            "dt": "Tuesday, November 22, 2016"
+        }, {
+            "y": 9.78,
+            "dt": "Wednesday, November 23, 2016"
+        }, {
+            "y": 9.22,
+            "dt": "Thursday, November 24, 2016"
+        }, {
+            "y": 9.39,
+            "dt": "Friday, November 25, 2016"
+        }, {
+            "y": 9.34,
+            "dt": "Saturday, November 26, 2016"
+        }, {
+            "y": 8.91,
+            "dt": "Sunday, November 27, 2016"
+        }, {
+            "y": 8.66,
+            "dt": "Monday, November 28, 2016"
+        }, {
+            "y": 8.18,
+            "dt": "Tuesday, November 29, 2016"
+        }, {
+            "y": 8.59,
+            "dt": "Wednesday, November 30, 2016"
+        }, {
+            "y": 8.44,
+            "dt": "Thursday, December 1, 2016"
+        }, {
+            "y": 7.65,
+            "dt": "Friday, December 2, 2016"
+        }, {
+            "y": 7.90,
+            "dt": "Saturday, December 3, 2016"
+        }, {
+            "y": 7.54,
+            "dt": "Sunday, December 4, 2016"
+        }, {
+            "y": 6.69,
+            "dt": "Monday, December 5, 2016"
+        }, {
+            "y": 7.61,
+            "dt": "Tuesday, December 6, 2016"
+        }, {
+            "y": 8.35,
+            "dt": "Wednesday, December 7, 2016"
+        }, {
+            "y": 8.30,
+            "dt": "Thursday, December 8, 2016"
+        }, {
+            "y": 8.52,
+            "dt": "Friday, December 9, 2016"
+        }, {
+            "y": 8.09,
+            "dt": "Saturday, December 10, 2016"
+        }, {
+            "y": 8.20,
+            "dt": "Sunday, December 11, 2016"
+        }, {
+            "y": 8.45,
+            "dt": "Monday, December 12, 2016"
+        }, {
+            "y": 8.40,
+            "dt": "Tuesday, December 13, 2016"
+        }, {
+            "y": 8.23,
+            "dt": "Wednesday, December 14, 2016"
+        }, {
+            "y": 7.76,
+            "dt": "Thursday, December 15, 2016"
+        }, {
+            "y": 7.85,
+            "dt": "Friday, December 16, 2016"
+        }, {
+            "y": 7.66,
+            "dt": "Saturday, December 17, 2016"
+        }, {
+            "y": 7.89,
+            "dt": "Sunday, December 18, 2016"
+        }, {
+            "y": 7.61,
+            "dt": "Monday, December 19, 2016"
+        }, {
+            "y": 7.59,
+            "dt": "Tuesday, December 20, 2016"
+        }, {
+            "y": 7.87,
+            "dt": "Wednesday, December 21, 2016"
+        }, {
+            "y": 7.64,
+            "dt": "Thursday, December 22, 2016"
+        }, {
+            "y": 7.16,
+            "dt": "Friday, December 23, 2016"
+        }, {
+            "y": 7.23,
+            "dt": "Saturday, December 24, 2016"
+        }, {
+            "y": 7.19,
+            "dt": "Sunday, December 25, 2016"
+        }, {
+            "y": 7.21,
+            "dt": "Monday, December 26, 2016"
+        }, {
+            "y": 7.15,
+            "dt": "Tuesday, December 27, 2016"
+        }, {
+            "y": 7.57,
+            "dt": "Wednesday, December 28, 2016"
+        }, {
+            "y": 8.21,
+            "dt": "Thursday, December 29, 2016"
+        }, {
+            "y": 8.16,
+            "dt": "Friday, December 30, 2016"
+        }, {
+            "y": 8.05,
+            "dt": "Saturday, December 31, 2016"
+        }, {
+            "y": 8.14,
+            "dt": "Sunday, January 1, 2017"
+        }, {
+            "y": 8.33,
+            "dt": "Monday, January 2, 2017"
+        }, {
+            "y": 9.59,
+            "dt": "Tuesday, January 3, 2017"
+        }, {
+            "y": 10.88,
+            "dt": "Wednesday, January 4, 2017"
+        }, {
+            "y": 10.20,
+            "dt": "Thursday, January 5, 2017"
+        }, {
+            "y": 10.07,
+            "dt": "Friday, January 6, 2017"
+        }, {
+            "y": 9.78,
+            "dt": "Saturday, January 7, 2017"
+        }, {
+            "y": 10.27,
+            "dt": "Sunday, January 8, 2017"
+        }, {
+            "y": 10.20,
+            "dt": "Monday, January 9, 2017"
+        }, {
+            "y": 10.55,
+            "dt": "Tuesday, January 10, 2017"
+        }, {
+            "y": 9.83,
+            "dt": "Wednesday, January 11, 2017"
+        }, {
+            "y": 9.81,
+            "dt": "Thursday, January 12, 2017"
+        }, {
+            "y": 9.78,
+            "dt": "Friday, January 13, 2017"
+        }, {
+            "y": 9.78,
+            "dt": "Saturday, January 14, 2017"
+        }, {
+            "y": 9.88,
+            "dt": "Sunday, January 15, 2017"
+        }, {
+            "y": 9.59,
+            "dt": "Monday, January 16, 2017"
+        }, {
+            "y": 10.14,
+            "dt": "Tuesday, January 17, 2017"
+        }, {
+            "y": 10.19,
+            "dt": "Wednesday, January 18, 2017"
+        }, {
+            "y": 10.43,
+            "dt": "Thursday, January 19, 2017"
+        }, {
+            "y": 10.60,
+            "dt": "Friday, January 20, 2017"
+        }, {
+            "y": 10.91,
+            "dt": "Saturday, January 21, 2017"
+        }, {
+            "y": 10.71,
+            "dt": "Sunday, January 22, 2017"
+        }, {
+            "y": 10.78,
+            "dt": "Monday, January 23, 2017"
+        }, {
+            "y": 10.51,
+            "dt": "Tuesday, January 24, 2017"
+        }, {
+            "y": 10.51,
+            "dt": "Wednesday, January 25, 2017"
+        }, {
+            "y": 10.65,
+            "dt": "Thursday, January 26, 2017"
+        }, {
+            "y": 10.51,
+            "dt": "Friday, January 27, 2017"
+        }, {
+            "y": 10.54,
+            "dt": "Saturday, January 28, 2017"
+        }, {
+            "y": 10.47,
+            "dt": "Sunday, January 29, 2017"
+        }, {
+            "y": 10.62,
+            "dt": "Monday, January 30, 2017"
+        }, {
+            "y": 10.71,
+            "dt": "Tuesday, January 31, 2017"
+        }, {
+            "y": 10.71,
+            "dt": "Wednesday, February 1, 2017"
+        }, {
+            "y": 10.78,
+            "dt": "Thursday, February 2, 2017"
+        }, {
+            "y": 10.95,
+            "dt": "Friday, February 3, 2017"
+        }, {
+            "y": 11.32,
+            "dt": "Saturday, February 4, 2017"
+        }, {
+            "y": 11.22,
+            "dt": "Sunday, February 5, 2017"
+        }, {
+            "y": 11.32,
+            "dt": "Monday, February 6, 2017"
+        }, {
+            "y": 11.45,
+            "dt": "Tuesday, February 7, 2017"
+        }, {
+            "y": 11.39,
+            "dt": "Wednesday, February 8, 2017"
+        }, {
+            "y": 10.94,
+            "dt": "Thursday, February 9, 2017"
+        }, {
+            "y": 11.34,
+            "dt": "Friday, February 10, 2017"
+        }, {
+            "y": 11.43,
+            "dt": "Saturday, February 11, 2017"
+        }, {
+            "y": 11.42,
+            "dt": "Sunday, February 12, 2017"
+        }, {
+            "y": 11.39,
+            "dt": "Monday, February 13, 2017"
+        }, {
+            "y": 13.00,
+            "dt": "Tuesday, February 14, 2017"
+        }, {
+            "y": 12.97,
+            "dt": "Wednesday, February 15, 2017"
+        }, {
+            "y": 12.95,
+            "dt": "Thursday, February 16, 2017"
+        }, {
+            "y": 12.72,
+            "dt": "Friday, February 17, 2017"
+        }, {
+            "y": 12.83,
+            "dt": "Saturday, February 18, 2017"
+        }, {
+            "y": 12.82,
+            "dt": "Sunday, February 19, 2017"
+        }, {
+            "y": 12.52,
+            "dt": "Monday, February 20, 2017"
+        }, {
+            "y": 12.77,
+            "dt": "Tuesday, February 21, 2017"
+        }, {
+            "y": 12.69,
+            "dt": "Wednesday, February 22, 2017"
+        }, {
+            "y": 13.13,
+            "dt": "Thursday, February 23, 2017"
+        }, {
+            "y": 13.11,
+            "dt": "Friday, February 24, 2017"
+        }, {
+            "y": 13.57,
+            "dt": "Saturday, February 25, 2017"
+        }, {
+            "y": 14.59,
+            "dt": "Sunday, February 26, 2017"
+        }, {
+            "y": 15.55,
+            "dt": "Monday, February 27, 2017"
+        }, {
+            "y": 16.07,
+            "dt": "Tuesday, February 28, 2017"
+        }, {
+            "y": 17.55,
+            "dt": "Wednesday, March 1, 2017"
+        }, {
+            "y": 19.08,
+            "dt": "Thursday, March 2, 2017"
+        }, {
+            "y": 19.48,
+            "dt": "Friday, March 3, 2017"
+        }, {
+            "y": 18.61,
+            "dt": "Saturday, March 4, 2017"
+        }, {
+            "y": 19.22,
+            "dt": "Sunday, March 5, 2017"
+        }, {
+            "y": 19.75,
+            "dt": "Monday, March 6, 2017"
+        }, {
+            "y": 18.91,
+            "dt": "Tuesday, March 7, 2017"
+        }, {
+            "y": 16.54,
+            "dt": "Wednesday, March 8, 2017"
+        }, {
+            "y": 17.71,
+            "dt": "Thursday, March 9, 2017"
+        }, {
+            "y": 19.13,
+            "dt": "Friday, March 10, 2017"
+        }, {
+            "y": 21.45,
+            "dt": "Saturday, March 11, 2017"
+        }, {
+            "y": 23.31,
+            "dt": "Sunday, March 12, 2017"
+        }, {
+            "y": 28.45,
+            "dt": "Monday, March 13, 2017"
+        }, {
+            "y": 28.58,
+            "dt": "Tuesday, March 14, 2017"
+        }, {
+            "y": 35.18,
+            "dt": "Wednesday, March 15, 2017"
+        }, {
+            "y": 45.51,
+            "dt": "Thursday, March 16, 2017"
+        }, {
+            "y": 44.48,
+            "dt": "Friday, March 17, 2017"
+        }, {
+            "y": 34.00,
+            "dt": "Saturday, March 18, 2017"
+        }, {
+            "y": 43.12,
+            "dt": "Sunday, March 19, 2017"
+        }, {
+            "y": 42.51,
+            "dt": "Monday, March 20, 2017"
+        }, {
+            "y": 42.67,
+            "dt": "Tuesday, March 21, 2017"
+        }, {
+            "y": 41.65,
+            "dt": "Wednesday, March 22, 2017"
+        }, {
+            "y": 43.20,
+            "dt": "Thursday, March 23, 2017"
+        }, {
+            "y": 53.19,
+            "dt": "Friday, March 24, 2017"
+        }, {
+            "y": 50.62,
+            "dt": "Saturday, March 25, 2017"
+        }, {
+            "y": 50.63,
+            "dt": "Sunday, March 26, 2017"
+        }, {
+            "y": 49.06,
+            "dt": "Monday, March 27, 2017"
+        }, {
+            "y": 50.25,
+            "dt": "Tuesday, March 28, 2017"
+        }, {
+            "y": 53.07,
+            "dt": "Wednesday, March 29, 2017"
+        }, {
+            "y": 51.91,
+            "dt": "Thursday, March 30, 2017"
+        }, {
+            "y": 49.91,
+            "dt": "Friday, March 31, 2017"
+        }, {
+            "y": 50.60,
+            "dt": "Saturday, April 1, 2017"
+        }, {
+            "y": 48.55,
+            "dt": "Sunday, April 2, 2017"
+        }, {
+            "y": 44.13,
+            "dt": "Monday, April 3, 2017"
+        }, {
+            "y": 44.43,
+            "dt": "Tuesday, April 4, 2017"
+        }, {
+            "y": 44.90,
+            "dt": "Wednesday, April 5, 2017"
+        }, {
+            "y": 43.23,
+            "dt": "Thursday, April 6, 2017"
+        }, {
+            "y": 42.31,
+            "dt": "Friday, April 7, 2017"
+        }, {
+            "y": 44.37,
+            "dt": "Saturday, April 8, 2017"
+        }, {
+            "y": 43.72,
+            "dt": "Sunday, April 9, 2017"
+        }, {
+            "y": 43.74,
+            "dt": "Monday, April 10, 2017"
+        }, {
+            "y": 43.74,
+            "dt": "Tuesday, April 11, 2017"
+        }, {
+            "y": 46.38,
+            "dt": "Wednesday, April 12, 2017"
+        }, {
+            "y": 49.97,
+            "dt": "Thursday, April 13, 2017"
+        }, {
+            "y": 47.32,
+            "dt": "Friday, April 14, 2017"
+        }, {
+            "y": 48.89,
+            "dt": "Saturday, April 15, 2017"
+        }, {
+            "y": 48.22,
+            "dt": "Sunday, April 16, 2017"
+        }, {
+            "y": 47.94,
+            "dt": "Monday, April 17, 2017"
+        }, {
+            "y": 49.88,
+            "dt": "Tuesday, April 18, 2017"
+        }, {
+            "y": 47.88,
+            "dt": "Wednesday, April 19, 2017"
+        }, {
+            "y": 49.36,
+            "dt": "Thursday, April 20, 2017"
+        }, {
+            "y": 48.27,
+            "dt": "Friday, April 21, 2017"
+        }, {
+            "y": 48.41,
+            "dt": "Saturday, April 22, 2017"
+        }, {
+            "y": 48.75,
+            "dt": "Sunday, April 23, 2017"
+        }, {
+            "y": 49.94,
+            "dt": "Monday, April 24, 2017"
+        }, {
+            "y": 50.09,
+            "dt": "Tuesday, April 25, 2017"
+        }, {
+            "y": 53.28,
+            "dt": "Wednesday, April 26, 2017"
+        }, {
+            "y": 63.14,
+            "dt": "Thursday, April 27, 2017"
+        }, {
+            "y": 72.42,
+            "dt": "Friday, April 28, 2017"
+        }, {
+            "y": 69.83,
+            "dt": "Saturday, April 29, 2017"
+        }, {
+            "y": 79.83,
+            "dt": "Sunday, April 30, 2017"
+        }, {
+            "y": 77.53,
+            "dt": "Monday, May 1, 2017"
+        }, {
+            "y": 77.25,
+            "dt": "Tuesday, May 2, 2017"
+        }, {
+            "y": 80.37,
+            "dt": "Wednesday, May 3, 2017"
+        }, {
+            "y": 94.55,
+            "dt": "Thursday, May 4, 2017"
+        }, {
+            "y": 90.79,
+            "dt": "Friday, May 5, 2017"
+        }, {
+            "y": 94.82,
+            "dt": "Saturday, May 6, 2017"
+        }, {
+            "y": 90.46,
+            "dt": "Sunday, May 7, 2017"
+        }, {
+            "y": 88.39,
+            "dt": "Monday, May 8, 2017"
+        }, {
+            "y": 86.27,
+            "dt": "Tuesday, May 9, 2017"
+        }, {
+            "y": 87.83,
+            "dt": "Wednesday, May 10, 2017"
+        }, {
+            "y": 88.20,
+            "dt": "Thursday, May 11, 2017"
+        }, {
+            "y": 85.15,
+            "dt": "Friday, May 12, 2017"
+        }, {
+            "y": 87.96,
+            "dt": "Saturday, May 13, 2017"
+        }, {
+            "y": 88.72,
+            "dt": "Sunday, May 14, 2017"
+        }, {
+            "y": 90.32,
+            "dt": "Monday, May 15, 2017"
+        }, {
+            "y": 87.80,
+            "dt": "Tuesday, May 16, 2017"
+        }, {
+            "y": 86.98,
+            "dt": "Wednesday, May 17, 2017"
+        }, {
+            "y": 95.88,
+            "dt": "Thursday, May 18, 2017"
+        }, {
+            "y": 124.38,
+            "dt": "Friday, May 19, 2017"
+        }, {
+            "y": 123.06,
+            "dt": "Saturday, May 20, 2017"
+        }, {
+            "y": 148.00,
+            "dt": "Sunday, May 21, 2017"
+        }, {
+            "y": 160.39,
+            "dt": "Monday, May 22, 2017"
+        }, {
+            "y": 169.50,
+            "dt": "Tuesday, May 23, 2017"
+        }, {
+            "y": 193.03,
+            "dt": "Wednesday, May 24, 2017"
+        }, {
+            "y": 177.33,
+            "dt": "Thursday, May 25, 2017"
+        }, {
+            "y": 162.83,
+            "dt": "Friday, May 26, 2017"
+        }, {
+            "y": 156.63,
+            "dt": "Saturday, May 27, 2017"
+        }, {
+            "y": 172.86,
+            "dt": "Sunday, May 28, 2017"
+        }, {
+            "y": 194.17,
+            "dt": "Monday, May 29, 2017"
+        }, {
+            "y": 228.58,
+            "dt": "Tuesday, May 30, 2017"
+        }, {
+            "y": 228.64,
+            "dt": "Wednesday, May 31, 2017"
+        }, {
+            "y": 220.70,
+            "dt": "Thursday, June 1, 2017"
+        }, {
+            "y": 222.04,
+            "dt": "Friday, June 2, 2017"
+        }, {
+            "y": 224.30,
+            "dt": "Saturday, June 3, 2017"
+        }, {
+            "y": 244.96,
+            "dt": "Sunday, June 4, 2017"
+        }, {
+            "y": 247.75,
+            "dt": "Monday, June 5, 2017"
+        }, {
+            "y": 264.26,
+            "dt": "Tuesday, June 6, 2017"
+        }, {
+            "y": 255.77,
+            "dt": "Wednesday, June 7, 2017"
+        }, {
+            "y": 259.41,
+            "dt": "Thursday, June 8, 2017"
+        }, {
+            "y": 279.11,
+            "dt": "Friday, June 9, 2017"
+        }, {
+            "y": 335.95,
+            "dt": "Saturday, June 10, 2017"
+        }, {
+            "y": 339.68,
+            "dt": "Sunday, June 11, 2017"
+        }, {
+            "y": 394.66,
+            "dt": "Monday, June 12, 2017"
+        }, {
+            "y": 388.09,
+            "dt": "Tuesday, June 13, 2017"
+        }, {
+            "y": 343.84,
+            "dt": "Wednesday, June 14, 2017"
+        }, {
+            "y": 344.68,
+            "dt": "Thursday, June 15, 2017"
+        }, {
+            "y": 353.61,
+            "dt": "Friday, June 16, 2017"
+        }, {
+            "y": 368.10,
+            "dt": "Saturday, June 17, 2017"
+        }, {
+            "y": 351.53,
+            "dt": "Sunday, June 18, 2017"
+        }, {
+            "y": 358.20,
+            "dt": "Monday, June 19, 2017"
+        }, {
+            "y": 350.53,
+            "dt": "Tuesday, June 20, 2017"
+        }, {
+            "y": 325.30,
+            "dt": "Wednesday, June 21, 2017"
+        }, {
+            "y": 320.97,
+            "dt": "Thursday, June 22, 2017"
+        }, {
+            "y": 326.85,
+            "dt": "Friday, June 23, 2017"
+        }, {
+            "y": 304.54,
+            "dt": "Saturday, June 24, 2017"
+        }, {
+            "y": 279.36,
+            "dt": "Sunday, June 25, 2017"
+        }, {
+            "y": 253.68,
+            "dt": "Monday, June 26, 2017"
+        }, {
+            "y": 286.14,
+            "dt": "Tuesday, June 27, 2017"
+        }, {
+            "y": 315.86,
+            "dt": "Wednesday, June 28, 2017"
+        }, {
+            "y": 292.90,
+            "dt": "Thursday, June 29, 2017"
+        }, {
+            "y": 280.68,
+            "dt": "Friday, June 30, 2017"
+        }, {
+            "y": 261.00,
+            "dt": "Saturday, July 1, 2017"
+        }, {
+            "y": 283.99,
+            "dt": "Sunday, July 2, 2017"
+        }, {
+            "y": 276.41,
+            "dt": "Monday, July 3, 2017"
+        }, {
+            "y": 269.05,
+            "dt": "Tuesday, July 4, 2017"
+        }, {
+            "y": 266.00,
+            "dt": "Wednesday, July 5, 2017"
+        }, {
+            "y": 265.88,
+            "dt": "Thursday, July 6, 2017"
+        }, {
+            "y": 240.94,
+            "dt": "Friday, July 7, 2017"
+        }, {
+            "y": 245.67,
+            "dt": "Saturday, July 8, 2017"
+        }, {
+            "y": 237.72,
+            "dt": "Sunday, July 9, 2017"
+        }, {
+            "y": 205.76,
+            "dt": "Monday, July 10, 2017"
+        }, {
+            "y": 190.55,
+            "dt": "Tuesday, July 11, 2017"
+        }, {
+            "y": 224.15,
+            "dt": "Wednesday, July 12, 2017"
+        }, {
+            "y": 205.41,
+            "dt": "Thursday, July 13, 2017"
+        }, {
+            "y": 197.14,
+            "dt": "Friday, July 14, 2017"
+        }, {
+            "y": 169.10,
+            "dt": "Saturday, July 15, 2017"
+        }, {
+            "y": 155.42,
+            "dt": "Sunday, July 16, 2017"
+        }, {
+            "y": 189.97,
+            "dt": "Monday, July 17, 2017"
+        }, {
+            "y": 227.09,
+            "dt": "Tuesday, July 18, 2017"
+        }, {
+            "y": 194.41,
+            "dt": "Wednesday, July 19, 2017"
+        }, {
+            "y": 226.33,
+            "dt": "Thursday, July 20, 2017"
+        }, {
+            "y": 216.33,
+            "dt": "Friday, July 21, 2017"
+        }, {
+            "y": 230.47,
+            "dt": "Saturday, July 22, 2017"
+        }, {
+            "y": 228.32,
+            "dt": "Sunday, July 23, 2017"
+        }, {
+            "y": 225.48,
+            "dt": "Monday, July 24, 2017"
+        }, {
+            "y": 203.59,
+            "dt": "Tuesday, July 25, 2017"
+        }, {
+            "y": 202.88,
+            "dt": "Wednesday, July 26, 2017"
+        }, {
+            "y": 202.93,
+            "dt": "Thursday, July 27, 2017"
+        }, {
+            "y": 191.21,
+            "dt": "Friday, July 28, 2017"
+        }, {
+            "y": 206.14,
+            "dt": "Saturday, July 29, 2017"
+        }, {
+            "y": 196.78,
+            "dt": "Sunday, July 30, 2017"
+        }, {
+            "y": 201.33,
+            "dt": "Monday, July 31, 2017"
+        }, {
+            "y": 225.90,
+            "dt": "Tuesday, August 1, 2017"
+        }, {
+            "y": 218.12,
+            "dt": "Wednesday, August 2, 2017"
+        }, {
+            "y": 224.39,
+            "dt": "Thursday, August 3, 2017"
+        }, {
+            "y": 220.60,
+            "dt": "Friday, August 4, 2017"
+        }, {
+            "y": 253.09,
+            "dt": "Saturday, August 5, 2017"
+        }, {
+            "y": 264.56,
+            "dt": "Sunday, August 6, 2017"
+        }, {
+            "y": 269.94,
+            "dt": "Monday, August 7, 2017"
+        }, {
+            "y": 296.51,
+            "dt": "Tuesday, August 8, 2017"
+        }, {
+            "y": 295.28,
+            "dt": "Wednesday, August 9, 2017"
+        }, {
+            "y": 298.28,
+            "dt": "Thursday, August 10, 2017"
+        }, {
+            "y": 309.32,
+            "dt": "Friday, August 11, 2017"
+        }, {
+            "y": 308.02,
+            "dt": "Saturday, August 12, 2017"
+        }, {
+            "y": 296.62,
+            "dt": "Sunday, August 13, 2017"
+        }, {
+            "y": 299.16,
+            "dt": "Monday, August 14, 2017"
+        }, {
+            "y": 286.52,
+            "dt": "Tuesday, August 15, 2017"
+        }, {
+            "y": 301.38,
+            "dt": "Wednesday, August 16, 2017"
+        }, {
+            "y": 300.30,
+            "dt": "Thursday, August 17, 2017"
+        }, {
+            "y": 292.62,
+            "dt": "Friday, August 18, 2017"
+        }, {
+            "y": 293.02,
+            "dt": "Saturday, August 19, 2017"
+        }, {
+            "y": 298.20,
+            "dt": "Sunday, August 20, 2017"
+        }, {
+            "y": 321.85,
+            "dt": "Monday, August 21, 2017"
+        }, {
+            "y": 313.37,
+            "dt": "Tuesday, August 22, 2017"
+        }, {
+            "y": 317.40,
+            "dt": "Wednesday, August 23, 2017"
+        }, {
+            "y": 325.28,
+            "dt": "Thursday, August 24, 2017"
+        }, {
+            "y": 330.06,
+            "dt": "Friday, August 25, 2017"
+        }, {
+            "y": 332.86,
+            "dt": "Saturday, August 26, 2017"
+        }, {
+            "y": 347.88,
+            "dt": "Sunday, August 27, 2017"
+        }, {
+            "y": 347.66,
+            "dt": "Monday, August 28, 2017"
+        }, {
+            "y": 372.35,
+            "dt": "Tuesday, August 29, 2017"
+        }, {
+            "y": 383.86,
+            "dt": "Wednesday, August 30, 2017"
+        }, {
+            "y": 388.33,
+            "dt": "Thursday, August 31, 2017"
+        }, {
+            "y": 391.42,
+            "dt": "Friday, September 1, 2017"
+        }, {
+            "y": 351.03,
+            "dt": "Saturday, September 2, 2017"
+        }, {
+            "y": 352.45,
+            "dt": "Sunday, September 3, 2017"
+        }, {
+            "y": 303.70,
+            "dt": "Monday, September 4, 2017"
+        }, {
+            "y": 317.94,
+            "dt": "Tuesday, September 5, 2017"
+        }, {
+            "y": 338.92,
+            "dt": "Wednesday, September 6, 2017"
+        }, {
+            "y": 335.37,
+            "dt": "Thursday, September 7, 2017"
+        }, {
+            "y": 306.72,
+            "dt": "Friday, September 8, 2017"
+        }, {
+            "y": 303.79,
+            "dt": "Saturday, September 9, 2017"
+        }, {
+            "y": 299.21,
+            "dt": "Sunday, September 10, 2017"
+        }, {
+            "y": 297.95,
+            "dt": "Monday, September 11, 2017"
+        }, {
+            "y": 294.10,
+            "dt": "Tuesday, September 12, 2017"
+        }, {
+            "y": 275.84,
+            "dt": "Wednesday, September 13, 2017"
+        }, {
+            "y": 223.14,
+            "dt": "Thursday, September 14, 2017"
+        }, {
+            "y": 259.57,
+            "dt": "Friday, September 15, 2017"
+        }, {
+            "y": 254.49,
+            "dt": "Saturday, September 16, 2017"
+        }, {
+            "y": 258.40,
+            "dt": "Sunday, September 17, 2017"
+        }, {
+            "y": 297.53,
+            "dt": "Monday, September 18, 2017"
+        }, {
+            "y": 283.00,
+            "dt": "Tuesday, September 19, 2017"
+        }, {
+            "y": 283.56,
+            "dt": "Wednesday, September 20, 2017"
+        }, {
+            "y": 257.77,
+            "dt": "Thursday, September 21, 2017"
+        }, {
+            "y": 262.94,
+            "dt": "Friday, September 22, 2017"
+        }, {
+            "y": 286.14,
+            "dt": "Saturday, September 23, 2017"
+        }, {
+            "y": 282.60,
+            "dt": "Sunday, September 24, 2017"
+        }, {
+            "y": 294.89,
+            "dt": "Monday, September 25, 2017"
+        }, {
+            "y": 288.64,
+            "dt": "Tuesday, September 26, 2017"
+        }, {
+            "y": 309.97,
+            "dt": "Wednesday, September 27, 2017"
+        }, {
+            "y": 302.77,
+            "dt": "Thursday, September 28, 2017"
+        }, {
+            "y": 292.58,
+            "dt": "Friday, September 29, 2017"
+        }, {
+            "y": 302.77,
+            "dt": "Saturday, September 30, 2017"
+        }, {
+            "y": 303.95,
+            "dt": "Sunday, October 1, 2017"
+        }, {
+            "y": 296.81,
+            "dt": "Monday, October 2, 2017"
+        }, {
+            "y": 291.81,
+            "dt": "Tuesday, October 3, 2017"
+        }, {
+            "y": 291.68,
+            "dt": "Wednesday, October 4, 2017"
+        }, {
+            "y": 294.99,
+            "dt": "Thursday, October 5, 2017"
+        }, {
+            "y": 308.33,
+            "dt": "Friday, October 6, 2017"
+        }, {
+            "y": 311.26,
+            "dt": "Saturday, October 7, 2017"
+        }, {
+            "y": 309.49,
+            "dt": "Sunday, October 8, 2017"
+        }, {
+            "y": 296.95,
+            "dt": "Monday, October 9, 2017"
+        }, {
+            "y": 298.46,
+            "dt": "Tuesday, October 10, 2017"
+        }, {
+            "y": 302.86,
+            "dt": "Wednesday, October 11, 2017"
+        }, {
+            "y": 302.89,
+            "dt": "Thursday, October 12, 2017"
+        }, {
+            "y": 336.83,
+            "dt": "Friday, October 13, 2017"
+        }, {
+            "y": 338.81,
+            "dt": "Saturday, October 14, 2017"
+        }, {
+            "y": 336.58,
+            "dt": "Sunday, October 15, 2017"
+        }, {
+            "y": 334.23,
+            "dt": "Monday, October 16, 2017"
+        }, {
+            "y": 316.14,
+            "dt": "Tuesday, October 17, 2017"
+        }, {
+            "y": 313.54,
+            "dt": "Wednesday, October 18, 2017"
+        }, {
+            "y": 307.41,
+            "dt": "Thursday, October 19, 2017"
+        }, {
+            "y": 303.08,
+            "dt": "Friday, October 20, 2017"
+        }, {
+            "y": 299.55,
+            "dt": "Saturday, October 21, 2017"
+        }, {
+            "y": 294.03,
+            "dt": "Sunday, October 22, 2017"
+        }, {
+            "y": 285.27,
+            "dt": "Monday, October 23, 2017"
+        }, {
+            "y": 296.50,
+            "dt": "Tuesday, October 24, 2017"
+        }, {
+            "y": 296.35,
+            "dt": "Wednesday, October 25, 2017"
+        }, {
+            "y": 295.54,
+            "dt": "Thursday, October 26, 2017"
+        }, {
+            "y": 296.36,
+            "dt": "Friday, October 27, 2017"
+        }, {
+            "y": 293.35,
+            "dt": "Saturday, October 28, 2017"
+        }, {
+            "y": 304.04,
+            "dt": "Sunday, October 29, 2017"
+        }, {
+            "y": 306.80,
+            "dt": "Monday, October 30, 2017"
+        }, {
+            "y": 303.64,
+            "dt": "Tuesday, October 31, 2017"
+        }, {
+            "y": 289.42,
+            "dt": "Wednesday, November 1, 2017"
+        }, {
+            "y": 284.92,
+            "dt": "Thursday, November 2, 2017"
+        }, {
+            "y": 304.51,
+            "dt": "Friday, November 3, 2017"
+        }, {
+            "y": 300.04,
+            "dt": "Saturday, November 4, 2017"
+        }, {
+            "y": 296.23,
+            "dt": "Sunday, November 5, 2017"
+        }, {
+            "y": 296.82,
+            "dt": "Monday, November 6, 2017"
+        }, {
+            "y": 291.84,
+            "dt": "Tuesday, November 7, 2017"
+        }, {
+            "y": 307.35,
+            "dt": "Wednesday, November 8, 2017"
+        }, {
+            "y": 319.66,
+            "dt": "Thursday, November 9, 2017"
+        }, {
+            "y": 296.86,
+            "dt": "Friday, November 10, 2017"
+        }, {
+            "y": 314.23,
+            "dt": "Saturday, November 11, 2017"
+        }, {
+            "y": 306.02,
+            "dt": "Sunday, November 12, 2017"
+        }, {
+            "y": 314.60,
+            "dt": "Monday, November 13, 2017"
+        }, {
+            "y": 334.72,
+            "dt": "Tuesday, November 14, 2017"
+        }, {
+            "y": 331.20,
+            "dt": "Wednesday, November 15, 2017"
+        }, {
+            "y": 330.32,
+            "dt": "Thursday, November 16, 2017"
+        }, {
+            "y": 331.72,
+            "dt": "Friday, November 17, 2017"
+        }, {
+            "y": 346.65,
+            "dt": "Saturday, November 18, 2017"
+        }, {
+            "y": 354.60,
+            "dt": "Sunday, November 19, 2017"
+        }, {
+            "y": 367.71,
+            "dt": "Monday, November 20, 2017"
+        }, {
+            "y": 360.52,
+            "dt": "Tuesday, November 21, 2017"
+        }, {
+            "y": 380.84,
+            "dt": "Wednesday, November 22, 2017"
+        }, {
+            "y": 406.57,
+            "dt": "Thursday, November 23, 2017"
+        }, {
+            "y": 470.43,
+            "dt": "Friday, November 24, 2017"
+        }, {
+            "y": 464.61,
+            "dt": "Saturday, November 25, 2017"
+        }, {
+            "y": 470.54,
+            "dt": "Sunday, November 26, 2017"
+        }, {
+            "y": 475.24,
+            "dt": "Monday, November 27, 2017"
+        }, {
+            "y": 466.27,
+            "dt": "Tuesday, November 28, 2017"
+        }, {
+            "y": 427.42,
+            "dt": "Wednesday, November 29, 2017"
+        }, {
+            "y": 434.85,
+            "dt": "Thursday, November 30, 2017"
+        }, {
+            "y": 461.58,
+            "dt": "Friday, December 1, 2017"
+        }, {
+            "y": 457.96,
+            "dt": "Saturday, December 2, 2017"
+        }, {
+            "y": 462.81,
+            "dt": "Sunday, December 3, 2017"
+        }, {
+            "y": 466.93,
+            "dt": "Monday, December 4, 2017"
+        }, {
+            "y": 453.96,
+            "dt": "Tuesday, December 5, 2017"
+        }, {
+            "y": 422.48,
+            "dt": "Wednesday, December 6, 2017"
+        }, {
+            "y": 421.15,
+            "dt": "Thursday, December 7, 2017"
+        }, {
+            "y": 513.29,
+            "dt": "Monday, December 11, 2017"
+        }, {
+            "y": 656.52,
+            "dt": "Tuesday, December 12, 2017"
+        }, {
+            "y": 699.09,
+            "dt": "Wednesday, December 13, 2017"
+        }, {
+            "y": 693.58,
+            "dt": "Thursday, December 14, 2017"
+        }, {
+            "y": 684.27,
+            "dt": "Friday, December 15, 2017"
+        }, {
+            "y": 692.83,
+            "dt": "Saturday, December 16, 2017"
+        }, {
+            "y": 717.71,
+            "dt": "Sunday, December 17, 2017"
+        }, {
+            "y": 785.99,
+            "dt": "Monday, December 18, 2017"
+        }, {
+            "y": 812.50,
+            "dt": "Tuesday, December 19, 2017"
+        }, {
+            "y": 799.17,
+            "dt": "Wednesday, December 20, 2017"
+        }, {
+            "y": 789.39,
+            "dt": "Thursday, December 21, 2017"
+        }, {
+            "y": 657.83,
+            "dt": "Friday, December 22, 2017"
+        }, {
+            "y": 700.44,
+            "dt": "Saturday, December 23, 2017"
+        }, {
+            "y": 675.91,
+            "dt": "Sunday, December 24, 2017"
+        }, {
+            "y": 723.14,
+            "dt": "Monday, December 25, 2017"
+        }, {
+            "y": 753.40,
+            "dt": "Tuesday, December 26, 2017"
+        }, {
+            "y": 739.94,
+            "dt": "Wednesday, December 27, 2017"
+        }, {
+            "y": 716.69,
+            "dt": "Thursday, December 28, 2017"
+        }, {
+            "y": 739.60,
+            "dt": "Friday, December 29, 2017"
+        }, {
+            "y": 692.99,
+            "dt": "Saturday, December 30, 2017"
+        }, {
+            "y": 741.13,
+            "dt": "Sunday, December 31, 2017"
+        }, {
+            "y": 756.20,
+            "dt": "Monday, January 1, 2018"
+        }, {
+            "y": 861.97,
+            "dt": "Tuesday, January 2, 2018"
+        }, {
+            "y": 941.10,
+            "dt": "Wednesday, January 3, 2018"
+        }, {
+            "y": 944.83,
+            "dt": "Thursday, January 4, 2018"
+        }, {
+            "y": 967.13,
+            "dt": "Friday, January 5, 2018"
+        }, {
+            "y": 1006.41,
+            "dt": "Saturday, January 6, 2018"
+        }, {
+            "y": 1117.75,
+            "dt": "Sunday, January 7, 2018"
+        }, {
+            "y": 1136.11,
+            "dt": "Monday, January 8, 2018"
+        }, {
+            "y": 1289.24,
+            "dt": "Tuesday, January 9, 2018"
+        }, {
+            "y": 1248.99,
+            "dt": "Wednesday, January 10, 2018"
+        }, {
+            "y": 1139.32,
+            "dt": "Thursday, January 11, 2018"
+        }, {
+            "y": 1261.03,
+            "dt": "Friday, January 12, 2018"
+        }, {
+            "y": 1385.02,
+            "dt": "Saturday, January 13, 2018"
+        }, {
+            "y": 1359.48,
+            "dt": "Sunday, January 14, 2018"
+        }, {
+            "y": 1278.69,
+            "dt": "Monday, January 15, 2018"
+        }, {
+            "y": 1050.26,
+            "dt": "Tuesday, January 16, 2018"
+        }, {
+            "y": 1024.69,
+            "dt": "Wednesday, January 17, 2018"
+        }, {
+            "y": 1012.97,
+            "dt": "Thursday, January 18, 2018"
+        }, {
+            "y": 1037.36,
+            "dt": "Friday, January 19, 2018"
+        }, {
+            "y": 1150.50,
+            "dt": "Saturday, January 20, 2018"
+        }, {
+            "y": 1049.09,
+            "dt": "Sunday, January 21, 2018"
+        }, {
+            "y": 999.64,
+            "dt": "Monday, January 22, 2018"
+        }, {
+            "y": 984.47,
+            "dt": "Tuesday, January 23, 2018"
+        }, {
+            "y": 1061.78,
+            "dt": "Wednesday, January 24, 2018"
+        }, {
+            "y": 1046.37,
+            "dt": "Thursday, January 25, 2018"
+        }, {
+            "y": 1048.58,
+            "dt": "Friday, January 26, 2018"
+        }, {
+            "y": 1109.08,
+            "dt": "Saturday, January 27, 2018"
+        }, {
+            "y": 1231.58,
+            "dt": "Sunday, January 28, 2018"
+        }, {
+            "y": 1169.96,
+            "dt": "Monday, January 29, 2018"
+        }, {
+            "y": 1063.75,
+            "dt": "Tuesday, January 30, 2018"
+        }, {
+            "y": 1111.31,
+            "dt": "Wednesday, January 31, 2018"
+        }, {
+            "y": 1026.19,
+            "dt": "Thursday, February 1, 2018"
+        }, {
+            "y": 917.47,
+            "dt": "Friday, February 2, 2018"
+        }, {
+            "y": 970.87,
+            "dt": "Saturday, February 3, 2018"
+        }, {
+            "y": 827.59,
+            "dt": "Sunday, February 4, 2018"
+        }, {
+            "y": 695.08,
+            "dt": "Monday, February 5, 2018"
+        }, {
+            "y": 785.01,
+            "dt": "Tuesday, February 6, 2018"
+        }, {
+            "y": 751.81,
+            "dt": "Wednesday, February 7, 2018"
+        }, {
+            "y": 813.55,
+            "dt": "Thursday, February 8, 2018"
+        }, {
+            "y": 877.88,
+            "dt": "Friday, February 9, 2018"
+        }, {
+            "y": 850.75,
+            "dt": "Saturday, February 10, 2018"
+        }, {
+            "y": 811.24,
+            "dt": "Sunday, February 11, 2018"
+        }, {
+            "y": 865.27,
+            "dt": "Monday, February 12, 2018"
+        }, {
+            "y": 840.98,
+            "dt": "Tuesday, February 13, 2018"
+        }, {
+            "y": 920.11,
+            "dt": "Wednesday, February 14, 2018"
+        }, {
+            "y": 927.95,
+            "dt": "Thursday, February 15, 2018"
+        }, {
+            "y": 938.02,
+            "dt": "Friday, February 16, 2018"
+        }, {
+            "y": 974.77,
+            "dt": "Saturday, February 17, 2018"
+        }, {
+            "y": 913.90,
+            "dt": "Sunday, February 18, 2018"
+        }, {
+            "y": 939.79,
+            "dt": "Monday, February 19, 2018"
+        }, {
+            "y": 885.52,
+            "dt": "Tuesday, February 20, 2018"
+        }, {
+            "y": 840.10,
+            "dt": "Wednesday, February 21, 2018"
+        }, {
+            "y": 804.63,
+            "dt": "Thursday, February 22, 2018"
+        }, {
+            "y": 854.70,
+            "dt": "Friday, February 23, 2018"
+        }, {
+            "y": 833.49,
+            "dt": "Saturday, February 24, 2018"
+        }, {
+            "y": 840.28,
+            "dt": "Sunday, February 25, 2018"
+        }, {
+            "y": 867.62,
+            "dt": "Monday, February 26, 2018"
+        }, {
+            "y": 871.58,
+            "dt": "Tuesday, February 27, 2018"
+        }, {
+            "y": 851.50,
+            "dt": "Wednesday, February 28, 2018"
+        }, {
+            "y": 869.87,
+            "dt": "Thursday, March 1, 2018"
+        }, {
+            "y": 855.60,
+            "dt": "Friday, March 2, 2018"
+        }, {
+            "y": 855.65,
+            "dt": "Saturday, March 3, 2018"
+        }, {
+            "y": 864.83,
+            "dt": "Sunday, March 4, 2018"
+        }, {
+            "y": 849.42,
+            "dt": "Monday, March 5, 2018"
+        }, {
+            "y": 815.69,
+            "dt": "Tuesday, March 6, 2018"
+        }, {
+            "y": 751.13,
+            "dt": "Wednesday, March 7, 2018"
+        }, {
+            "y": 698.83,
+            "dt": "Thursday, March 8, 2018"
+        }, {
+            "y": 726.92,
+            "dt": "Friday, March 9, 2018"
+        }, {
+            "y": 682.30,
+            "dt": "Saturday, March 10, 2018"
+        }, {
+            "y": 720.36,
+            "dt": "Sunday, March 11, 2018"
+        }, {
+            "y": 697.02,
+            "dt": "Monday, March 12, 2018"
+        }, {
+            "y": 689.96,
+            "dt": "Tuesday, March 13, 2018"
+        }, {
+            "y": 613.15,
+            "dt": "Wednesday, March 14, 2018"
+        }, {
+            "y": 610.56,
+            "dt": "Thursday, March 15, 2018"
+        }, {
+            "y": 600.53,
+            "dt": "Friday, March 16, 2018"
+        }, {
+            "y": 549.79,
+            "dt": "Saturday, March 17, 2018"
+        }, {
+            "y": 537.38,
+            "dt": "Sunday, March 18, 2018"
+        }, {
+            "y": 555.55,
+            "dt": "Monday, March 19, 2018"
+        }, {
+            "y": 557.57,
+            "dt": "Tuesday, March 20, 2018"
+        }, {
+            "y": 559.91,
+            "dt": "Wednesday, March 21, 2018"
+        }, {
+            "y": 539.89,
+            "dt": "Thursday, March 22, 2018"
+        }, {
+            "y": 543.83,
+            "dt": "Friday, March 23, 2018"
+        }, {
+            "y": 520.16,
+            "dt": "Saturday, March 24, 2018"
+        }, {
+            "y": 523.01,
+            "dt": "Sunday, March 25, 2018"
+        }, {
+            "y": 486.25,
+            "dt": "Monday, March 26, 2018"
+        }, {
+            "y": 448.78,
+            "dt": "Tuesday, March 27, 2018"
+        }, {
+            "y": 445.93,
+            "dt": "Wednesday, March 28, 2018"
+        }, {
+            "y": 383.90,
+            "dt": "Thursday, March 29, 2018"
+        }, {
+            "y": 393.82,
+            "dt": "Friday, March 30, 2018"
+        }, {
+            "y": 394.07,
+            "dt": "Saturday, March 31, 2018"
+        }, {
+            "y": 378.85,
+            "dt": "Sunday, April 1, 2018"
+        }, {
+            "y": 384.68,
+            "dt": "Monday, April 2, 2018"
+        }, {
+            "y": 415.93,
+            "dt": "Tuesday, April 3, 2018"
+        }, {
+            "y": 378.65,
+            "dt": "Wednesday, April 4, 2018"
+        }, {
+            "y": 381.36,
+            "dt": "Thursday, April 5, 2018"
+        }, {
+            "y": 370.35,
+            "dt": "Friday, April 6, 2018"
+        }, {
+            "y": 384.98,
+            "dt": "Saturday, April 7, 2018"
+        }, {
+            "y": 400.72,
+            "dt": "Sunday, April 8, 2018"
+        }, {
+            "y": 399.02,
+            "dt": "Monday, April 9, 2018"
+        }, {
+            "y": 415.65,
+            "dt": "Tuesday, April 10, 2018"
+        }, {
+            "y": 430.42,
+            "dt": "Wednesday, April 11, 2018"
+        }, {
+            "y": 493.95,
+            "dt": "Thursday, April 12, 2018"
+        }, {
+            "y": 494.96,
+            "dt": "Friday, April 13, 2018"
+        }, {
+            "y": 502.79,
+            "dt": "Saturday, April 14, 2018"
+        }, {
+            "y": 534.15,
+            "dt": "Sunday, April 15, 2018"
+        }, {
+            "y": 511.67,
+            "dt": "Monday, April 16, 2018"
+        }, {
+            "y": 503.03,
+            "dt": "Tuesday, April 17, 2018"
+        }, {
+            "y": 525.78,
+            "dt": "Wednesday, April 18, 2018"
+        }, {
+            "y": 567.25,
+            "dt": "Thursday, April 19, 2018"
+        }, {
+            "y": 617.16,
+            "dt": "Friday, April 20, 2018"
+        }, {
+            "y": 605.17,
+            "dt": "Saturday, April 21, 2018"
+        }, {
+            "y": 621.33,
+            "dt": "Sunday, April 22, 2018"
+        }, {
+            "y": 644.13,
+            "dt": "Monday, April 23, 2018"
+        }, {
+            "y": 703.35,
+            "dt": "Tuesday, April 24, 2018"
+        }, {
+            "y": 617.73,
+            "dt": "Wednesday, April 25, 2018"
+        }, {
+            "y": 661.45,
+            "dt": "Thursday, April 26, 2018"
+        }, {
+            "y": 643.33,
+            "dt": "Friday, April 27, 2018"
+        }, {
+            "y": 683.02,
+            "dt": "Saturday, April 28, 2018"
+        }, {
+            "y": 689.31,
+            "dt": "Sunday, April 29, 2018"
+        }, {
+            "y": 670.04,
+            "dt": "Monday, April 30, 2018"
+        }, {
+            "y": 670.81,
+            "dt": "Tuesday, May 1, 2018"
+        }, {
+            "y": 686.74,
+            "dt": "Wednesday, May 2, 2018"
+        }, {
+            "y": 777.62,
+            "dt": "Thursday, May 3, 2018"
+        }, {
+            "y": 784.21,
+            "dt": "Friday, May 4, 2018"
+        }, {
+            "y": 816.58,
+            "dt": "Saturday, May 5, 2018"
+        }, {
+            "y": 790.39,
+            "dt": "Sunday, May 6, 2018"
+        }, {
+            "y": 752.40,
+            "dt": "Monday, May 7, 2018"
+        }, {
+            "y": 747.79,
+            "dt": "Tuesday, May 8, 2018"
+        }, {
+            "y": 751.27,
+            "dt": "Wednesday, May 9, 2018"
+        }, {
+            "y": 723.61,
+            "dt": "Thursday, May 10, 2018"
+        }, {
+            "y": 677.80,
+            "dt": "Friday, May 11, 2018"
+        }, {
+            "y": 683.64,
+            "dt": "Saturday, May 12, 2018"
+        }, {
+            "y": 729.34,
+            "dt": "Sunday, May 13, 2018"
+        }, {
+            "y": 727.41,
+            "dt": "Monday, May 14, 2018"
+        }, {
+            "y": 705.64,
+            "dt": "Tuesday, May 15, 2018"
+        }, {
+            "y": 706.72,
+            "dt": "Wednesday, May 16, 2018"
+        }, {
+            "y": 668.38,
+            "dt": "Thursday, May 17, 2018"
+        }, {
+            "y": 693.57,
+            "dt": "Friday, May 18, 2018"
+        }, {
+            "y": 696.05,
+            "dt": "Saturday, May 19, 2018"
+        }, {
+            "y": 715.15,
+            "dt": "Sunday, May 20, 2018"
+        }, {
+            "y": 696.73,
+            "dt": "Monday, May 21, 2018"
+        }, {
+            "y": 640.84,
+            "dt": "Tuesday, May 22, 2018"
+        }, {
+            "y": 577.01,
+            "dt": "Wednesday, May 23, 2018"
+        }, {
+            "y": 602.59,
+            "dt": "Thursday, May 24, 2018"
+        }, {
+            "y": 584.77,
+            "dt": "Friday, May 25, 2018"
+        }, {
+            "y": 585.76,
+            "dt": "Saturday, May 26, 2018"
+        }, {
+            "y": 569.64,
+            "dt": "Sunday, May 27, 2018"
+        }, {
+            "y": 512.03,
+            "dt": "Monday, May 28, 2018"
+        }, {
+            "y": 566.59,
+            "dt": "Tuesday, May 29, 2018"
+        }, {
+            "y": 557.12,
+            "dt": "Wednesday, May 30, 2018"
+        }, {
+            "y": 577.23,
+            "dt": "Thursday, May 31, 2018"
+        }, {
+            "y": 579.01,
+            "dt": "Friday, June 1, 2018"
+        }, {
+            "y": 590.53,
+            "dt": "Saturday, June 2, 2018"
+        }, {
+            "y": 619.04,
+            "dt": "Sunday, June 3, 2018"
+        }, {
+            "y": 591.31,
+            "dt": "Monday, June 4, 2018"
+        }, {
+            "y": 608.23,
+            "dt": "Tuesday, June 5, 2018"
+        }, {
+            "y": 606.30,
+            "dt": "Wednesday, June 6, 2018"
+        }, {
+            "y": 604.44,
+            "dt": "Thursday, June 7, 2018"
+        }, {
+            "y": 599.55,
+            "dt": "Friday, June 8, 2018"
+        }, {
+            "y": 593.38,
+            "dt": "Saturday, June 9, 2018"
+        }, {
+            "y": 524.74,
+            "dt": "Sunday, June 10, 2018"
+        }, {
+            "y": 531.15,
+            "dt": "Monday, June 11, 2018"
+        }, {
+            "y": 494.53,
+            "dt": "Tuesday, June 12, 2018"
+        }, {
+            "y": 476.30,
+            "dt": "Wednesday, June 13, 2018"
+        }, {
+            "y": 519.83,
+            "dt": "Thursday, June 14, 2018"
+        }, {
+            "y": 487.51,
+            "dt": "Friday, June 15, 2018"
+        }, {
+            "y": 497.22,
+            "dt": "Saturday, June 16, 2018"
+        }, {
+            "y": 496.74,
+            "dt": "Sunday, June 17, 2018"
+        }, {
+            "y": 517.63,
+            "dt": "Monday, June 18, 2018"
+        }, {
+            "y": 538.45,
+            "dt": "Tuesday, June 19, 2018"
+        }, {
+            "y": 536.16,
+            "dt": "Wednesday, June 20, 2018"
+        }, {
+            "y": 525.77,
+            "dt": "Thursday, June 21, 2018"
+        }, {
+            "y": 462.16,
+            "dt": "Friday, June 22, 2018"
+        }, {
+            "y": 474.18,
+            "dt": "Saturday, June 23, 2018"
+        }, {
+            "y": 455.25,
+            "dt": "Sunday, June 24, 2018"
+        }, {
+            "y": 458.82,
+            "dt": "Monday, June 25, 2018"
+        }, {
+            "y": 429.58,
+            "dt": "Tuesday, June 26, 2018"
+        }, {
+            "y": 441.75,
+            "dt": "Wednesday, June 27, 2018"
+        }, {
+            "y": 420.72,
+            "dt": "Thursday, June 28, 2018"
+        }, {
+            "y": 435.25,
+            "dt": "Friday, June 29, 2018"
+        }, {
+            "y": 453.42,
+            "dt": "Saturday, June 30, 2018"
+        }, {
+            "y": 451.95,
+            "dt": "Sunday, July 1, 2018"
+        }, {
+            "y": 476.58,
+            "dt": "Monday, July 2, 2018"
+        }, {
+            "y": 461.95,
+            "dt": "Tuesday, July 3, 2018"
+        }, {
+            "y": 467.19,
+            "dt": "Wednesday, July 4, 2018"
+        }, {
+            "y": 467.55,
+            "dt": "Thursday, July 5, 2018"
+        }, {
+            "y": 469.93,
+            "dt": "Friday, July 6, 2018"
+        }, {
+            "y": 485.81,
+            "dt": "Saturday, July 7, 2018"
+        }, {
+            "y": 486.19,
+            "dt": "Sunday, July 8, 2018"
+        }
+    ]
+}
