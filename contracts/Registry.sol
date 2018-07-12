@@ -540,7 +540,7 @@ contract Registry is IRegistry {
 
         deleteTypeRepositoryRegistrationInternal(orgName, repositoryName);
 
-        emit TypeRepositoryModified(orgName, repositoryName, orgName, repositoryName);
+        emit TypeRepositoryDeleted(orgName, repositoryName, orgName, repositoryName);
     }
 
     function deleteTypeRepositoryRegistrationInternal(bytes32 orgName, bytes32 repositoryName) internal {
