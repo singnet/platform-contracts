@@ -7,13 +7,16 @@ pragma solidity ^0.4.24;
   */
 interface IRegistry {
 
-
     //    ___                        _          _   _                   __  __                 _
     //   / _ \ _ __ __ _  __ _ _ __ (_)______ _| |_(_) ___  _ __       |  \/  | __ _ _ __ ___ | |_
     //  | | | | '__/ _` |/ _` | '_ \| |_  / _` | __| |/ _ \| '_ \      | |\/| |/ _` | '_ ` _ \| __|
     //  | |_| | | | (_| | (_| | | | | |/ / (_| | |_| | (_) | | | |     | |  | | (_| | | | | | | |_
     //   \___/|_|  \__, |\__,_|_| |_|_/___\__,_|\__|_|\___/|_| |_|     |_|  |_|\__, |_| |_| |_|\__|
     //             |___/                                                       |___/
+
+    event OrganizationCreated (bytes32 orgName, bytes32 indexed orgNameIndexed);
+    event OrganizationModified(bytes32 orgName, bytes32 indexed orgNameIndexed);
+    event OrganizationDeleted (bytes32 orgName, bytes32 indexed orgNameIndexed);
 
     /**
       * @dev Adds a new organization that hosts SingularityNET services to the registry.
@@ -70,6 +73,10 @@ interface IRegistry {
     //   ___) |  __/ |   \ V /| | (__  __/     | |  | | (_| | | | | | | |_
     //  |____/ \___|_|    \_/ |_|\___\___|     |_|  |_|\__, |_| |_| |_|\__|
     //                                                 |___/
+
+    event ServiceCreated (bytes32 orgName, bytes32 serviceName, bytes32 indexed orgNameIndexed, bytes32 indexed serviceNameIndexed);
+    event ServiceModified(bytes32 orgName, bytes32 serviceName, bytes32 indexed orgNameIndexed, bytes32 indexed serviceNameIndexed);
+    event ServiceDeleted (bytes32 orgName, bytes32 serviceName, bytes32 indexed orgNameIndexed, bytes32 indexed serviceNameIndexed);
 
     /**
       * @dev Adds a new service to the registry.
@@ -136,6 +143,10 @@ interface IRegistry {
     //    |_| \__, | .__/ \___|      |_| \_\___| .__/ \___/      |_|  |_|\__, |_| |_| |_|\__|
     //        |___/|_|                         |_|                       |___/
 
+    event TypeRepositoryCreated (bytes32 orgName, bytes32 typeRepositoryName, bytes32 indexed orgNameIndexed, bytes32 indexed typeRepositoryNameIndexed);
+    event TypeRepositoryModified(bytes32 orgName, bytes32 typeRepositoryName, bytes32 indexed orgNameIndexed, bytes32 indexed typeRepositoryNameIndexed);
+    event TypeRepositoryDeleted (bytes32 orgName, bytes32 typeRepositoryName, bytes32 indexed orgNameIndexed, bytes32 indexed typeRepositoryNameIndexed);
+
     /**
       * @dev Adds a new type repository to the registry.
       *      Only a member of the given organization can invoke this method.
@@ -144,7 +155,7 @@ interface IRegistry {
       * @param orgName         Name of SingularityNET organization that owns this type repository.
       * @param repositoryName  Name of the repository to create, must be unique organization-wide.
       * @param repositoryPath  Optional hierarchical descriptor for organizational purposes.
-      * @param repositoryURI   Path to an offchain resource that contains service metadata.
+      * @param repositoryURI   Path to an offchain resource that contains type repository metadata.
       * @param tags            Optional array of tags for discoverability.
       */
     function createTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath, bytes repositoryURI, bytes32[] tags) external;
@@ -157,7 +168,7 @@ interface IRegistry {
       * @param orgName         Name of SingularityNET organization that owns this type repository.
       * @param repositoryName  Name of the repository to update.
       * @param repositoryPath  Optional hierarchical descriptor for organizational purposes.
-      * @param repositoryURI   Path to an offchain resource that contains service metadata.
+      * @param repositoryURI   Path to an offchain resource that contains type repository metadata.
       */
     function updateTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath, bytes repositoryURI) external;
 

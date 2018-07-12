@@ -134,6 +134,8 @@ contract Registry is IRegistry {
         orgKeys.push(orgName);
 
         addOrganizationMembersInternal(orgName, members);
+
+        emit OrganizationCreated(orgName, orgName);
     }
 
     function changeOrganizationOwner(bytes32 orgName, address newOwner) external {
@@ -142,6 +144,8 @@ contract Registry is IRegistry {
         requireAuthorization(orgName, false);
 
         orgsByName[orgName].owner = newOwner;
+
+        emit OrganizationModified(orgName, orgName);
     }
 
     function addOrganizationMembers(bytes32 orgName, address[] newMembers) external {
@@ -150,6 +154,8 @@ contract Registry is IRegistry {
         requireAuthorization(orgName, true);
 
         addOrganizationMembersInternal(orgName, newMembers);
+
+        emit OrganizationModified(orgName, orgName);
     }
 
     function addOrganizationMembersInternal(bytes32 orgName, address[] newMembers) internal {
@@ -169,6 +175,8 @@ contract Registry is IRegistry {
         for (uint i = 0; i < existingMembers.length; i++) {
             removeOrganizationMemberInternal(orgName, existingMembers[i]);
         }
+
+        emit OrganizationModified(orgName, orgName);
     }
 
     function removeOrganizationMemberInternal(bytes32 orgName, address existingMember) internal {
@@ -223,6 +231,8 @@ contract Registry is IRegistry {
 
         // delete contents of organization registration
         delete orgsByName[orgName];
+
+        emit OrganizationDeleted(orgName, orgName);
     }
 
     //   ____                  _                __  __                 _
@@ -249,6 +259,8 @@ contract Registry is IRegistry {
         for (uint i = 0; i < tags.length; i++) {
             addTagToServiceRegistration(orgName, serviceName, tags[i]);
         }
+
+        emit ServiceCreated(orgName, serviceName, orgName, serviceName);
     }
 
     function updateServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 servicePath, address agentAddress) external {
@@ -260,6 +272,8 @@ contract Registry is IRegistry {
         // update the servicePath and agentAddress
         orgsByName[orgName].servicesByName[serviceName].servicePath = servicePath;
         orgsByName[orgName].servicesByName[serviceName].agentAddress = agentAddress;
+
+        emit ServiceModified(orgName, serviceName, orgName, serviceName);
     }
 
     function addTagsToServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32[] tags) external {
@@ -271,6 +285,8 @@ contract Registry is IRegistry {
         for (uint i = 0; i < tags.length; i++) {
             addTagToServiceRegistration(orgName, serviceName, tags[i]);
         }
+
+        emit ServiceModified(orgName, serviceName, orgName, serviceName);
     }
 
     function addTagToServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 tagName) internal {
@@ -307,6 +323,8 @@ contract Registry is IRegistry {
         for (uint i = 0; i < tags.length; i++) {
             removeTagFromServiceRegistration(orgName, serviceName, tags[i]);
         }
+
+        emit ServiceModified(orgName, serviceName, orgName, serviceName);
     }
 
     function removeTagFromServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 tagName) internal {
@@ -356,6 +374,8 @@ contract Registry is IRegistry {
         requireServiceExistenceConstraint(orgName, serviceName, true);
 
         deleteServiceRegistrationInternal(orgName, serviceName);
+
+        emit ServiceDeleted(orgName, serviceName, orgName, serviceName);
     }
 
     function deleteServiceRegistrationInternal(bytes32 orgName, bytes32 serviceName) internal {
@@ -404,6 +424,8 @@ contract Registry is IRegistry {
         for (uint i = 0; i < tags.length; i++) {
             addTagToTypeRepositoryRegistration(orgName, repositoryName, tags[i]);
         }
+
+        emit TypeRepositoryCreated(orgName, repositoryName, orgName, repositoryName);
     }
 
     function updateTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath,
@@ -415,6 +437,8 @@ contract Registry is IRegistry {
 
         orgsByName[orgName].typeReposByName[repositoryName].repositoryPath = repositoryPath;
         orgsByName[orgName].typeReposByName[repositoryName].repositoryURI = repositoryURI;
+
+        emit TypeRepositoryModified(orgName, repositoryName, orgName, repositoryName);
     }
 
     function addTagsToTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32[] tags) external {
@@ -426,6 +450,8 @@ contract Registry is IRegistry {
         for (uint i = 0; i < tags.length; i++) {
             addTagToTypeRepositoryRegistration(orgName, repositoryName, tags[i]);
         }
+
+        emit TypeRepositoryModified(orgName, repositoryName, orgName, repositoryName);
     }
 
     function addTagToTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 tagName) internal {
@@ -461,6 +487,8 @@ contract Registry is IRegistry {
         for (uint i = 0; i < tags.length; i++) {
             removeTagFromTypeRepositoryRegistration(orgName, repositoryName, tags[i]);
         }
+
+        emit TypeRepositoryModified(orgName, repositoryName, orgName, repositoryName);
     }
 
     function removeTagFromTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 tagName) internal {
@@ -511,6 +539,8 @@ contract Registry is IRegistry {
         requireTypeRepositoryExistenceConstraint(orgName, repositoryName, true);
 
         deleteTypeRepositoryRegistrationInternal(orgName, repositoryName);
+
+        emit TypeRepositoryModified(orgName, repositoryName, orgName, repositoryName);
     }
 
     function deleteTypeRepositoryRegistrationInternal(bytes32 orgName, bytes32 repositoryName) internal {
