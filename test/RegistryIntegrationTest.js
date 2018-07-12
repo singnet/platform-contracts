@@ -63,20 +63,10 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
         const c = Object.freeze({
             OrganizationCount: 10,
             OrganizationName: "MetaCortex", // name of the organization
-            OrganizationMembers: [
-                "0x0000000000000000000000000000000000000001",
-                "0x0000000000000000000000000000000000000002",
-                "0x0000000000000000000000000000000000000003",
-                "0x0000000000000000000000000000000000000004",
-                "0x0000000000000000000000000000000000000005",
-                "0x0000000000000000000000000000000000000006",
-                "0x0000000000000000000000000000000000000007",
-                "0x0000000000000000000000000000000000000008"
-            ],
             CreatorAccount: accounts[0],
             Format: Object.freeze({
                 getOrgName        : (i) => `${c.OrganizationName}_${i}`,
-                getMemberAddress  : (i) => `0x${i}`,
+                getMemberAddress  : (i) => `0x${String(i).padStart(40, '0')}`,
                 getServiceName    : (orgName, i) => `${orgName}_Service_${i}`,
                 getServicePath    : (orgName, i) => `/${orgName}/s${i}`,
                 getServiceAddress : (orgName, serviceName) => web3.fromAscii(`${orgName}-${serviceName}`).substring(0, 42),
@@ -118,9 +108,9 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
 
             s.Data.Orgs.add(_orgName);
 
-            const [found, name, owner, serviceNames, repositoryNames] = await s.RegistryInstance.getOrganizationByName.call(_orgName);
+            const [found, name, owner, members, serviceNames, repositoryNames] = await s.RegistryInstance.getOrganizationByName.call(_orgName);
 
-            return {receipt: createResult.receipt, view: {found, name, owner, serviceNames, repositoryNames}};
+            return {receipt: createResult.receipt, view: {found, name, owner, members, serviceNames, repositoryNames}};
         };
 
         const deleteOrganization = async (_orgName) => {
@@ -339,7 +329,7 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
             for (let i = 0; i < numOrgs; i++) {
                 // setup params
                 const orgName = c.Format.getOrgName(i);
-                const membersArray = intRange(0, i).map(c.Format.getMemberAddress);
+                const membersArray = intRange(0, i+1).map(c.Format.getMemberAddress);
 
                 it(`Creates org ${orgName} with ${membersArray.length} members`, async () => {
                     // interact with contract
@@ -351,12 +341,14 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
 
 
                     // destructure view
-                    const {found, name, owner, serviceNames, repositoryNames} = createResult.view;
+                    const {found, name, owner, members, serviceNames, repositoryNames} = createResult.view;
+                    const membersDecoded = members.map(m => addressToString(m));
 
                     // validate view
                     assert.equal(true, found, "Org not found after registration");
                     assert.equal(orgName, bytesToString(name), "Org registered with the wrong name");
                     assert.equal(c.CreatorAccount, addressToString(owner), "Org registered with the wrong owner");
+                    assertArraysEqual(assert.equal, membersArray, membersDecoded, "Org registered with incorrect members");
                     assert.equal(0, serviceNames.length, "Org registered with pre-existing services");
                     assert.equal(0, repositoryNames.length, "Org registered with pre-existing type repos");
                 });
@@ -575,7 +567,6 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
             }
 
             it(`VALIDATE - after deleting repos`, async () => {
-                // console.log(s.Data);
                 await validateAllTheThings(s.Data.Orgs, s.Data.ServiceTags, s.Data.RepoTags, s.Data.OrgsToServices, s.Data.OrgsToRepos, s.Data.TagsToServices, s.Data.TagsToRepos)
             });
 
@@ -617,7 +608,6 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
             }
 
             it(`VALIDATE - after deleting orgs`, async () => {
-                // console.log(s.Data);
                 await validateAllTheThings(s.Data.Orgs, s.Data.ServiceTags, s.Data.RepoTags, s.Data.OrgsToServices, s.Data.OrgsToRepos, s.Data.TagsToServices, s.Data.TagsToRepos)
             });
 
@@ -684,12 +674,11 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
             }
 
             it(`VALIDATE - after deleting tags`, async () => {
-                // console.log(s.Data);
                 await validateAllTheThings(s.Data.Orgs, s.Data.ServiceTags, s.Data.RepoTags, s.Data.OrgsToServices, s.Data.OrgsToRepos, s.Data.TagsToServices, s.Data.TagsToRepos)
             });
         };
 
-        await testLogic(suite_numOrgs, suite_servicesPerOrg, suite_reposPerOrg, suite_numTags) ; //4, 4, 4, 10);
+        await testLogic(suite_numOrgs, suite_servicesPerOrg, suite_reposPerOrg, suite_numTags) ;
     });
 };
 

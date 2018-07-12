@@ -7,7 +7,13 @@ contract Registry is IRegistry {
     struct OrganizationRegistration {
         bytes32 organizationName;
         address owner;
-        mapping(address => bool) members;
+
+        // member indexing note:
+        // case (members[someAddress]) of
+        //   0 -> not a member of this org
+        //   n -> member of this org, and memberKeys[n-1] == someAddress
+        address[] memberKeys;
+        mapping(address => uint) members;
 
         bytes32[] serviceKeys;
         bytes32[] typeRepoKeys;
@@ -66,7 +72,7 @@ contract Registry is IRegistry {
       * @param membersAllowed if true, revert when sender is non-owner and non-member, else revert when sender is non-owner
       */
     function requireAuthorization(bytes32 orgName, bool membersAllowed) internal view {
-        require(msg.sender == orgsByName[orgName].owner || (membersAllowed && orgsByName[orgName].members[msg.sender])
+        require(msg.sender == orgsByName[orgName].owner || (membersAllowed && orgsByName[orgName].members[msg.sender] > 0)
             , "unauthorized invocation");
     }
 
@@ -127,9 +133,7 @@ contract Registry is IRegistry {
         orgsByName[orgName].globalOrgIndex = orgKeys.length;
         orgKeys.push(orgName);
 
-        for (uint i = 0; i < members.length; i++) {
-            orgsByName[orgName].members[members[i]] = true;
-        }
+        addOrganizationMembersInternal(orgName, members);
     }
 
     function changeOrganizationOwner(bytes32 orgName, address newOwner) external {
@@ -145,8 +149,15 @@ contract Registry is IRegistry {
         requireOrgExistenceConstraint(orgName, true);
         requireAuthorization(orgName, true);
 
+        addOrganizationMembersInternal(orgName, newMembers);
+    }
+
+    function addOrganizationMembersInternal(bytes32 orgName, address[] newMembers) internal {
         for (uint i = 0; i < newMembers.length; i++) {
-            orgsByName[orgName].members[newMembers[i]] = true;
+            if (orgsByName[orgName].members[newMembers[i]] == 0) {
+                orgsByName[orgName].memberKeys.push(newMembers[i]);
+                orgsByName[orgName].members[newMembers[i]] = orgsByName[orgName].memberKeys.length;
+            }
         }
     }
 
@@ -156,7 +167,28 @@ contract Registry is IRegistry {
         requireAuthorization(orgName, true);
 
         for (uint i = 0; i < existingMembers.length; i++) {
-            orgsByName[orgName].members[existingMembers[i]] = false;
+            removeOrganizationMemberInternal(orgName, existingMembers[i]);
+        }
+    }
+
+    function removeOrganizationMemberInternal(bytes32 orgName, address existingMember) internal {
+        // see "member indexing note"
+        if (orgsByName[orgName].members[existingMember] != 0) {
+            uint storedIndexToRemove = orgsByName[orgName].members[existingMember];
+            address memberToMove = orgsByName[orgName].memberKeys[orgsByName[orgName].memberKeys.length - 1];
+
+            // no-op if we are deleting the last entry
+            if (orgsByName[orgName].memberKeys[storedIndexToRemove - 1] != memberToMove) {
+                // swap lut entries
+                orgsByName[orgName].memberKeys[storedIndexToRemove - 1] = memberToMove;
+                orgsByName[orgName].members[memberToMove] = storedIndexToRemove;
+            }
+
+            // shorten keys array
+            orgsByName[orgName].memberKeys.length--;
+
+            // delete the mapping entry
+            delete orgsByName[orgName].members[existingMember];
         }
     }
 
@@ -173,12 +205,20 @@ contract Registry is IRegistry {
             deleteTypeRepositoryRegistrationInternal(orgName, orgsByName[orgName].typeRepoKeys[repoIndex-1]);
         }
 
+        for (uint memberIndex = orgsByName[orgName].memberKeys.length; memberIndex > 0; memberIndex--) {
+            removeOrganizationMemberInternal(orgName, orgsByName[orgName].memberKeys[memberIndex-1]);
+        }
+
         // swap lut entries
         uint    indexToUpdate = orgsByName[orgName].globalOrgIndex;
         bytes32 orgToUpdate   = orgKeys[orgKeys.length-1];
 
-        orgKeys[indexToUpdate] = orgToUpdate;
-        orgsByName[orgToUpdate].globalOrgIndex = indexToUpdate;
+        if (orgKeys[indexToUpdate] != orgToUpdate) {
+            orgKeys[indexToUpdate] = orgToUpdate;
+            orgsByName[orgToUpdate].globalOrgIndex = indexToUpdate;
+        }
+
+        // shorten keys array
         orgKeys.length--;
 
         // delete contents of organization registration
@@ -237,7 +277,7 @@ contract Registry is IRegistry {
 
         // no-op if tag already exists
         if (orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName].tagName == bytes32(0x0)) {
-            // add the service to the org level tag index
+            // add the tag to the service level tag index
             Tag memory tagObj;
             orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName] = tagObj;
             orgsByName[orgName].servicesByName[serviceName].tagsByName[tagName].tagName = tagName;
@@ -328,8 +368,11 @@ contract Registry is IRegistry {
         uint    indexToUpdate   = orgsByName[orgName].servicesByName[serviceName].orgServiceIndex;
         bytes32 serviceToUpdate = orgsByName[orgName].serviceKeys[orgsByName[orgName].serviceKeys.length-1];
 
-        orgsByName[orgName].serviceKeys[indexToUpdate] = serviceToUpdate;
-        orgsByName[orgName].servicesByName[serviceToUpdate].orgServiceIndex = indexToUpdate;
+        if (orgsByName[orgName].serviceKeys[indexToUpdate] != serviceToUpdate) {
+            orgsByName[orgName].serviceKeys[indexToUpdate] = serviceToUpdate;
+            orgsByName[orgName].servicesByName[serviceToUpdate].orgServiceIndex = indexToUpdate;
+        }
+
         orgsByName[orgName].serviceKeys.length--;
 
         // delete contents of service registration
@@ -389,7 +432,7 @@ contract Registry is IRegistry {
 
         // no-op if tag already exists
         if (orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName].tagName == bytes32(0x0)) {
-            // add the type repository to the org level tag index
+            // add the tag to the type repository level tag index
             Tag memory tagObj;
             orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName] = tagObj;
             orgsByName[orgName].typeReposByName[repositoryName].tagsByName[tagName].tagName = tagName;
@@ -481,8 +524,12 @@ contract Registry is IRegistry {
         uint    indexToUpdate    = orgsByName[orgName].typeReposByName[repositoryName].orgTypeRepoIndex;
         bytes32 typeRepoToUpdate = orgsByName[orgName].typeRepoKeys[orgsByName[orgName].typeRepoKeys.length-1];
 
-        orgsByName[orgName].typeRepoKeys[indexToUpdate] = typeRepoToUpdate;
-        orgsByName[orgName].typeReposByName[typeRepoToUpdate].orgTypeRepoIndex = indexToUpdate;
+        // no-op if we are deleting the last item
+        if (orgsByName[orgName].typeRepoKeys[indexToUpdate] != typeRepoToUpdate) {
+            orgsByName[orgName].typeRepoKeys[indexToUpdate] = typeRepoToUpdate;
+            orgsByName[orgName].typeReposByName[typeRepoToUpdate].orgTypeRepoIndex = indexToUpdate;
+        }
+
         orgsByName[orgName].typeRepoKeys.length--;
 
         // delete contents of repo registration
@@ -501,7 +548,7 @@ contract Registry is IRegistry {
     }
 
     function getOrganizationByName(bytes32 orgName) external view
-            returns(bool found, bytes32 name, address owner, bytes32[] serviceNames, bytes32[] repositoryNames) {
+            returns(bool found, bytes32 name, address owner, address[] members, bytes32[] serviceNames, bytes32[] repositoryNames) {
 
         // check to see if this organization exists
         if(orgsByName[orgName].organizationName == bytes32(0x0)) {
@@ -512,6 +559,7 @@ contract Registry is IRegistry {
         found = true;
         name = orgsByName[orgName].organizationName;
         owner = orgsByName[orgName].owner;
+        members = orgsByName[orgName].memberKeys;
         serviceNames = orgsByName[orgName].serviceKeys;
         repositoryNames = orgsByName[orgName].typeRepoKeys;
     }

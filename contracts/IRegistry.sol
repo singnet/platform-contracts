@@ -220,7 +220,7 @@ interface IRegistry {
       * @return repositoryNames Array of name of type repositories owned by the organization.
       */
     function getOrganizationByName(bytes32 orgName) external view
-            returns (bool found, bytes32 name, address owner, bytes32[] serviceNames, bytes32[] repositoryNames);
+            returns (bool found, bytes32 name, address owner, address[] members, bytes32[] serviceNames, bytes32[] repositoryNames);
 
     /**
       * @dev Returns an array of names of all services owned by a given organization.
