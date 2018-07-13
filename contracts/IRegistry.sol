@@ -227,6 +227,7 @@ interface IRegistry {
       *                         returned fields should be ignored.
       * @return name            Name of organization, should be the same as the orgName parameter.
       * @return owner           Address of the owner of the organization.
+      * @return members         Array of addresses of the members of this organization.
       * @return serviceNames    Array of names of services owned by the organization.
       * @return repositoryNames Array of name of type repositories owned by the organization.
       */
