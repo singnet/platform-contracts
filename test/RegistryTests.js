@@ -19,14 +19,14 @@ assert.notEqual = assert.notStrictEqual;
 // 1, 3, 6, and 9 orgs and all the combinations of the other parameters.
 
 const start = Object.freeze({
-     Orgs     : 1,
+     Orgs     : 2,
      Services : 5,
      TypeRepos: 5,
      Tags     : 10
 });
 
 const end = Object.freeze({
-     Orgs     : 1,
+     Orgs     : 2,
      Services : 5,
      TypeRepos: 5,
      Tags     : 10
