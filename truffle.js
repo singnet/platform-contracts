@@ -9,12 +9,17 @@ let provider = (endpoint) => {
     }
 }
 
-module.exports = {
+let truffleOptions = {
     networks: {
         local: {
             host: "127.0.0.1",
             port: 8545,
             network_id: "*" // Any network ID
+        },
+        develop : {
+            host: "127.0.0.1",
+            port: 9545,
+            network_id: "*",
         },
         localhd: {
             provider: () => provider("http://127.0.0.1:8545"),
@@ -26,4 +31,27 @@ module.exports = {
             network_id: "42" // Kovan network ID
         },
     },
+    mocha: {
+        reporter: 'eth-gas-reporter',
+        reporterOptions : {
+            currency: 'USD',
+            onlyCalledMethods: 'true',
+            showTimeSpent: 'true'
+        }
+    },
+    solc: {
+        optimizer: {
+            enabled: true,
+            runs: 200
+        }
+    }
+};
+
+let reporterArg = process.argv.indexOf('--reporter');
+if (reporterArg >= 0) {
+    truffleOptions['mocha'] = {
+        reporter: process.argv[reporterArg + 1]
+    };
 }
+
+module.exports = truffleOptions;
