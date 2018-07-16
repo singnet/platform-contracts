@@ -1,5 +1,6 @@
 const STRINGS = Object.freeze({
-    "NULL_ADDRESS" : "0x0000000000000000000000000000000000000000"
+    "NULL_ADDRESS" : "0x0000000000000000000000000000000000000000",
+    "REGISTRY_ERC165_ID"  : "0xbd523993"
 });
 
 /**
@@ -73,7 +74,42 @@ const HELPERS = Object.freeze({
         for (let i = 0; i < arrayExpectedSorted.length; i++) {
             assertEqualFn(arrayExpectedSorted[i], arrayActualSorted[i], message + `: sorted arrays differ at element ${i}`);
         }
-    }
+    },
+    /**
+     * Takes a truffle contract object and returns an array of all function selectors
+     *
+     * e.g.
+     *
+     * [
+     *  'createOrganization(bytes32,address[])',
+     *  'changeOrganizationOwner(bytes32,address)',
+     *  ...
+     * ]
+     */
+    generateSelectorArray : (contract) =>
+        contract.abi
+            .filter(x => x.type === 'function') // filter only functions
+            .map(x => `${x.name}(${x.inputs.map(y=>y.type).join(',')})`), // map to $name($paramType1,$paramType2...)
+
+    /**
+     * Generates an erc165 compatible interface id from an array of method signatures.
+     * Adapted from openzeppelin-solidity which we cannot import due to ES6 module issues
+     *   https://github.com/ldub/openzeppelin-solidity/blob/master/test/helpers/makeInterfaceId.js
+     */
+    generateInterfaceId : (methodSignatures = []) =>
+        "0x" + methodSignatures
+            .map(methodSignature => web3.sha3(methodSignature)) // keccak256
+            .map(h => Buffer
+                .from(h.substring(2), 'hex')
+                .slice(0, 4) // bytes4()
+            )
+            .reduce((memo, bytes) => {
+                for (let i = 0; i < 4; i++) {
+                    memo[i] = memo[i] ^ bytes[i]; // xor
+                }
+                return memo;
+            }, Buffer.alloc(4))
+            .toString('hex')
 });
 
 module.exports = {

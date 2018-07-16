@@ -4,16 +4,22 @@ Includes alpha blockchain contracts, migrations, tests
 ## Contracts
 
 ### Agent
-* Per-service contract that manages the creation of Job instances at the request of consumers
+* Per-service contract that manages the creation of Job instances at the request of consumers.
 
 ### AgentFactory
-* Per-network contract that manages the creation of Agent instances at the request of service owners
+* Per-network contract that manages the creation of Agent instances at the request of service owners.
 
 ### Job
-* Per-service-invocation contract that performs escrow functionality with release of funds gated on a valid consumer signature
+* Per-service-invocation contract that performs escrow functionality with release of funds gated on a valid consumer signature.
 
 ### Registry
-* Per-network contract that maintains a mapping from name to agent address whose records can be updated and deprecated by the owner (first registrant) of the name
+* Per-network contract that maintains a registration structure including organizations, services, and type repositories. Consumers can query this registry by organization, service name, or tag in order to find AI services to use.
+
+## Interfaces
+
+| Name      | InterfaceID ([ERC-165](https://eips.ethereum.org/EIPS/eip-165)) | Source Code                              |
+|-----------|-----------------------------------------------------------------|------------------------------------------|
+| IRegistry | 0xbd523993                                                      | [IRegistry.sol](contracts/IRegistry.sol) |
 
 ## Deployed Contracts
 * AgentFactory (Kovan): [0x17c9c45ef8017862cd1628cd39f8ba1a9bc193ae](https://kovan.etherscan.io/address/0x17c9c45ef8017862cd1628cd39f8ba1a9bc193ae)
