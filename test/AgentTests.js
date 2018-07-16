@@ -17,11 +17,15 @@ assert.notEqual = assert.notStrictEqual;
 
 contract("Agent Creation & Job Execution", async (accounts) => {
     const testConstants = Object.freeze({
-        CreatorAccount  : accounts[1], // creator of agent
-        ConsumerAccount : accounts[0], // consumer of agent
-        AgentName       : "Mr. Smith", // name of the agent
-        AgentPrice      : 8          , // price that agent demands for services
-        AgentUrl        : "http://fake.url", // agent's hosted service url
+        CreatorAccount    : accounts[1], // creator of agent
+        ConsumerAccount   : accounts[0], // consumer of agent
+        AgentName         : "Mr. Smith", // name of the agent
+        AgentPrice        : 8          , // price that agent demands for services
+        AgentUrl          : "http://fake.url", // agent's hosted service url
+        AgentMetadataUri  : "/ipfs/whatever", // agent's IPFS-hosted metadata uri
+
+        AgentUrl2         : "http://new.fake.url", // agent's hosted service url
+        AgentMetadataUri2 : "/ipfs/whateverElse" // agent's IPFS-hosted metadata uri
     });
 
     const testState = Object.seal({
@@ -47,18 +51,21 @@ contract("Agent Creation & Job Execution", async (accounts) => {
     });
 
     it(`Creates agent with owner ${testConstants.CreatorAccount}, price ${testConstants.AgentPrice}, and url ${testConstants.AgentUrl}`, async () => {
-        const createAgentResult = await testState.AgentFactoryInstance.createAgent(testConstants.AgentPrice, testConstants.AgentUrl, {from: testConstants.CreatorAccount});
+        const createAgentResult = await testState.AgentFactoryInstance.createAgent(testConstants.AgentPrice
+            , testConstants.AgentUrl, testConstants.AgentMetadataUri, {from: testConstants.CreatorAccount});
         testState.AgentInstance = Agent.at(createAgentResult.logs[0].args.agent);
 
         const state        = (await testState.AgentInstance.state.call()).toNumber();
         const owner        = await testState.AgentInstance.owner.call();
         const currentPrice = (await testState.AgentInstance.currentPrice.call()).toNumber();
         const endpoint     = await testState.AgentInstance.endpoint.call();
+        const metadataUri  = await testState.AgentInstance.metadataURI.call();
 
-        assert.equal(AGENT_STATE.ENABLED         , state       , "Agent state should be ENABLED");
-        assert.equal(testConstants.CreatorAccount, owner       , "Agent's owner was not saved correctly");
-        assert.equal(testConstants.AgentPrice    , currentPrice, "Agent price was not saved correctly");
-        assert.equal(testConstants.AgentUrl      , endpoint    , "Agent endpoint was not saved correctly");
+        assert.equal(AGENT_STATE.ENABLED           , state       , "Agent state should be ENABLED");
+        assert.equal(testConstants.CreatorAccount  , owner       , "Agent's owner was not saved correctly");
+        assert.equal(testConstants.AgentPrice      , currentPrice, "Agent price was not saved correctly");
+        assert.equal(testConstants.AgentUrl        , endpoint    , "Agent endpoint was not saved correctly");
+        assert.equal(testConstants.AgentMetadataUri, metadataUri , "Agent metadata uri was not saved correctly");
     });
 
     it(`Creates job with consumer account ${testConstants.ConsumerAccount}`, async () => {
@@ -127,6 +134,21 @@ contract("Agent Creation & Job Execution", async (accounts) => {
         assert.equal(testConstants.CreatorAccount, agentOwner       , "Agent owner was changed");
         assert.equal(testConstants.AgentPrice    , agentPrice       , "AgentPrice was changed");
         assert.equal(testConstants.AgentPrice    , agentOwnerBalance, `Agent owner does not have ${testConstants.AgentPrice} AGI`);
+    });
 
+    it(`Changes the agent endpoint to ${testConstants.AgentUrl2}`, async () => {
+        const setEndpointResult = await testState.AgentInstance.setEndpoint.sendTransaction(testConstants.AgentUrl2, {from: accounts[1]});
+
+        const updatedEndpoint = await testState.AgentInstance.endpoint.call();
+
+        assert.equal(updatedEndpoint, testConstants.AgentUrl2);
+    });
+
+    it(`Changes the agent metadata uri to ${testConstants.AgentMetadataUri2}`, async () => {
+        const setMetadataUriResult = await testState.AgentInstance.setMetadataURI.sendTransaction(testConstants.AgentMetadataUri2, {from: accounts[1]});
+
+        const updatedMetadataUri = await testState.AgentInstance.metadataURI.call();
+
+        assert.equal(updatedMetadataUri, testConstants.AgentMetadataUri2);
     });
 });
