@@ -1,8 +1,9 @@
 pragma solidity ^0.4.24;
 
+import "openzeppelin-solidity/contracts/introspection/ERC165.sol";
 import "./IRegistry.sol";
 
-contract Registry is IRegistry {
+contract Registry is IRegistry, ERC165 {
 
     struct OrganizationRegistration {
         bytes32 organizationName;
@@ -678,5 +679,12 @@ contract Registry is IRegistry {
     function listTypeRepositoriesForTag(bytes32 tag) external view returns (bytes32[] orgNames, bytes32[] repositoryNames) {
         orgNames = typeReposByTag[tag].orgNames;
         repositoryNames = typeReposByTag[tag].itemNames;
+    }
+
+    // ERC165: https://eips.ethereum.org/EIPS/eip-165
+    function supportsInterface(bytes4 interfaceID) external view returns (bool) {
+        return
+            interfaceID == this.supportsInterface.selector || // ERC165
+            interfaceID == 0xbd523993; // IRegistry
     }
 }

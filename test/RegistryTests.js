@@ -1,9 +1,10 @@
 "use strict";
 
+let IRegistry = artifacts.require("IRegistry");
 let Registry = artifacts.require("Registry");
 
 let { STRINGS, AGENT_STATE, JOB_STATE, TX_STATUS, HELPERS } = require("./util/Util.js");
-let { signAddress, bytesToString, addressToString, intRange, assertArraysEqual } = HELPERS;
+let { signAddress, bytesToString, addressToString, intRange, assertArraysEqual, generateSelectorArray, generateInterfaceId } = HELPERS;
 let { dimensionalTraversal } = require("./util/DimensionalTraversal.js");
 require("./util/CollectionExtensions");
 
@@ -682,8 +683,32 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
     });
 };
 
-// const testVector = [1,3,0,0];
-//
-// runDynamicTestSuite.apply(null, testVector);
+// ERC165 tests
+contract(`Registry ERC-165 test`, async (accounts) => {
 
+    it(`Validates the IRegistry ERC165 identifier`, async () => {
+        const identifier = generateInterfaceId(generateSelectorArray(IRegistry));
+
+        assert.equal(STRINGS.REGISTRY_ERC165_ID, identifier, "incorrect IRegistry ERC165 identifier");
+    });
+
+    // Registry will always have supportsInterface which will change the ID
+    it(`Validates that Registry and IRegistry have different identifiers`, async () => {
+
+        const registryIdentifier  = generateInterfaceId(generateSelectorArray(Registry));
+        const iregistryIdentifier = generateInterfaceId(generateSelectorArray(IRegistry));
+
+        assert.notEqual(registryIdentifier, iregistryIdentifier, "Registry and IRegistry should never have the same identifier");
+    });
+
+    it(`Validates that the deployed Registry indicates support of registry ID`, async () => {
+        const registryInstance = await Registry.deployed();
+
+        const supportsRegistryId = await registryInstance.supportsInterface.call(STRINGS.REGISTRY_ERC165_ID);
+
+        assert.equal(true, supportsRegistryId, `Registry does not indicate support of published interface id ${STRINGS.REGISTRY_ERC165_ID}`);
+    });
+});
+
+// Registry functional tests
 doTest();
