@@ -1,5 +1,5 @@
-# alpha-blockchain
-Includes alpha blockchain contracts, migrations, tests
+# platform-contracts
+Includes SingularityNET platform contracts, migrations, tests
 
 ## Contracts
 
@@ -22,8 +22,8 @@ Includes alpha blockchain contracts, migrations, tests
 | IRegistry | 0xbd523993                                                      | [IRegistry.sol](contracts/IRegistry.sol) |
 
 ## Deployed Contracts
-* AgentFactory (Kovan): [0x17c9c45ef8017862cd1628cd39f8ba1a9bc193ae](https://kovan.etherscan.io/address/0x17c9c45ef8017862cd1628cd39f8ba1a9bc193ae)
-* Registry (Kovan): [0x6846ed8ad12d7d4b4bc8319994bbc153d1434783](https://kovan.etherscan.io/address/0x6846ed8ad12d7d4b4bc8319994bbc153d1434783)
+* AgentFactory (Kovan): [0x1faa8ec70afe4f5ce904da935a6ddf5f3482eedb](https://kovan.etherscan.io/address/0x1faa8ec70afe4f5ce904da935a6ddf5f3482eedb)
+* Registry (Kovan): [0x440cf8424fcd7fc2d2ff3a5668c919e93a3d2aab](https://kovan.etherscan.io/address/0x440cf8424fcd7fc2d2ff3a5668c919e93a3d2aab)
 
 ## Requirements
 * [Node.js](https://github.com/nodejs/node) (8+)
@@ -47,4 +47,4 @@ npm run package-npm
 ```
 
 ## Release
-AgentFactory and Registry artifacts are published to NPM: https://www.npmjs.com/package/singularitynet-alpha-blockchain
+Contract build artifacts are published to NPM: https://www.npmjs.com/package/singularitynet-platform-contracts

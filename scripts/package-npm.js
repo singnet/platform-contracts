@@ -53,7 +53,7 @@ let transformPackageJson = (x) => {
         homepage: x.homepage,
         dependencies: {
             "singularitynet-token-contracts": x.dependencies["singularitynet-token-contracts"],
-            "zeppelin-solidity": x.dependencies["zeppelin-solidity"]
+            "openzeppelin-solidity": x.dependencies["openzeppelin-solidity"]
         }
     };
 };
