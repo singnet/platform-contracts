@@ -5,8 +5,10 @@ let Agent = artifacts.require("Agent");
 //let Registry = artifacts.require("Registry");
 let Job = artifacts.require("Job");
 let Contract = require("truffle-contract");
-let TokenJson = require("singularitynet-token-contracts/SingularityNetToken.json");
-let Token = Contract(TokenJson);
+let TokenAbi = require("singularitynet-token-contracts/abi/SingularityNetToken.json");
+let TokenNetworks = require("singularitynet-token-contracts/networks/SingularityNetToken.json");
+let TokenBytecode = require("singularitynet-token-contracts/bytecode/SingularityNetToken.json");
+let Token = Contract({contractName: "SingularityNetToken", abi: TokenAbi, networks: TokenNetworks, bytecode: TokenBytecode});
 let { STRINGS, AGENT_STATE, JOB_STATE, HELPERS : { signAddress, bytesToString, addressToString }} = require("./util/Util.js");
 
 Token.setProvider(web3.currentProvider);

@@ -1,2 +1,2 @@
-# singularitynet-alpha-blockchain
-SingularityNET Alpha Blockchain
+# singularitynet-platform-contracts
+SingularityNET Platform Contracts

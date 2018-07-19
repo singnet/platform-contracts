@@ -1,4 +1,4 @@
-pragma solidity ^0.4.21;
+pragma solidity ^0.4.24;
 
 import "./Agent.sol";
 
@@ -8,7 +8,7 @@ contract AgentFactory {
 
     event AgentCreated(address agent);
 
-    function AgentFactory(address _token) public {
+    constructor(address _token) public {
         token = _token;
     }
 

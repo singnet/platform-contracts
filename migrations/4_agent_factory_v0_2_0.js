@@ -1,13 +1,13 @@
-let AgentFactory = artifacts.require("AgentFactory");
+let AgentFactory = artifacts.require("./AgentFactory.sol");
 let Contract = require("truffle-contract");
-let TokenJson = require("singularitynet-token-contracts/SingularityNetToken.json");
-let Token = Contract(TokenJson);
+let TokenAbi = require("singularitynet-token-contracts/abi/SingularityNetToken.json");
+let TokenNetworks = require("singularitynet-token-contracts/networks/SingularityNetToken.json");
+let TokenBytecode = require("singularitynet-token-contracts/bytecode/SingularityNetToken.json");
+let Token = Contract({contractName: "SingularityNetToken", abi: TokenAbi, networks: TokenNetworks, bytecode: TokenBytecode});
 
 module.exports = function(deployer, network, accounts) {
     Token.setProvider(web3.currentProvider);
     Token.defaults({from: accounts[0], gas: 4000000});
     deployer.deploy(Token, {overwrite: false})
-        .then(() => Token.deployed())
-        .then(() => deployer.deploy(AgentFactory, Token.address))
-        .then(() => AgentFactory.deployed());
+        .then((TokenInstance) => deployer.deploy(AgentFactory, TokenInstance.address));
 };

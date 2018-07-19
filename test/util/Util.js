@@ -27,9 +27,7 @@ const TX_STATUS = Object.freeze({
 
 const HELPERS = Object.freeze({
     signAddress : (address, account) => {
-        let valueHex = "0x" + address.slice(2);
-        let h = web3.sha3(valueHex, {encoding: "hex"});
-        let sig = web3.eth.sign(account, h).slice(2);
+        let sig = web3.eth.sign(account, web3.fromUtf8(address)).slice(2);
         let r = `0x${sig.slice(0, 64)}`;
         let s = `0x${sig.slice(64, 128)}`;
         let v = web3.toDecimal(sig.slice(128, 130)) + 27;

@@ -1,8 +1,8 @@
 {
-  "name": "singularitynet-alpha-blockchain",
-  "version": "1.1.0",
+  "name": "singularitynet-platform-contracts",
+  "version": "0.2.1",
   "private": true,
-  "description": "Includes alpha blockchain contracts, migrations, tests",
+  "description": "Includes SingularityNET platform contracts, migrations, tests",
   "directories": {
     "test": "test"
   },
@@ -15,20 +15,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/singnet/alpha-blockchain.git"
+    "url": "git+https://github.com/singnet/platform-contracts.git"
   },
   "author": "SingularityNET",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/singnet/alpha-blockchain/issues"
+    "url": "https://github.com/singnet/platform-contracts/issues"
   },
-  "homepage": "https://github.com/singnet/alpha-blockchain#readme",
+  "homepage": "https://github.com/singnet/platform-contracts#readme",
   "dependencies": {
-    "openzeppelin-solidity": "^1.11.0",
-    "singularitynet-token-contracts": "1.0.0",
+    "openzeppelin-solidity": "1.11.0",
+    "singularitynet-token-contracts": "2.0.0",
     "truffle": "4.1.13",
-    "truffle-contract": "3.0.4",
-    "truffle-hdwallet-provider": "0.0.3"
+    "truffle-contract": "3.0.6",
+    "truffle-hdwallet-provider": "0.0.5"
   },
   "devDependencies": {
     "chai": "^4.1.2",
