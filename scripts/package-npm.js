@@ -19,11 +19,6 @@ const mapFiles = {
         "networks": "networks/AgentFactory.json",
         "bytecode": "bytecode/AgentFactory.json"
     },
-    "build/contracts/AlphaRegistry.json": {
-        "abi": "abi/AlphaRegistry.json",
-        "networks": "networks/AlphaRegistry.json",
-        "bytecode": "bytecode/AlphaRegistry.json"
-    },
     "build/contracts/Registry.json": {
         "networks": "networks/Registry.json",
         "bytecode": "bytecode/Registry.json"
