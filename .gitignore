@@ -1,4 +1,4 @@
-build/npm-module
+build
 node_modules
 yarn-error.log
 npm-debug.log
