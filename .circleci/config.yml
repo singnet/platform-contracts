@@ -1,0 +1,19 @@
+version: 2
+jobs:
+  build:
+    docker:
+    - image: circleci/node:8.10
+    working_directory: ~/singnet/platform-contracts
+    steps:
+    - checkout
+    - run:
+        name: Build platform-contracts
+        command: |
+          npm install ganache-cli
+          npm install
+          npm run-script compile
+          npm run-script package-npm
+    - run:
+        name: Test token-contracts
+        command: |
+          npm run test
