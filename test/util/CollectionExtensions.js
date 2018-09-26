@@ -48,10 +48,12 @@ Set.prototype.forEachAsync = function (callbackfn, thisArg) {
         );
 };
 
-Array.prototype.zip = function (otherArray) {
-    return this.map((e,i) => [this[i], i < otherArray.length ? otherArray[i] : null]);
-};
+Object.defineProperty(Array.prototype, 'zip', {
+    enumerable: false,
+    value: function(otherArray) { return this.map((e,i) => [this[i], i < otherArray.length ? otherArray[i] : null]); }
+});
 
-Array.prototype.difference = function (otherArray) {
-    return this.filter((e, i) => !otherArray.includes(e));
-};
+Object.defineProperty(Array.prototype, 'difference', {
+    enumerable: false,
+    value: function(otherArray) { return this.filter((e, i) => !otherArray.includes(e)); }
+});

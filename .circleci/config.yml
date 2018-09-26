@@ -2,14 +2,13 @@ version: 2
 jobs:
   build:
     docker:
-    - image: circleci/node:8.10
+    - image: circleci/node:10.11
     working_directory: ~/singnet/platform-contracts
     steps:
     - checkout
     - run:
         name: Install
         command: |
-          npm install ganache-cli
           npm install
     - run:
         name: Test
