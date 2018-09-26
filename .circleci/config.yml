@@ -7,13 +7,11 @@ jobs:
     steps:
     - checkout
     - run:
-        name: Build platform-contracts
+        name: Install
         command: |
           npm install ganache-cli
           npm install
-          npm run-script compile
-          npm run-script package-npm
     - run:
-        name: Test token-contracts
+        name: Test
         command: |
           npm run test
