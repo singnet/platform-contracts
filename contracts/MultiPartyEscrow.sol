@@ -17,7 +17,8 @@ contract MultiPartyEscrow {
         uint256 replica_id;  // id of particular service replica
         uint256 value;       // Total amount of tokens deposited to the channel. 
         uint256 nonce;       // "nonce" of the channel (by changing nonce we effectivly close the old channel ([this, channel_id, old_nonce])
-                             //  and open the new channel [this, channel_id, new_nonce]) 
+                             //  and open the new channel [this, channel_id, new_nonce])
+                             //!!! nonce also prevents race conditon between channel_claim and channel_extend_and_add_funds 
         uint256 expiration;  // Timeout in case the recipient never closes.
     }
 
