@@ -55,7 +55,8 @@ Each "atomic" payment channel in MPE is represented by the following structure
         uint256 replica_id;  // id of particular service replica
         uint256 value;       // Total amount of tokens deposited to the channel. 
         uint256 nonce;       // "nonce" of the channel (by changing nonce we effectivly close the old channel ([this, channel_id, old_nonce])
-                             //  and open the new channel [this, channel_id, new_nonce]) 
+                             //  and open the new channel [this, channel_id, new_nonce])
+                             // nonce also prevents race conditon between channel_claim and channel_extend_and_add_funds
         uint256 expiration;  // Timeout in case the recipient never closes.
     }
 
@@ -69,6 +70,7 @@ Comments are selfexplanatory, but few clarifications migth be useful.
    which is needed to prevent the multi contracts attacks. channel_id is a index in the channels mapping. nonce is a part of close/reopen logic.
 * by changing nonce we effectively close the old channel [MPEContractAddress, channel_id, old_nonce]
   and open the new one [MPEContractAddress, channel_id, new_nonce]. More explanations will be given later.
+* nonce also prevents race condition between between channel_claim and channel_extend_and_add_funds.
 * The full ID of the recipient is [recipient_ethereum_address, replica_id]. By doing this we allow service provider to use the
   same ethereum wallet for different replicas.
 
@@ -202,4 +204,7 @@ Instead it could be some centralized server to sign the transactions from the da
 * Server do not need to wait the confirmation from the blockchain after he sends on-chain request to close/reopen the channel
   (after he fix the profit and ask MPE to change the nonce of the channel). He can inform the client that nonce of the channel have changed
   (that old atomic  channel have been closed and new atomic chanel have been opened). The server can start accepting calls from the client with a new nonce. It can be shown that it is secure for both the client and the server, if transaction is accepted by blockchain before expiration date of the channel. Similary the client don't need to wait the confirmation from the blockchain after sending channel_extend_and_add_funds. It makes MPE functional even on very slow Ethereum network.  
+* nonce in the channel prevent race condition between channel_extend_and_add_funds and channel_claim. If the client send channel_extend_and_add_funds request and at the same time the
+server sends channel_claim request. Then, as have been said before, they can continue to work without receiving confirmation from blockchain. 
+But it is also doesn't matter which request will be accepted first (because channel_claim only change the nonce, and not create new PaymentChannel structure).
 
