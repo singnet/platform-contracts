@@ -64,7 +64,9 @@ contract MultiPartyEscrow {
         return true;
     }
     
-    //open a channel, tokan should be already being deposit
+    //open a channel, token should be already being deposit
+    //open_channel should be run only once for given sender, recipient, replica_id
+    //channel can be reused even after channel_claim(..., is_sendback=true)
     function open_channel(address  recipient, uint256 value, uint256 expiration, uint256 replica_id) 
     public
     returns(bool) 
@@ -138,7 +140,7 @@ contract MultiPartyEscrow {
         require(amount <= channel.value);
         require(msg.sender == channel.recipient);
  
-        //"this" will be added later 
+        //message which was signed contains the address of MPE contract ("this"), but we will add it later.
         require(isValidSignature_claim(channel_id, channel.nonce, amount, signature, channel.sender));
         
         balances[msg.sender]       += amount;
