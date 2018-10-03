@@ -103,7 +103,16 @@ contract MultiPartyEscrow {
     returns(bool) 
     {
         require(balances[sender] >= value);
-        require(isValidSignature_open_channel_replaysafe(msg.sender, value, expiration, replica_id, message_nonce, signature, sender));
+
+        //compose the message which was signed
+        bytes32 message = prefixed(keccak256(abi.encodePacked(this, msg.sender, value, expiration, replica_id, message_nonce)));
+        
+        //check for replay attack (message can be used only once)
+        require( ! used_messages[message]);
+        used_messages[message] = true;
+
+        // check that the signature is from the "sender"
+        require(recoverSigner(message, signature) == sender);
 
         channels[next_channel_id] = PaymentChannel({
             sender       : sender,
@@ -120,7 +129,7 @@ contract MultiPartyEscrow {
         return true;
     }
  
-    function _channel_sendback_and_reopen(uint256 channel_id)
+    function _channel_sendback_and_reopen_suspended(uint256 channel_id)
     private
     {
         PaymentChannel storage channel = channels[channel_id];
@@ -139,16 +148,18 @@ contract MultiPartyEscrow {
         PaymentChannel storage channel = channels[channel_id];
         require(amount <= channel.value);
         require(msg.sender == channel.recipient);
- 
-        //message which was signed contains the address of MPE contract ("this"), but we will add it later.
-        require(isValidSignature_claim(channel_id, channel.nonce, amount, signature, channel.sender));
         
+        //compose the message which was signed
+        bytes32 message = prefixed(keccak256(abi.encodePacked(this, channel_id, channel.nonce, amount)));
+        // check that the signature is from the channel.sender
+        require(recoverSigner(message, signature) == channel.sender);
+         
         balances[msg.sender]       += amount;
         channels[channel_id].value -= amount;
     
         if (is_sendback)    
             {
-                _channel_sendback_and_reopen(channel_id);
+                _channel_sendback_and_reopen_suspended(channel_id);
             }
             else
             {
@@ -202,36 +213,8 @@ contract MultiPartyEscrow {
     {
         require(msg.sender == channels[channel_id].sender);
         require(now >= channels[channel_id].expiration);
-        _channel_sendback_and_reopen(channel_id);
+        _channel_sendback_and_reopen_suspended(channel_id);
     }
-
-
-    function isValidSignature_open_channel_replaysafe(address recipient, uint256 value, uint256 expiration, uint256 replica_id, uint256 message_nonce, bytes memory signature, address sender)
-    internal
-	returns (bool)
-    {
-        bytes32 message = prefixed(keccak256(abi.encodePacked(this, recipient, value, expiration, replica_id, message_nonce)));
-        
-        //check for replay attack
-        if (used_messages[message]) return false;
-        
-        //store this message. It will prevent replay of this message
-        used_messages[message] = true;
-
-        // check that the signature is from the "sender"
-        return recoverSigner(message, signature) == sender;
-    }
-
-    function isValidSignature_claim(uint256 channel_id, uint256 nonce, uint256 amount, bytes memory signature, address sender)
-    internal
-    view
-	returns (bool)
-    {
-        bytes32 message = prefixed(keccak256(abi.encodePacked(this, channel_id, nonce, amount)));
-        // check that the signature is from the payment sender
-        return recoverSigner(message, signature) == sender;
-    }
-
 
     function splitSignature(bytes memory sig)
     internal
