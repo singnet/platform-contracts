@@ -8,42 +8,42 @@ function sleep(ms)
 }
 
 
-function sign_message(from_account, message, callback) 
+function signMessage(fromAccount, message, callback) 
 {
-    web3.eth.sign(from_account, "0x" + message.toString("hex"), callback)
+    web3.eth.sign(fromAccount, "0x" + message.toString("hex"), callback)
 }
 
 
-function compose_claim_message(contract_address, channel_id, nonce, amount)
+function composeClaimMessage(contractAddress, channelId, nonce, amount)
 {
     return ethereumjsabi.soliditySHA3(
         ["address",        "uint256",  "uint256", "uint256"],
-        [contract_address, channel_id, nonce,      amount]);
+        [contractAddress, channelId, nonce,      amount]);
 }
 
-function compose_open_channel_message(contract_address, recipient_address, value, expiration, replica_id, message_nonce)
+function composeOpenChannelMessage(contractAddress, recipientAddress, value, expiration, replicaId, messageNonce)
 {
    return ethereumjsabi.soliditySHA3(
         ["address",        "address",        "uint256", "uint256", "uint256", "uint256"],
-        [contract_address, recipient_address, value,    expiration, replica_id, message_nonce]);
+        [contractAddress, recipientAddress, value,    expiration, replicaId, messageNonce]);
 
 }
 
 
-function sign_claim_message(from_account, contract_address, channel_id, nonce, amount, callback) 
+function signClaimMessage(fromAccount, contractAddress, channelId, nonce, amount, callback) 
 {
-    var message = compose_claim_message(contract_address, channel_id, nonce, amount);
-    sign_message(from_account, message, callback);
+    var message = composeClaimMessage(contractAddress, channelId, nonce, amount);
+    signMessage(fromAccount, message, callback);
 }
 
-function sign_open_channel_message(from_account, contract_address, recipient_address, value, expiration, replica_id, message_nonce, callback)
+function signOpenChannelMessage(fromAccount, contractAddress, recipientAddress, value, expiration, replicaId, messageNonce, callback)
 {
-    var message = compose_open_channel_message(contract_address, recipient_address, value, expiration, replica_id, message_nonce);
-    sign_message(from_account, message, callback);
+    var message = composeOpenChannelMessage(contractAddress, recipientAddress, value, expiration, replicaId, messageNonce);
+    signMessage(fromAccount, message, callback);
 }
 
 
-// this mimics the prefixing behavior of the eth_sign JSON-RPC method.
+// this mimics the prefixing behavior of the ethSign JSON-RPC method.
 function prefixed(hash) {
     return ethereumjsabi.soliditySHA3(
         ["string", "bytes32"],
@@ -59,57 +59,57 @@ function recoverSigner(message, signature) {
     return signer;
 }
 
-function isValidSignature_claim(contract_address, channel_id, nonce, amount, signature, expectedSigner) {
-    var message = prefixed(compose_claim_message(contract_address, channel_id, nonce, amount));
-    var signer = recoverSigner(message, signature);
+function isValidSignatureClaim(contractAddress, channelId, nonce, amount, signature, expectedSigner) {
+    var message = prefixed(composeClaimMessage(contractAddress, channelId, nonce, amount));
+    var signer  = recoverSigner(message, signature);
     return signer.toLowerCase() ==
         ethereumjsutil.stripHexPrefix(expectedSigner).toLowerCase();
 }
 
-function isValidSignature_open_channel(contract_address, recipient_address, value, expiration, replica_id, message_nonce, signature, expectedSigner) {
-    var message = prefixed(compose_open_channel_message(contract_address, recipient_address, value, expiration, replica_id, message_nonce));
-    var signer = recoverSigner(message, signature);
+function isValidSignatureOpenChannel(contractAddress, recipientAddress, value, expiration, replicaId, messageNonce, signature, expectedSigner) {
+    var message = prefixed(composeOpenChannelMessage(contractAddress, recipientAddress, value, expiration, replicaId, messageNonce));
+    var signer  = recoverSigner(message, signature);
     return signer.toLowerCase() ==
         ethereumjsutil.stripHexPrefix(expectedSigner).toLowerCase();
 }
 
 
 
-async function wait_signed_claim_message(from_account, contract_address, channel_id, nonce, amount)
+async function waitSignedClaimMessage(fromAccount, contractAddress, channelId, nonce, amount)
 {
-    let det_wait = true;
-    let rez_sign;
-    sign_claim_message(from_account, contract_address, channel_id, nonce, amount, function(err,sgn)
+    let detWait = true;
+    let rezSign;
+    signClaimMessage(fromAccount, contractAddress, channelId, nonce, amount, function(err,sgn)
         {   
-            det_wait = false;
-            rez_sign = sgn
+            detWait = false;
+            rezSign = sgn
         });
-    while(det_wait)
+    while(detWait)
     {
         await sleep(1)
     }
-    return rez_sign;
+    return rezSign;
 } 
 
-async function wait_signed_open_channel_message(from_account, contract_address, recipient_address, value, expiration, replica_id, message_nonce)
+async function waitSignedOpenChannelMessage(fromAccount, contractAddress, recipientAddress, value, expiration, replicaId, messageNonce)
 {
-    let det_wait = true;
-    let rez_sign;
-    sign_open_channel_message(from_account, contract_address, recipient_address, value, expiration, replica_id, message_nonce, function(err,sgn)
+    let detWait = true;
+    let rezSign;
+    signOpenChannelMessage(fromAccount, contractAddress, recipientAddress, value, expiration, replicaId, messageNonce, function(err,sgn)
         {   
-            det_wait = false;
-            rez_sign = sgn
+            detWait = false;
+            rezSign = sgn
         });
-    while(det_wait)
+    while(detWait)
     {
         await sleep(1)
     }
-    return rez_sign;
+    return rezSign;
 } 
 
 
-module.exports.wait_signed_claim_message         = wait_signed_claim_message;
-module.exports.wait_signed_open_channel_message  = wait_signed_open_channel_message;
-module.exports.isValidSignature_claim            = isValidSignature_claim;
-module.exports.isValidSignature_open_channel     = isValidSignature_open_channel;
+module.exports.waitSignedClaimMessage        = waitSignedClaimMessage;
+module.exports.waitSignedOpenChannelMessage  = waitSignedOpenChannelMessage;
+module.exports.isValidSignatureClaim         = isValidSignatureClaim;
+module.exports.isValidSignatureOpenChannel   = isValidSignatureOpenChannel;
 
