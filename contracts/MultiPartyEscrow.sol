@@ -26,9 +26,6 @@ contract MultiPartyEscrow {
     mapping (uint256 => PaymentChannel) public channels;
     mapping (address => uint256)        public balances; //tokens which have been deposit but haven't been escrowed in the channels
    
-    //already used messages for openChannelByRecipient in order to prevent replay attack
-    mapping (bytes32 => bool) public usedMessages; 
-
     uint256 public nextChannelId; //id of the next channel (and size of channels)
  
     ERC20 public token; // Address of token contract
@@ -97,38 +94,7 @@ contract MultiPartyEscrow {
         return true;
     }
 
-    //open a channel from the recipient side. Sender should send the signed permission to open the channel
-    function openChannelByRecipient(address  sender, uint256 value, uint256 expiration, uint256 replicaId, uint256 messageNonce, bytes memory signature) 
-    public
-    returns(bool) 
-    {
-        require(balances[sender] >= value);
 
-        //compose the message which was signed
-        bytes32 message = prefixed(keccak256(abi.encodePacked(this, msg.sender, value, expiration, replicaId, messageNonce)));
-        
-        //check for replay attack (message can be used only once)
-        require( ! usedMessages[message]);
-        usedMessages[message] = true;
-
-        // check that the signature is from the "sender"
-        require(recoverSigner(message, signature) == sender);
-
-        channels[nextChannelId] = PaymentChannel({
-            sender       : sender,
-            recipient    : msg.sender,
-            value        : value,
-            replicaId    : replicaId,
-            nonce        : 0,
-            expiration   : expiration
-        });
-        balances[sender] -= value;
-
-        emit EventChannelOpen(nextChannelId, sender, msg.sender, replicaId);
-        nextChannelId += 1;
-        return true;
-    }
- 
     function _channelSendbackAndReopenSuspended(uint256 channelId)
     private
     {

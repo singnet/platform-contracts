@@ -12,7 +12,7 @@ var ethereumjsabi  = require('ethereumjs-abi');
 var ethereumjsutil = require('ethereumjs-util');
 let signFuns       = require('./sign_mpe_funs');
 
-//console.log(signFuns)
+
 
 async function testErrorRevert(prom)
 {
@@ -123,26 +123,15 @@ contract('MultiPartyEscrow', function(accounts) {
 
        });
 
-     it ("Open the third channel from the server side", async function()
+     it ("Open the third channel", async function()
         {
-            let expiration   = web3.eth.getBlock(web3.eth.blockNumber).timestamp + 10000000
+           let expiration   = web3.eth.getBlock(web3.eth.blockNumber).timestamp + 10000000
             let value        = 1000
             let replicaId    = 44
             let messageNonce = 666
-            //open the channel from the server side
-            let sgn = await signFuns.waitSignedOpenChannelMessage(accounts[4], escrow.address, accounts[7], value, expiration, replicaId, messageNonce)          
-
-            await escrow.openChannelByRecipient(accounts[4], value, expiration, replicaId , messageNonce, sgn, {from:accounts[7]})
-            //console.log(accounts)
-            assert.equal((await escrow.nextChannelId.call()).toNumber(), 3)    
-            
+            await escrow.openChannel(accounts[7], value, expiration, replicaId, {from:accounts[4]})
+            assert.equal((await escrow.nextChannelId.call()).toNumber(), 3)     
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*2)
-            
-
-            //try replay attack. It MUST fail
-
-            testErrorRevert(escrow.openChannelByRecipient(accounts[4], value, expiration, replicaId , messageNonce, sgn, {from:accounts[7]}))
-
         });
 
      it ("Extend and add funds to the third channel", async function()
@@ -179,25 +168,6 @@ contract('MultiPartyEscrow', function(accounts) {
             assert.equal(signFuns.isValidSignatureClaim(escrow.address, 1941, 1917, 31415, sgn, accounts[2]), false,  "signature should be false")
             assert.equal(signFuns.isValidSignatureClaim(accounts[2],    1789, 1917, 31415, sgn, accounts[2]), false,  "signature should be false")
              
-        });
-
-   it ("Check validity of the signatures with js-server part (open channel)", async function()
-        {
-            //open the channel message
-            let expiration   = web3.eth.getBlock(web3.eth.blockNumber).timestamp + 10000000
-            let value        = 1000
-            let replicaId    = 44
-            let messageNonce = 666
-
-            let sgn = await signFuns.waitSignedOpenChannelMessage(accounts[4], escrow.address, accounts[7], value, expiration, replicaId, messageNonce)
-            assert.equal(signFuns.isValidSignatureOpenChannel(escrow.address, accounts[7], value, expiration, replicaId, messageNonce, sgn, accounts[4]), true, "signature should be ok")
-            assert.equal(signFuns.isValidSignatureOpenChannel(escrow.address, accounts[7], value, expiration, replicaId, messageNonce, sgn, accounts[5]), false, "signature should be false")
-            assert.equal(signFuns.isValidSignatureOpenChannel(escrow.address, accounts[7], value, expiration, replicaId, 42,            sgn, accounts[4]), false, "signature should be false")
-            assert.equal(signFuns.isValidSignatureOpenChannel(escrow.address, accounts[7], value, expiration, 0         , messageNonce, sgn, accounts[4]), false, "signature should be false")
-            assert.equal(signFuns.isValidSignatureOpenChannel(escrow.address, accounts[7], value, 42,         replicaId, messageNonce, sgn, accounts[4]), false, "signature should be false")
-            assert.equal(signFuns.isValidSignatureOpenChannel(escrow.address, accounts[7], 42,    expiration, replicaId, messageNonce, sgn, accounts[4]), false, "signature should be false")
-            assert.equal(signFuns.isValidSignatureOpenChannel(escrow.address, accounts[4], value, expiration, replicaId, messageNonce, sgn, accounts[4]), false, "signature should be false")
-            assert.equal(signFuns.isValidSignatureOpenChannel(accounts[0],    accounts[7], value, expiration, replicaId, messageNonce, sgn, accounts[4]), false, "signature should be false")
         });
 
 });

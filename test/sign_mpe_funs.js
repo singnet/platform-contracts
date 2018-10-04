@@ -21,24 +21,10 @@ function composeClaimMessage(contractAddress, channelId, nonce, amount)
         [contractAddress, channelId, nonce,      amount]);
 }
 
-function composeOpenChannelMessage(contractAddress, recipientAddress, value, expiration, replicaId, messageNonce)
-{
-   return ethereumjsabi.soliditySHA3(
-        ["address",        "address",        "uint256", "uint256", "uint256", "uint256"],
-        [contractAddress, recipientAddress, value,    expiration, replicaId, messageNonce]);
-
-}
-
 
 function signClaimMessage(fromAccount, contractAddress, channelId, nonce, amount, callback) 
 {
     var message = composeClaimMessage(contractAddress, channelId, nonce, amount);
-    signMessage(fromAccount, message, callback);
-}
-
-function signOpenChannelMessage(fromAccount, contractAddress, recipientAddress, value, expiration, replicaId, messageNonce, callback)
-{
-    var message = composeOpenChannelMessage(contractAddress, recipientAddress, value, expiration, replicaId, messageNonce);
     signMessage(fromAccount, message, callback);
 }
 
@@ -66,14 +52,6 @@ function isValidSignatureClaim(contractAddress, channelId, nonce, amount, signat
         ethereumjsutil.stripHexPrefix(expectedSigner).toLowerCase();
 }
 
-function isValidSignatureOpenChannel(contractAddress, recipientAddress, value, expiration, replicaId, messageNonce, signature, expectedSigner) {
-    var message = prefixed(composeOpenChannelMessage(contractAddress, recipientAddress, value, expiration, replicaId, messageNonce));
-    var signer  = recoverSigner(message, signature);
-    return signer.toLowerCase() ==
-        ethereumjsutil.stripHexPrefix(expectedSigner).toLowerCase();
-}
-
-
 
 async function waitSignedClaimMessage(fromAccount, contractAddress, channelId, nonce, amount)
 {
@@ -91,25 +69,7 @@ async function waitSignedClaimMessage(fromAccount, contractAddress, channelId, n
     return rezSign;
 } 
 
-async function waitSignedOpenChannelMessage(fromAccount, contractAddress, recipientAddress, value, expiration, replicaId, messageNonce)
-{
-    let detWait = true;
-    let rezSign;
-    signOpenChannelMessage(fromAccount, contractAddress, recipientAddress, value, expiration, replicaId, messageNonce, function(err,sgn)
-        {   
-            detWait = false;
-            rezSign = sgn
-        });
-    while(detWait)
-    {
-        await sleep(1)
-    }
-    return rezSign;
-} 
-
 
 module.exports.waitSignedClaimMessage        = waitSignedClaimMessage;
-module.exports.waitSignedOpenChannelMessage  = waitSignedOpenChannelMessage;
 module.exports.isValidSignatureClaim         = isValidSignatureClaim;
-module.exports.isValidSignatureOpenChannel   = isValidSignatureOpenChannel;
 
