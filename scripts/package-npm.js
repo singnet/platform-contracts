@@ -31,6 +31,10 @@ const mapFiles = {
     },
     "build/contracts/Job.json": {
         "abi": "abi/Job.json"
+    }
+    ,
+    "build/contracts/MultiPartyEscrow.json": {
+        "abi": "abi/MultiPartyEscrow.json"
     },
     "resources/npm-README.md": "README.md",
     "LICENSE": "LICENSE"
