@@ -1,11 +1,11 @@
 pragma solidity ^0.4.24;
 
 import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 contract MultiPartyEscrow {
     
-    //it seems we don't need SafeMath
-    //using SafeMath for uint256;
+    using SafeMath for uint256;
     
 
     //TODO: we could use uint64 for replicaId and nonce (it could be cheaper to store but more expensive to operate with)
