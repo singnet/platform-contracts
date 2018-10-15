@@ -34,7 +34,8 @@ const mapFiles = {
     }
     ,
     "build/contracts/MultiPartyEscrow.json": {
-        "abi": "abi/MultiPartyEscrow.json"
+        "abi": "abi/MultiPartyEscrow.json",
+        "bytecode": "bytecode/MultiPartyEscrow.json"
     },
     "resources/npm-README.md": "README.md",
     "LICENSE": "LICENSE"
