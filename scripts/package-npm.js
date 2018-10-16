@@ -1,5 +1,6 @@
 "use-strict";
 
+const fs = require("fs");
 const fse = require("fs-extra");
 const path = require("path");
 const npmModulePath = "build/npm-module";
@@ -17,11 +18,11 @@ const mapFiles = {
     "build/contracts/AgentFactory.json": {
         "abi": "abi/AgentFactory.json",
         "networks": "networks/AgentFactory.json",
-        "bytecode": "bytecode/AgentFactory.json"
+        "bytecode": "bytecode/AgentFactory.hex"
     },
     "build/contracts/Registry.json": {
         "networks": "networks/Registry.json",
-        "bytecode": "bytecode/Registry.json"
+        "bytecode": "bytecode/Registry.hex"
     },
     "build/contracts/IRegistry.json": {
         "abi": "abi/Registry.json"
@@ -35,7 +36,7 @@ const mapFiles = {
     ,
     "build/contracts/MultiPartyEscrow.json": {
         "abi": "abi/MultiPartyEscrow.json",
-        "bytecode": "bytecode/MultiPartyEscrow.json"
+        "bytecode": "bytecode/MultiPartyEscrow.hex"
     },
     "resources/npm-README.md": "README.md",
     "LICENSE": "LICENSE"
@@ -74,7 +75,13 @@ for (let sourceFile in mapFiles) {
             let destFile = path.join(npmModulePath, mapFiles[sourceFile][key]);
             let destParent = path.resolve(destFile, "../");
             fse.mkdirsSync(destParent);
-            fse.writeJsonSync(destFile, fse.readJsonSync(sourceFile)[key]);
+            if (key === "bytecode") {
+                // write bytecode as pure hex number string to be compatible
+                // with abigen
+                fs.writeFileSync(destFile, fse.readJsonSync(sourceFile)[key]);
+            } else {
+                fse.writeJsonSync(destFile, fse.readJsonSync(sourceFile)[key]);
+            }
         }
     } else {
         let destFile = path.join(npmModulePath, mapFiles[sourceFile]);
