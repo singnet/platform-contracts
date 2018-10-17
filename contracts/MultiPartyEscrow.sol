@@ -47,8 +47,8 @@ contract MultiPartyEscrow {
     public
     returns(bool) 
     {
-        require(token.transferFrom(msg.sender, this, value), "Unable to transfer token to the contract");
-        balances[msg.sender] += value;
+        require(token.transferFrom(msg.sender, this, value), "Unable to transfer token to the contract"); 
+        balances[msg.sender] = balances[msg.sender].add(value);
         return true;
     }
     
@@ -58,7 +58,7 @@ contract MultiPartyEscrow {
     {
         require(balances[msg.sender] >= value);
         require(token.transfer(msg.sender, value));
-        balances[msg.sender] -= value;
+        balances[msg.sender] = balances[msg.sender].sub(value);
         return true;
     }
     
@@ -78,7 +78,8 @@ contract MultiPartyEscrow {
             nonce        : 0,
             expiration   : expiration
         });
-        balances[msg.sender] -= value;
+      
+        balances[msg.sender] = balances[msg.sender].sub(value);  
         emit EventChannelOpen(nextChannelId, msg.sender, recipient, replicaId);
         nextChannelId += 1;
         return true;
@@ -100,10 +101,11 @@ contract MultiPartyEscrow {
     private
     {
         PaymentChannel storage channel = channels[channelId];
-        balances[channel.sender]      += channel.value; 
-        channel.value                  = 0;
-        channel.nonce                 += 1;
-        channel.expiration             = 0;
+
+        balances[channel.sender] = balances[channel.sender].add(channel.value); 
+        channel.value            = 0;
+        channel.nonce           += 1;
+        channel.expiration       = 0;
     }
 
     // the recipient can close the channel at any time by presenting a
@@ -120,10 +122,11 @@ contract MultiPartyEscrow {
         bytes32 message = prefixed(keccak256(abi.encodePacked(this, channelId, channel.nonce, amount)));
         // check that the signature is from the channel.sender
         require(recoverSigner(message, signature) == channel.sender);
-         
-        balances[msg.sender]      += amount;
-        channels[channelId].value -= amount;
-    
+        
+        //transfer amount from the channel to the sender
+        channels[channelId].value = channels[channelId].value.sub(amount);
+        balances[msg.sender]      = balances[msg.sender].add     (amount);
+   
         if (isSendback)    
             {
                 _channelSendbackAndReopenSuspended(channelId);
@@ -162,8 +165,9 @@ contract MultiPartyEscrow {
         //TODO: we could remove this require and allow everybody to funds it
         require(msg.sender == channel.sender);
 
-        channels[channelId].value += amount;
-        balances[msg.sender]      -= amount;
+        //tranfser amount from sender to the channel
+        balances[msg.sender]      = balances[msg.sender].sub     (amount);
+        channels[channelId].value = channels[channelId].value.add(amount);
         return true;
     }
 
