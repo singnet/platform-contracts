@@ -19,7 +19,8 @@ contract MultiPartyEscrow {
         uint256 nonce;       // "nonce" of the channel (by changing nonce we effectivly close the old channel ([this, channelId, oldNonce])
                              //  and open the new channel [this, channelId, newNonce])
                              //!!! nonce also prevents race conditon between channelClaim and channelExtendAndAddFunds 
-        uint256 expiration;  // Timeout in case the recipient never closes.
+        uint256 expiration;  // Timeout (in block numbers) in case the recipient never closes.
+                             // if block.number > expiration then sender can call channelClaimTimeout
     }
 
 
@@ -143,7 +144,7 @@ contract MultiPartyEscrow {
         PaymentChannel storage channel = channels[channelId];
 
         require(msg.sender == channel.sender);
-        require(newExpiration > channel.expiration);
+        require(newExpiration >= channel.expiration);
 
         channels[channelId].expiration = newExpiration;
         return true;
@@ -178,7 +179,7 @@ contract MultiPartyEscrow {
     public 
     {
         require(msg.sender == channels[channelId].sender);
-        require(now >= channels[channelId].expiration);
+        require(block.number >= channels[channelId].expiration);
         _channelSendbackAndReopenSuspended(channelId);
     }
 

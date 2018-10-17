@@ -70,15 +70,19 @@ contract('MultiPartyEscrow', function(accounts) {
         it ("Initial openning (first and second channel)", async function()
         {
             //first channel
-            testErrorRevert( escrow.openChannel(accounts[5], N1 + 1, web3.eth.getBlock(web3.eth.blockNumber).timestamp + 10000000, 0, {from:accounts[0]}))
-            await escrow.openChannel(accounts[5], N1, web3.eth.getBlock(web3.eth.blockNumber).timestamp + 10000000, 0, {from:accounts[0]})
+
+            //first try to open with bigger amount (it must fail)
+            testErrorRevert( escrow.openChannel(accounts[5], N1 + 1, web3.eth.blockNumber + 10000000, 0, {from:accounts[0]}))
+            
+            //normal open
+            await escrow.openChannel(accounts[5], N1, web3.eth.blockNumber + 10000000, 0, {from:accounts[0]})
             assert.equal((await escrow.nextChannelId.call()).toNumber(), 1)
 
             //full balance doesn't change
             assert.equal((await token.balanceOf(escrow.address)).toNumber(), N1 + N2 - N3)
             assert.equal((await escrow.balances.call(accounts[0])).toNumber(), 0)
             //second channel
-            await escrow.openChannel(accounts[6], N1 * 2, web3.eth.getBlock(web3.eth.blockNumber).timestamp + 10000000, 27, {from:accounts[4]})
+            await escrow.openChannel(accounts[6], N1 * 2, web3.eth.blockNumber + 10000000, 27, {from:accounts[4]})
             assert.equal((await escrow.nextChannelId.call()).toNumber(), 2)
             
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1 * 2)
@@ -125,10 +129,9 @@ contract('MultiPartyEscrow', function(accounts) {
 
      it ("Open the third channel", async function()
         {
-           let expiration   = web3.eth.getBlock(web3.eth.blockNumber).timestamp + 10000000
+            let expiration   = web3.eth.blockNumber + 10000000
             let value        = 1000
             let replicaId    = 44
-            let messageNonce = 666
             await escrow.openChannel(accounts[7], value, expiration, replicaId, {from:accounts[4]})
             assert.equal((await escrow.nextChannelId.call()).toNumber(), 3)     
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*2)
@@ -136,12 +139,16 @@ contract('MultiPartyEscrow', function(accounts) {
 
      it ("Extend and add funds to the third channel", async function()
          {
-             let expiration = web3.eth.getBlock(web3.eth.blockNumber).timestamp + 10000000 + 1;
-             let addValue  = N1;
+             let good_expiration  = web3.eth.blockNumber + 10000000 + 1;
+             let wrong_expiration = web3.eth.blockNumber;
+             let addValue   = N1;
 
              //try extend from the wrong account
-             testErrorRevert( escrow.channelExtendAndAddFunds(2, expiration, 1, {from:accounts[0]}) )
-             await escrow.channelExtendAndAddFunds(2, expiration, addValue, {from:accounts[4]})
+             testErrorRevert( escrow.channelExtendAndAddFunds(2, good_expiration, 1, {from:accounts[0]}) )
+
+             //try extend with the smaller exporation
+             testErrorRevert( escrow.channelExtendAndAddFunds(2, wrong_expiration, addValue, {from:accounts[4]}))
+             await escrow.channelExtendAndAddFunds(2, good_expiration, addValue, {from:accounts[4]})
 
              assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*3)
 
@@ -156,6 +163,21 @@ contract('MultiPartyEscrow', function(accounts) {
           //  let balance4 = await token.balanceOf.call(accounts[4]);
           //  assert.equal(balance4, 41000, "After closure balance of accounts[4] should be 41000");
        });
+
+     it ("Open the fourh channel and close it by timeout", async function()
+        {
+            let expiration   = web3.eth.blockNumber - 1
+            let replicaId    = 42
+            await escrow.openChannel(accounts[7], 10, expiration, replicaId, {from:accounts[4]})
+            assert.equal((await escrow.nextChannelId.call()).toNumber(), 4)     
+            assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*2)
+            
+            await escrow.channelClaimTimeout(3, {from:accounts[4]})
+
+            assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*2 + 10)
+            assert.equal((await escrow.balances.call(accounts[7])).toNumber(), 1000 - 10)
+        });
+
  
     it ("Check validity of the signatures with js-server part (claim)", async function()
         {
