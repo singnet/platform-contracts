@@ -6,19 +6,12 @@
   "directories": {
     "test": "test"
   },
-  "files": [
-    "contracts",
-    "resources",
-    "scripts",
-    "truffle.js"
-  ],
   "scripts": {
     "package-npm": "node scripts/package-npm.js",
     "deploy": "scripts/truffle-migrate",
     "compile": "node_modules/.bin/truffle compile",
     "test": "rm -rf build && node_modules/.bin/truffle test",
-    "test-develop": "rm -rf build && node_modules/.bin/truffle test --network develop",
-    "postinstall": "scripts/postinstall"
+    "test-develop": "rm -rf build && node_modules/.bin/truffle test --network develop"
   },
   "repository": {
     "type": "git",
@@ -35,17 +28,17 @@
     "singularitynet-token-contracts": "2.0.0",
     "truffle": "4.1.13",
     "truffle-contract": "3.0.6",
-    "truffle-hdwallet-provider": "0.0.5",
-    "fs-extra": "^5.0.0"
+    "truffle-hdwallet-provider": "0.0.5"
   },
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^2.0.2",
     "eth-gas-reporter": "^0.1.9",
+    "fs-extra": "^5.0.0",
     "moment": "^2.22.2",
     "webpack-cli": "^3.0.8",
     "ethereumjs-abi": "^0.6.5",
-    "ethereumjs-util": "^5.2.0"
+    "ethereumjs-util":"^5.2.0"
   }
 }
