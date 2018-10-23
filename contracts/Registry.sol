@@ -28,6 +28,7 @@ contract Registry is IRegistry, ERC165 {
         bytes32 serviceName;
         bytes32 servicePath;
         address agentAddress;
+        bytes   metadataIPFSHash;  // IPFSHash of service metadata (in the case of MPE payment system)
 
         bytes32[] tags;
         mapping(bytes32 => Tag) tagsByName;
@@ -313,6 +314,15 @@ contract Registry is IRegistry, ERC165 {
             servicesByTag[tagName].orgNames.push(orgName);
             servicesByTag[tagName].itemNames.push(serviceName);
         }
+    }
+
+    function setMetadataIPFSHashInServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes metadataIPFSHash)
+    public
+    {
+        requireOrgExistenceConstraint(orgName, true);
+        requireAuthorization(orgName, true);
+        requireServiceExistenceConstraint(orgName, serviceName, true);
+        orgsByName[orgName].servicesByName[serviceName].metadataIPFSHash = metadataIPFSHash;
     }
 
     function removeTagsFromServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32[] tags) external {
@@ -627,6 +637,25 @@ contract Registry is IRegistry, ERC165 {
         path = orgsByName[orgName].servicesByName[serviceName].servicePath;
         agentAddress = orgsByName[orgName].servicesByName[serviceName].agentAddress;
         tags = orgsByName[orgName].servicesByName[serviceName].tags;
+    }
+
+    function getMetadataIPFSHash(bytes32 orgName, bytes32 serviceName) external view
+            returns (bool found, bytes metadataIPFSHash) {
+
+        // check to see if this organization exists
+        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
+            found = false;
+            return;
+        }
+
+        // check to see if this repo exists
+        if(orgsByName[orgName].servicesByName[serviceName].serviceName == bytes32(0x0)) {
+            found = false;
+            return;
+        }
+
+        found = true;
+        metadataIPFSHash = orgsByName[orgName].servicesByName[serviceName].metadataIPFSHash;
     }
 
     function listTypeRepositoriesForOrganization(bytes32 orgName) external view returns (bool found, bytes32[] repositoryNames) {
