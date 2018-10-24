@@ -7,14 +7,14 @@ contract MultiPartyEscrow {
     
     using SafeMath for uint256;
     
-
-    //TODO: we could use uint64 for replicaId and nonce (it could be cheaper to store but more expensive to operate with)
-
+    //TODO: we could use uint64 for value, nonce and expiration (it could be cheaper to store but more expensive to operate with)
     //the full ID of "atomic" payment channel = "[this, channelId, nonce]"
     struct PaymentChannel {
         address sender;      // The account sending payments.
-        address recipient;    // The account receiving the payments.
-        uint256 replicaId;   // id of particular service replica
+        address recipient;   // The account receiving the payments.
+        uint256 groupId;     // id of group of replicas who share the same payment channel
+                             // You should generate groupId randomly in order to prevent
+                             // two PaymentChannel with the same [recipient, groupId]
         uint256 value;       // Total amount of tokens deposited to the channel. 
         uint256 nonce;       // "nonce" of the channel (by changing nonce we effectivly close the old channel ([this, channelId, oldNonce])
                              //  and open the new channel [this, channelId, newNonce])
@@ -32,8 +32,8 @@ contract MultiPartyEscrow {
     ERC20 public token; // Address of token contract
     
     //TODO: optimize events. Do we need more (or less) events?
-    event EventChannelOpen       (uint256 channelId,         address indexed sender, address indexed recipient, uint256 indexed replicaId);
-    //event EventChannelReopen     (uint256 channelId,         address indexed sender, address indexed recipient, uint256 indexed replicaId, uint256 nonce);
+    event EventChannelOpen       (uint256 channelId,         address indexed sender, address indexed recipient, uint256 indexed groupId);
+    //event EventChannelReopen     (uint256 channelId,         address indexed sender, address indexed recipient, uint256 indexed groupId, uint256 nonce);
     //event EventChannelTorecipient(uint256 indexed channelId, address indexed sender, address indexed recipient, uint256 amount);
     //event EventChannelTosender   (uint256 indexed channelId, address indexed sender, address indexed recipient, uint256 amount);
 
@@ -63,9 +63,9 @@ contract MultiPartyEscrow {
     }
     
     //open a channel, token should be already being deposit
-    //openChannel should be run only once for given sender, recipient, replicaId
+    //openChannel should be run only once for given sender, recipient, groupId
     //channel can be reused even after channelClaim(..., isSendback=true)
-    function openChannel(address  recipient, uint256 value, uint256 expiration, uint256 replicaId) 
+    function openChannel(address  recipient, uint256 value, uint256 expiration, uint256 groupId) 
     public
     returns(bool) 
     {
@@ -74,25 +74,25 @@ contract MultiPartyEscrow {
             sender       : msg.sender,
             recipient    : recipient,
             value        : value,
-            replicaId    : replicaId,
+            groupId      : groupId,
             nonce        : 0,
             expiration   : expiration
         });
       
         balances[msg.sender] = balances[msg.sender].sub(value);  
-        emit EventChannelOpen(nextChannelId, msg.sender, recipient, replicaId);
+        emit EventChannelOpen(nextChannelId, msg.sender, recipient, groupId);
         nextChannelId += 1;
         return true;
     }
     
 
 
-    function depositAndOpenChannel(address  recipient, uint256 value, uint256 expiration, uint256 replicaId)
+    function depositAndOpenChannel(address  recipient, uint256 value, uint256 expiration, uint256 groupId)
     public
     returns(bool)
     {
         require(deposit(value));
-        require(openChannel(recipient, value, expiration, replicaId));
+        require(openChannel(recipient, value, expiration, groupId));
         return true;
     }
 
