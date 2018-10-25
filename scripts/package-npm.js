@@ -23,7 +23,7 @@ const mapFiles = {
         "networks": "networks/Registry.json",
         "bytecode": "bytecode/Registry.json"
     },
-    "build/contracts/IRegistry.json": {
+    "build/contracts/Registry.json": {
         "abi": "abi/Registry.json"
     },
     "build/contracts/Agent.json": {
