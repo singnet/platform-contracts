@@ -316,9 +316,7 @@ contract Registry is IRegistry, ERC165 {
         }
     }
 
-    function setMetadataIPFSHashInServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes metadataIPFSHash)
-    public
-    {
+    function setMetadataIPFSHashInServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes metadataIPFSHash) external {
         requireOrgExistenceConstraint(orgName, true);
         requireAuthorization(orgName, true);
         requireServiceExistenceConstraint(orgName, serviceName, true);
