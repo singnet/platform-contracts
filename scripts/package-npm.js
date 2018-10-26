@@ -14,17 +14,16 @@ const mapDirs = {
 const mapFiles = {
     "contracts/AgentFactory.sol": "sol/AgentFactory.sol",
     "contracts/IRegistry.sol": "sol/IRegistry.sol",
+    "contracts/Registry.sol":  "sol/Registry.sol",
     "build/contracts/AgentFactory.json": {
         "abi": "abi/AgentFactory.json",
         "networks": "networks/AgentFactory.json",
         "bytecode": "bytecode/AgentFactory.json"
     },
     "build/contracts/Registry.json": {
+        "abi": "abi/Registry.json",
         "networks": "networks/Registry.json",
         "bytecode": "bytecode/Registry.json"
-    },
-    "build/contracts/Registry.json": {
-        "abi": "abi/Registry.json"
     },
     "build/contracts/Agent.json": {
         "abi": "abi/Agent.json"
