@@ -21,6 +21,7 @@ contract MultiPartyEscrow {
                              //!!! nonce also prevents race conditon between channelClaim and channelExtendAndAddFunds 
         uint256 expiration;  // Timeout (in block numbers) in case the recipient never closes.
                              // if block.number > expiration then sender can call channelClaimTimeout
+        address signer;     // signer on behalf of sender
     }
 
 
@@ -32,7 +33,7 @@ contract MultiPartyEscrow {
     ERC20 public token; // Address of token contract
     
     //TODO: optimize events. Do we need more (or less) events?
-    event EventChannelOpen       (uint256 channelId,         address indexed sender, address indexed recipient, uint256 indexed groupId);
+    event EventChannelOpen       (uint256 channelId, address indexed sender, address indexed recipient, uint256 indexed groupId, address signer);
     //event EventChannelReopen     (uint256 channelId,         address indexed sender, address indexed recipient, uint256 indexed groupId, uint256 nonce);
     //event EventChannelTorecipient(uint256 indexed channelId, address indexed sender, address indexed recipient, uint256 amount);
     //event EventChannelTosender   (uint256 indexed channelId, address indexed sender, address indexed recipient, uint256 amount);
@@ -62,10 +63,21 @@ contract MultiPartyEscrow {
         return true;
     }
     
+    function transfer(address receiver, uint256 value)
+    public
+    returns(bool)
+    {
+        require(balances[msg.sender] >= value);
+        balances[msg.sender] = balances[msg.sender].sub(value);
+        balances[receiver] = balances[receiver].add(value);
+        return true;
+    }
+    
+    
     //open a channel, token should be already being deposit
     //openChannel should be run only once for given sender, recipient, groupId
     //channel can be reused even after channelClaim(..., isSendback=true)
-    function openChannel(address  recipient, uint256 value, uint256 expiration, uint256 groupId) 
+    function openChannel(address  recipient, uint256 value, uint256 expiration, uint256 groupId, address signer) 
     public
     returns(bool) 
     {
@@ -76,23 +88,24 @@ contract MultiPartyEscrow {
             value        : value,
             groupId      : groupId,
             nonce        : 0,
-            expiration   : expiration
+            expiration   : expiration,
+            signer       : signer
         });
       
         balances[msg.sender] = balances[msg.sender].sub(value);  
-        emit EventChannelOpen(nextChannelId, msg.sender, recipient, groupId);
+        emit EventChannelOpen(nextChannelId, msg.sender, recipient, groupId, signer);
         nextChannelId += 1;
         return true;
     }
     
 
 
-    function depositAndOpenChannel(address  recipient, uint256 value, uint256 expiration, uint256 groupId)
+    function depositAndOpenChannel(address  recipient, uint256 value, uint256 expiration, uint256 groupId, address signer)
     public
     returns(bool)
     {
         require(deposit(value));
-        require(openChannel(recipient, value, expiration, groupId));
+        require(openChannel(recipient, value, expiration, groupId, signer));
         return true;
     }
 
@@ -108,10 +121,28 @@ contract MultiPartyEscrow {
         channel.expiration       = 0;
     }
 
-    // the recipient can close the channel at any time by presenting a
-    // signed amount from the sender. The recipient will be sent that amount. The recipient can choose: 
-    // send the remainder to the sender (isSendback == true), or put that amount into the new channel.
-    function channelClaim(uint256 channelId, uint256 amount, bytes memory signature, bool isSendback) 
+    /**
+     * @dev function to claim multiple channels at a time. Needs to send limited channels per call
+     * @param channelIds list of channel Ids
+     * @param amounts list of amounts should be aligned with channel ids index
+     * @param isSendbacks list of sendbacks flags
+     * @param v channel senders signatures in V R S for each channel
+     * @param r channel senders signatures in V R S for each channel
+     * @param s channel senders signatures in V R S for each channel
+     */
+    function multiChannelClaim(uint256[] channelIds, uint256[] amounts, bool[] isSendbacks, uint8[] v, bytes32[] r, bytes32[] s) 
+    public 
+    {
+        uint256 len = channelIds.length;
+        
+        require(amounts.length == len && isSendbacks.length == len && v.length == len && r.length == len && s.length == len);
+        for(uint256 i=0; i<len ; i++) {
+            channelClaim(channelIds[i], amounts[i], v[i], r[i], s[i], isSendbacks[i]);
+        }
+        
+    }
+
+    function channelClaim(uint256 channelId, uint256 amount, uint8 v, bytes32 r, bytes32 s, bool isSendback) 
     public 
     {
         PaymentChannel storage channel = channels[channelId];
@@ -120,8 +151,9 @@ contract MultiPartyEscrow {
         
         //compose the message which was signed
         bytes32 message = prefixed(keccak256(abi.encodePacked(this, channelId, channel.nonce, amount)));
-        // check that the signature is from the channel.sender
-        require(recoverSigner(message, signature) == channel.sender);
+        // check that the signature is from the channel.sender or signer
+        address signAddress = ecrecover(message, v, r, s);
+        require(signAddress != address(0) && (signAddress == channel.sender || signAddress == channel.signer));
         
         //transfer amount from the channel to the sender
         channels[channelId].value = channels[channelId].value.sub(amount);
@@ -137,6 +169,7 @@ contract MultiPartyEscrow {
                 channels[channelId].nonce += 1;
             }
     }
+
 
 
     /// the sender can extend the expiration at any time
@@ -187,40 +220,12 @@ contract MultiPartyEscrow {
         _channelSendbackAndReopenSuspended(channelId);
     }
 
-    function splitSignature(bytes memory sig)
-    internal
-    pure
-    returns (uint8 v, bytes32 r, bytes32 s)
-    {
-        require(sig.length == 65);
-
-        assembly {
-            // first 32 bytes, after the length prefix
-            r := mload(add(sig, 32))
-            // second 32 bytes
-            s := mload(add(sig, 64))
-            // final byte
-            v := and(mload(add(sig, 65)), 255)
-        }
-        
-        if (v < 27) v += 27;
-
-        return (v, r, s);
-    }
-
-    function recoverSigner(bytes32 message, bytes memory sig)
-    internal
-    pure
-    returns (address)
-    {
-        (uint8 v, bytes32 r, bytes32 s) = splitSignature(sig);
-
-        return ecrecover(message, v, r, s);
-    }
 
     /// builds a prefixed hash to mimic the behavior of ethSign.
     function prefixed(bytes32 hash) internal pure returns (bytes32) 
     {
         return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash));
     }
+    
+    
 }
