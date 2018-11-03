@@ -32,11 +32,10 @@ contract MultiPartyEscrow {
  
     ERC20 public token; // Address of token contract
     
-    //TODO: optimize events. Do we need more (or less) events?
-    event EventChannelOpen       (uint256 channelId, address indexed sender, address indexed recipient, uint256 indexed groupId, address signer);
-    //event EventChannelReopen     (uint256 channelId,         address indexed sender, address indexed recipient, uint256 indexed groupId, uint256 nonce);
-    //event EventChannelTorecipient(uint256 indexed channelId, address indexed sender, address indexed recipient, uint256 amount);
-    //event EventChannelTosender   (uint256 indexed channelId, address indexed sender, address indexed recipient, uint256 amount);
+
+    // Events
+    event EventChannelOpen(uint256 channelId, address indexed sender, address indexed recipient, uint256 indexed groupId, address signer);
+    event EventChannelClaim(address indexed recipient, uint256 channelId, uint256 amount, bool isSendback);
 
     constructor (address _token)
     public
@@ -168,6 +167,8 @@ contract MultiPartyEscrow {
                 //reopen new "channel", without sending back funds to "sender"        
                 channels[channelId].nonce += 1;
             }
+        
+        emit EventChannelClaim(msg.sender, channelId, amount, isSendback);
     }
 
 
