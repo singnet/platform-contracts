@@ -52,6 +52,24 @@ function isValidSignatureClaim(contractAddress, channelId, nonce, amount, signat
         ethereumjsutil.stripHexPrefix(expectedSigner).toLowerCase();
 }
 
+function getVFromSignature(signature) {
+  signature = signature.substr(2); //remove 0x
+  const v = '0x' + signature.slice(128, 130);    // Should be either 27 or 28
+  const v_decimal = web3.toDecimal(v);
+  return v_decimal;
+}
+
+function getRFromSignature(signature) {
+  signature = signature.substr(2); //remove 0x
+  const r = '0x' + signature.slice(0, 64);
+  return r;
+}
+
+function getSFromSignature(signature) {
+  signature = signature.substr(2); //remove 0x
+  const s = '0x' + signature.slice(64, 128);
+  return s;
+}
 
 async function waitSignedClaimMessage(fromAccount, contractAddress, channelId, nonce, amount)
 {
