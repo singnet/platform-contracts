@@ -34,8 +34,8 @@ contract MultiPartyEscrow {
     
 
     // Events
-    event EventChannelOpen(uint256 channelId, address indexed sender, address indexed recipient, uint256 indexed groupId, address signer);
-    event EventChannelClaim(address indexed recipient, uint256 channelId, uint256 amount, bool isSendback);
+    event ChannelOpen(uint256 channelId, address indexed sender, address indexed recipient, uint256 indexed groupId, address signer);
+    event ChannelClaim(address indexed recipient, uint256 channelId, uint256 amount, bool isSendback);
 
     constructor (address _token)
     public
@@ -92,7 +92,7 @@ contract MultiPartyEscrow {
         });
       
         balances[msg.sender] = balances[msg.sender].sub(value);  
-        emit EventChannelOpen(nextChannelId, msg.sender, recipient, groupId, signer);
+        emit ChannelOpen(nextChannelId, msg.sender, recipient, groupId, signer);
         nextChannelId += 1;
         return true;
     }
@@ -168,7 +168,7 @@ contract MultiPartyEscrow {
                 channels[channelId].nonce += 1;
             }
         
-        emit EventChannelClaim(msg.sender, channelId, amount, isSendback);
+        emit ChannelClaim(msg.sender, channelId, amount, isSendback);
     }
 
 
@@ -188,16 +188,12 @@ contract MultiPartyEscrow {
     }
     
     /// the sender could add funds to the channel at any time
+    /// any one can fund the channel irrespective of the sender
     function channelAddFunds(uint256 channelId, uint256 amount)
     public
     returns(bool)
     {
         require(balances[msg.sender] >= amount);
-        
-        PaymentChannel storage channel = channels[channelId];
-        
-        //TODO: we could remove this require and allow everybody to funds it
-        require(msg.sender == channel.sender);
 
         //tranfser amount from sender to the channel
         balances[msg.sender]      = balances[msg.sender].sub     (amount);
