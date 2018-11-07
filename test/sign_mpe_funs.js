@@ -55,8 +55,11 @@ function isValidSignatureClaim(contractAddress, channelId, nonce, amount, signat
 function getVFromSignature(signature) {
   signature = signature.substr(2); //remove 0x
   const v = '0x' + signature.slice(128, 130);    // Should be either 27 or 28
-  const v_decimal = web3.toDecimal(v);
-  return v_decimal;
+  const v_decimal = web3.toDecimal(v) ;
+  if(v_decimal < 27 ) 
+    return v_decimal + 27;
+  else 
+    return v_decimal;
 }
 
 function getRFromSignature(signature) {
@@ -89,5 +92,7 @@ async function waitSignedClaimMessage(fromAccount, contractAddress, channelId, n
 
 
 module.exports.waitSignedClaimMessage        = waitSignedClaimMessage;
-module.exports.isValidSignatureClaim         = isValidSignatureClaim;
-
+module.exports.isValidSignatureClaim = isValidSignatureClaim;
+module.exports.getVFromSignature = getVFromSignature;
+module.exports.getRFromSignature = getRFromSignature;
+module.exports.getSFromSignature = getSFromSignature;
