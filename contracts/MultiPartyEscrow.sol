@@ -34,8 +34,11 @@ contract MultiPartyEscrow {
     
 
     // Events
-    event ChannelOpen(uint256 channelId, address indexed sender, address indexed recipient, uint256 indexed groupId, address signer);
-    event ChannelClaim(address indexed recipient, uint256 channelId, uint256 amount, bool isSendback);
+    event ChannelOpen(uint256 channelId, address indexed sender, address indexed recipient, uint256 indexed groupId, address signer, uint256 amount, uint256 expiration);
+    event ChannelClaim(address indexed recipient, uint256 channelId, uint256 claimAmount, uint256 sendBackAmount, uint256 keepAmpount);
+    event SenderClaim(uint256 channelId, uint256 claimAmount);
+    event ExtendChannel(uint256 channelId, uint256 newExpiration);
+    event AddFunds(uint256 channelId, uint256 newFunds);
 
     constructor (address _token)
     public
@@ -92,7 +95,7 @@ contract MultiPartyEscrow {
         });
       
         balances[msg.sender] = balances[msg.sender].sub(value);  
-        emit ChannelOpen(nextChannelId, msg.sender, recipient, groupId, signer);
+        emit ChannelOpen(nextChannelId, msg.sender, recipient, groupId, signer, value, expiration);
         nextChannelId += 1;
         return true;
     }
@@ -161,14 +164,14 @@ contract MultiPartyEscrow {
         if (isSendback)    
             {
                 _channelSendbackAndReopenSuspended(channelId);
+                emit ChannelClaim(msg.sender, channelId, amount, channels[channelId].value, 0);
             }
             else
             {
                 //reopen new "channel", without sending back funds to "sender"        
                 channels[channelId].nonce += 1;
+                emit ChannelClaim(msg.sender, channelId, amount, 0, channels[channelId].value);
             }
-        
-        emit ChannelClaim(msg.sender, channelId, amount, isSendback);
     }
 
 
@@ -184,6 +187,8 @@ contract MultiPartyEscrow {
         require(newExpiration >= channel.expiration);
 
         channels[channelId].expiration = newExpiration;
+        
+        emit ExtendChannel(channelId, newExpiration);
         return true;
     }
     
@@ -198,6 +203,8 @@ contract MultiPartyEscrow {
         //tranfser amount from sender to the channel
         balances[msg.sender]      = balances[msg.sender].sub     (amount);
         channels[channelId].value = channels[channelId].value.add(amount);
+        
+        emit AddFunds(channelId, amount);
         return true;
     }
 
@@ -215,6 +222,8 @@ contract MultiPartyEscrow {
         require(msg.sender == channels[channelId].sender);
         require(block.number >= channels[channelId].expiration);
         _channelSendbackAndReopenSuspended(channelId);
+        
+        emit SenderClaim(channelId, channels[channelId].value);
     }
 
 
