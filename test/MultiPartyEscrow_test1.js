@@ -105,6 +105,7 @@ contract('MultiPartyEscrow', function(accounts) {
             let v = signFuns.getVFromSignature(sgn.toString("hex"));
             let r = signFuns.getRFromSignature(sgn.toString("hex"));
             let s = signFuns.getSFromSignature(sgn.toString("hex"));
+
             // With Signature Parameter
             //await escrow.channelClaim(0, N1 - 1000, sgn.toString("hex"), true, {from:accounts[5]});
             await escrow.channelClaim(0, N1 - 1000, v, r, s, true, {from:accounts[5]});
@@ -217,4 +218,3 @@ contract('MultiPartyEscrow', function(accounts) {
         });
 
 });
-
