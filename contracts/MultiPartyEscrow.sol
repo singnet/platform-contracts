@@ -39,6 +39,7 @@ contract MultiPartyEscrow {
     event SenderClaim(uint256 channelId, uint256 claimAmount);
     event ExtendChannel(uint256 channelId, uint256 newExpiration);
     event AddFunds(uint256 channelId, uint256 newFunds);
+    event TransferFunds(address receiver, uint256 amount);
 
     constructor (address _token)
     public
@@ -72,6 +73,8 @@ contract MultiPartyEscrow {
         require(balances[msg.sender] >= value);
         balances[msg.sender] = balances[msg.sender].sub(value);
         balances[receiver] = balances[receiver].add(value);
+
+        emit TransferFunds(receiver, value);
         return true;
     }
     
@@ -235,3 +238,4 @@ contract MultiPartyEscrow {
     
     
 }
+
