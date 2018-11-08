@@ -14,7 +14,7 @@ import "truffle/DeployedAddresses.sol";
 contract TestERC165 {
     bytes4 constant InvalidID   = 0xffffffff;
     bytes4 constant ERC165ID    = 0x01ffc9a7;
-    bytes4 constant RegistryID  = 0xbd523993;
+    bytes4 constant RegistryID  = 0x256b3545;
 
     // adapted from https://eips.ethereum.org/EIPS/eip-165
     function doesContractImplementInterface(address _contract, bytes4 _interfaceId) internal view returns (bool) {
