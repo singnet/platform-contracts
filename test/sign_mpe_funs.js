@@ -85,6 +85,6 @@ async function waitSignedClaimMessage(fromAccount, contractAddress, channelId, n
 } 
 
 
-module.exports.waitSignedClaimMessage = waitSignedClaimMessage;
-module.exports.isValidSignatureClaim = isValidSignatureClaim;
-module.exports.getVRSFromSignature = getVRSFromSignature; 
+module.exports.waitSignedClaimMessage   = waitSignedClaimMessage;
+module.exports.isValidSignatureClaim    = isValidSignatureClaim;
+module.exports.getVRSFromSignature      = getVRSFromSignature; 
