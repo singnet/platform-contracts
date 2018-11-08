@@ -156,7 +156,7 @@ contract MultiPartyEscrow {
         
         //compose the message which was signed
         bytes32 message = prefixed(keccak256(abi.encodePacked(this, channelId, channel.nonce, amount)));
-        // check that the signature is from the channel.sender or signer
+        // check that the signature is from the signer
         address signAddress = ecrecover(message, v, r, s);
         require(signAddress == channel.signer);
         
