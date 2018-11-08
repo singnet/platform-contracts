@@ -35,11 +35,11 @@ contract MultiPartyEscrow {
 
     // Events
     event ChannelOpen(uint256 channelId, address indexed sender, address indexed recipient, uint256 indexed groupId, address signer, uint256 amount, uint256 expiration);
-    event ChannelClaim(address indexed recipient, uint256 channelId, uint256 claimAmount, uint256 sendBackAmount, uint256 keepAmpount);
-    event SenderClaim(uint256 channelId, uint256 claimAmount);
-    event ExtendChannel(uint256 channelId, uint256 newExpiration);
-    event AddFunds(uint256 channelId, uint256 newFunds);
-    event TransferFunds(address receiver, uint256 amount);
+    event ChannelClaim(uint256 indexed channelId, address indexed recipient, uint256 claimAmount, uint256 sendBackAmount, uint256 keepAmpount);
+    event SenderClaim(uint256 indexed channelId, uint256 claimAmount);
+    event ChannelExtend(uint256 indexed channelId, uint256 newExpiration);
+    event AddFunds(uint256 indexed channelId, uint256 newFunds);
+    event TransferFunds(address indexed sender, address indexed receiver, uint256 amount);
 
     constructor (address _token)
     public
@@ -74,7 +74,7 @@ contract MultiPartyEscrow {
         balances[msg.sender] = balances[msg.sender].sub(value);
         balances[receiver] = balances[receiver].add(value);
 
-        emit TransferFunds(receiver, value);
+        emit TransferFunds(msg.sender, receiver, value);
         return true;
     }
     
@@ -158,7 +158,7 @@ contract MultiPartyEscrow {
         bytes32 message = prefixed(keccak256(abi.encodePacked(this, channelId, channel.nonce, amount)));
         // check that the signature is from the channel.sender or signer
         address signAddress = ecrecover(message, v, r, s);
-        require(signAddress != address(0) && (signAddress == channel.sender || signAddress == channel.signer));
+        require(signAddress == channel.signer);
         
         //transfer amount from the channel to the sender
         channels[channelId].value = channels[channelId].value.sub(amount);
@@ -167,13 +167,13 @@ contract MultiPartyEscrow {
         if (isSendback)    
             {
                 _channelSendbackAndReopenSuspended(channelId);
-                emit ChannelClaim(msg.sender, channelId, amount, channels[channelId].value, 0);
+                emit ChannelClaim(channelId, msg.sender, amount, channels[channelId].value, 0);
             }
             else
             {
                 //reopen new "channel", without sending back funds to "sender"        
                 channels[channelId].nonce += 1;
-                emit ChannelClaim(msg.sender, channelId, amount, 0, channels[channelId].value);
+                emit ChannelClaim(channelId, msg.sender, amount, 0, channels[channelId].value);
             }
     }
 
@@ -191,7 +191,7 @@ contract MultiPartyEscrow {
 
         channels[channelId].expiration = newExpiration;
         
-        emit ExtendChannel(channelId, newExpiration);
+        emit ChannelExtend(channelId, newExpiration);
         return true;
     }
     
@@ -238,4 +238,3 @@ contract MultiPartyEscrow {
     
     
 }
-
