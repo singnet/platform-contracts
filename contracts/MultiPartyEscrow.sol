@@ -87,6 +87,8 @@ contract MultiPartyEscrow {
     returns(bool) 
     {
         require(balances[msg.sender] >= value);
+        require(signer != address(0));
+        
         channels[nextChannelId] = PaymentChannel({
             sender       : msg.sender,
             recipient    : recipient,
