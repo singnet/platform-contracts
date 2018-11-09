@@ -36,9 +36,9 @@ contract MultiPartyEscrow {
     // Events
     event ChannelOpen(uint256 channelId, address indexed sender, address indexed recipient, uint256 indexed groupId, address signer, uint256 amount, uint256 expiration);
     event ChannelClaim(uint256 indexed channelId, address indexed recipient, uint256 claimAmount, uint256 sendBackAmount, uint256 keepAmpount);
-    event SenderClaim(uint256 indexed channelId, uint256 claimAmount);
+    event ChannelSenderClaim(uint256 indexed channelId, uint256 claimAmount);
     event ChannelExtend(uint256 indexed channelId, uint256 newExpiration);
-    event AddFunds(uint256 indexed channelId, uint256 newFunds);
+    event ChannelAddFunds(uint256 indexed channelId, uint256 newFunds);
     event TransferFunds(address indexed sender, address indexed receiver, uint256 amount);
 
     constructor (address _token)
@@ -88,7 +88,7 @@ contract MultiPartyEscrow {
     {
         require(balances[msg.sender] >= value);
         require(signer != address(0));
-        
+
         channels[nextChannelId] = PaymentChannel({
             sender       : msg.sender,
             recipient    : recipient,
@@ -209,7 +209,7 @@ contract MultiPartyEscrow {
         balances[msg.sender]      = balances[msg.sender].sub     (amount);
         channels[channelId].value = channels[channelId].value.add(amount);
         
-        emit AddFunds(channelId, amount);
+        emit ChannelAddFunds(channelId, amount);
         return true;
     }
 
@@ -228,7 +228,7 @@ contract MultiPartyEscrow {
         require(block.number >= channels[channelId].expiration);
         _channelSendbackAndReopenSuspended(channelId);
         
-        emit SenderClaim(channelId, channels[channelId].value);
+        emit ChannelSenderClaim(channelId, channels[channelId].value);
     }
 
 
