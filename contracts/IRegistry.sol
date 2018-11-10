@@ -14,9 +14,9 @@ interface IRegistry {
     //   \___/|_|  \__, |\__,_|_| |_|_/___\__,_|\__|_|\___/|_| |_|     |_|  |_|\__, |_| |_| |_|\__|
     //             |___/                                                       |___/
 
-    event OrganizationCreated (bytes32 orgName, bytes32 indexed orgNameIndexed);
-    event OrganizationModified(bytes32 orgName, bytes32 indexed orgNameIndexed);
-    event OrganizationDeleted (bytes32 orgName, bytes32 indexed orgNameIndexed);
+    event OrganizationCreated (bytes32 indexed orgName);
+    event OrganizationModified(bytes32 indexed orgName);
+    event OrganizationDeleted (bytes32 indexed orgName);
 
     /**
       * @dev Adds a new organization that hosts SingularityNET services to the registry.
@@ -74,9 +74,9 @@ interface IRegistry {
     //  |____/ \___|_|    \_/ |_|\___\___|     |_|  |_|\__, |_| |_| |_|\__|
     //                                                 |___/
 
-    event ServiceCreated (bytes32 orgName, bytes32 serviceName, bytes32 indexed orgNameIndexed, bytes32 indexed serviceNameIndexed);
-    event ServiceModified(bytes32 orgName, bytes32 serviceName, bytes32 indexed orgNameIndexed, bytes32 indexed serviceNameIndexed);
-    event ServiceDeleted (bytes32 orgName, bytes32 serviceName, bytes32 indexed orgNameIndexed, bytes32 indexed serviceNameIndexed);
+    event ServiceCreated (bytes32 indexed orgName, bytes32 indexed serviceName);
+    event ServiceModified(bytes32 indexed orgName, bytes32 indexed serviceName);
+    event ServiceDeleted (bytes32 indexed orgName, bytes32 indexed serviceName);
 
     /**
       * @dev Adds a new service to the registry.
@@ -142,9 +142,9 @@ interface IRegistry {
     //    |_| \__, | .__/ \___|      |_| \_\___| .__/ \___/      |_|  |_|\__, |_| |_| |_|\__|
     //        |___/|_|                         |_|                       |___/
 
-    event TypeRepositoryCreated (bytes32 orgName, bytes32 typeRepositoryName, bytes32 indexed orgNameIndexed, bytes32 indexed typeRepositoryNameIndexed);
-    event TypeRepositoryModified(bytes32 orgName, bytes32 typeRepositoryName, bytes32 indexed orgNameIndexed, bytes32 indexed typeRepositoryNameIndexed);
-    event TypeRepositoryDeleted (bytes32 orgName, bytes32 typeRepositoryName, bytes32 indexed orgNameIndexed, bytes32 indexed typeRepositoryNameIndexed);
+    event TypeRepositoryCreated (bytes32 indexed orgName, bytes32 indexed typeRepositoryName);
+    event TypeRepositoryModified(bytes32 indexed orgName, bytes32 indexed typeRepositoryName);
+    event TypeRepositoryDeleted (bytes32 indexed orgName, bytes32 indexed typeRepositoryName);
 
     /**
       * @dev Adds a new type repository to the registry.

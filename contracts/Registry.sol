@@ -134,7 +134,7 @@ contract Registry is IRegistry, ERC165 {
 
         addOrganizationMembersInternal(orgName, members);
 
-        emit OrganizationCreated(orgName, orgName);
+        emit OrganizationCreated(orgName);
     }
 
     function changeOrganizationOwner(bytes32 orgName, address newOwner) external {
@@ -144,7 +144,7 @@ contract Registry is IRegistry, ERC165 {
 
         orgsByName[orgName].owner = newOwner;
 
-        emit OrganizationModified(orgName, orgName);
+        emit OrganizationModified(orgName);
     }
 
     function addOrganizationMembers(bytes32 orgName, address[] newMembers) external {
@@ -154,7 +154,7 @@ contract Registry is IRegistry, ERC165 {
 
         addOrganizationMembersInternal(orgName, newMembers);
 
-        emit OrganizationModified(orgName, orgName);
+        emit OrganizationModified(orgName);
     }
 
     function addOrganizationMembersInternal(bytes32 orgName, address[] newMembers) internal {
@@ -175,7 +175,7 @@ contract Registry is IRegistry, ERC165 {
             removeOrganizationMemberInternal(orgName, existingMembers[i]);
         }
 
-        emit OrganizationModified(orgName, orgName);
+        emit OrganizationModified(orgName);
     }
 
     function removeOrganizationMemberInternal(bytes32 orgName, address existingMember) internal {
@@ -231,7 +231,7 @@ contract Registry is IRegistry, ERC165 {
         // delete contents of organization registration
         delete orgsByName[orgName];
 
-        emit OrganizationDeleted(orgName, orgName);
+        emit OrganizationDeleted(orgName);
     }
 
     //   ____                  _                __  __                 _
@@ -258,7 +258,7 @@ contract Registry is IRegistry, ERC165 {
             addTagToServiceRegistration(orgName, serviceName, tags[i]);
         }
 
-        emit ServiceCreated(orgName, serviceName, orgName, serviceName);
+        emit ServiceCreated(orgName, serviceName);
     }
 
     function updateServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes metadataURI) external {
@@ -269,7 +269,7 @@ contract Registry is IRegistry, ERC165 {
 
         orgsByName[orgName].servicesByName[serviceName].metadataURI = metadataURI;
 
-        emit ServiceModified(orgName, serviceName, orgName, serviceName);
+        emit ServiceModified(orgName, serviceName);
     }
 
     function addTagsToServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32[] tags) external {
@@ -282,7 +282,7 @@ contract Registry is IRegistry, ERC165 {
             addTagToServiceRegistration(orgName, serviceName, tags[i]);
         }
 
-        emit ServiceModified(orgName, serviceName, orgName, serviceName);
+        emit ServiceModified(orgName, serviceName);
     }
 
     function addTagToServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 tagName) internal {
@@ -320,7 +320,7 @@ contract Registry is IRegistry, ERC165 {
             removeTagFromServiceRegistration(orgName, serviceName, tags[i]);
         }
 
-        emit ServiceModified(orgName, serviceName, orgName, serviceName);
+        emit ServiceModified(orgName, serviceName);
     }
 
     function removeTagFromServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 tagName) internal {
@@ -371,7 +371,7 @@ contract Registry is IRegistry, ERC165 {
 
         deleteServiceRegistrationInternal(orgName, serviceName);
 
-        emit ServiceDeleted(orgName, serviceName, orgName, serviceName);
+        emit ServiceDeleted(orgName, serviceName);
     }
 
     function deleteServiceRegistrationInternal(bytes32 orgName, bytes32 serviceName) internal {
@@ -420,7 +420,7 @@ contract Registry is IRegistry, ERC165 {
             addTagToTypeRepositoryRegistration(orgName, repositoryName, tags[i]);
         }
 
-        emit TypeRepositoryCreated(orgName, repositoryName, orgName, repositoryName);
+        emit TypeRepositoryCreated(orgName, repositoryName);
     }
 
     function updateTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName,
@@ -432,7 +432,7 @@ contract Registry is IRegistry, ERC165 {
 
         orgsByName[orgName].typeReposByName[repositoryName].repositoryURI = repositoryURI;
 
-        emit TypeRepositoryModified(orgName, repositoryName, orgName, repositoryName);
+        emit TypeRepositoryModified(orgName, repositoryName);
     }
 
     function addTagsToTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32[] tags) external {
@@ -445,7 +445,7 @@ contract Registry is IRegistry, ERC165 {
             addTagToTypeRepositoryRegistration(orgName, repositoryName, tags[i]);
         }
 
-        emit TypeRepositoryModified(orgName, repositoryName, orgName, repositoryName);
+        emit TypeRepositoryModified(orgName, repositoryName);
     }
 
     function addTagToTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 tagName) internal {
@@ -482,7 +482,7 @@ contract Registry is IRegistry, ERC165 {
             removeTagFromTypeRepositoryRegistration(orgName, repositoryName, tags[i]);
         }
 
-        emit TypeRepositoryModified(orgName, repositoryName, orgName, repositoryName);
+        emit TypeRepositoryModified(orgName, repositoryName);
     }
 
     function removeTagFromTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 tagName) internal {
@@ -534,7 +534,7 @@ contract Registry is IRegistry, ERC165 {
 
         deleteTypeRepositoryRegistrationInternal(orgName, repositoryName);
 
-        emit TypeRepositoryDeleted(orgName, repositoryName, orgName, repositoryName);
+        emit TypeRepositoryDeleted(orgName, repositoryName);
     }
 
     function deleteTypeRepositoryRegistrationInternal(bytes32 orgName, bytes32 repositoryName) internal {
@@ -634,7 +634,7 @@ contract Registry is IRegistry, ERC165 {
     }
 
     function getTypeRepositoryByName(bytes32 orgName, bytes32 repositoryName) external view
-            returns (bool found, bytes32 name, bytes uri, bytes32[] tags) {
+            returns (bool found, bytes32 name, bytes repositoryURI, bytes32[] tags) {
 
         // check to see if this organization exists
         if(orgsByName[orgName].organizationName == bytes32(0x0)) {
@@ -650,7 +650,7 @@ contract Registry is IRegistry, ERC165 {
 
         found = true;
         name = repositoryName;
-        uri = orgsByName[orgName].typeReposByName[repositoryName].repositoryURI;
+        repositoryURI = orgsByName[orgName].typeReposByName[repositoryName].repositoryURI;
         tags = orgsByName[orgName].typeReposByName[repositoryName].tags;
     }
 
