@@ -74,9 +74,10 @@ interface IRegistry {
     //  |____/ \___|_|    \_/ |_|\___\___|     |_|  |_|\__, |_| |_| |_|\__|
     //                                                 |___/
 
-    event ServiceCreated (bytes32 indexed orgName, bytes32 indexed serviceName);
-    event ServiceModified(bytes32 indexed orgName, bytes32 indexed serviceName);
-    event ServiceDeleted (bytes32 indexed orgName, bytes32 indexed serviceName);
+    event ServiceCreated         (bytes32 indexed orgName, bytes32 indexed serviceName, bytes metadataURI);
+    event ServiceMetadataModified(bytes32 indexed orgName, bytes32 indexed serviceName, bytes metadataURI);
+    event ServiceTagsModified    (bytes32 indexed orgName, bytes32 indexed serviceName);
+    event ServiceDeleted         (bytes32 indexed orgName, bytes32 indexed serviceName);
 
     /**
       * @dev Adds a new service to the registry.

@@ -16,7 +16,7 @@ contract('Registry', function(accounts) {
         { 
             let orgName     = "TestName" 
             let serviceName = "ServiceName"
-            let metadataURI = "LONG \"BINARY\" STRING 42424242424242424242424242424242424242424242424242424242424"
+            let metadataURI = "ipfs://QmUfwZ7pEWBE5zSepKpHDaPibQxpPqoEDRo5Kzai8h5U9B"
             await registry.createOrganization(orgName, [accounts[1]]);
             await registry.createServiceRegistration(orgName, serviceName, metadataURI, [])
             let rez = await registry.getServiceRegistrationByName(orgName, serviceName)

@@ -258,7 +258,7 @@ contract Registry is IRegistry, ERC165 {
             addTagToServiceRegistration(orgName, serviceName, tags[i]);
         }
 
-        emit ServiceCreated(orgName, serviceName);
+        emit ServiceCreated(orgName, serviceName, metadataURI);
     }
 
     function updateServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes metadataURI) external {
@@ -269,7 +269,7 @@ contract Registry is IRegistry, ERC165 {
 
         orgsByName[orgName].servicesByName[serviceName].metadataURI = metadataURI;
 
-        emit ServiceModified(orgName, serviceName);
+        emit ServiceMetadataModified(orgName, serviceName, metadataURI);
     }
 
     function addTagsToServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32[] tags) external {
@@ -282,7 +282,7 @@ contract Registry is IRegistry, ERC165 {
             addTagToServiceRegistration(orgName, serviceName, tags[i]);
         }
 
-        emit ServiceModified(orgName, serviceName);
+        emit ServiceTagsModified(orgName, serviceName);
     }
 
     function addTagToServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 tagName) internal {
@@ -320,7 +320,7 @@ contract Registry is IRegistry, ERC165 {
             removeTagFromServiceRegistration(orgName, serviceName, tags[i]);
         }
 
-        emit ServiceModified(orgName, serviceName);
+        emit ServiceTagsModified(orgName, serviceName);
     }
 
     function removeTagFromServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 tagName) internal {
