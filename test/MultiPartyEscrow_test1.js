@@ -160,7 +160,7 @@ contract('MultiPartyEscrow', function(accounts) {
         {
             let expiration   = web3.eth.blockNumber + 10000000
             let value        = 1000
-            let groupId      = 44
+            let groupId      = "group44"
             await escrow.openChannel(accounts[7], value, expiration, groupId, accounts[4], {from:accounts[4]})
             assert.equal((await escrow.nextChannelId.call()).toNumber(), 3)     
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*2)
@@ -200,7 +200,7 @@ contract('MultiPartyEscrow', function(accounts) {
      it ("Open the fourh channel and close it by timeout", async function()
         {
             let expiration   = web3.eth.blockNumber - 1
-            let groupId      = 42
+            let groupId      = "group42"
             await escrow.openChannel(accounts[7], 10, expiration, groupId, accounts[4], {from:accounts[4]})
             assert.equal((await escrow.nextChannelId.call()).toNumber(), 4)     
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*2)
