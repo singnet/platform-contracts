@@ -12,7 +12,7 @@ contract MultiPartyEscrow {
     struct PaymentChannel {
         address sender;      // The account sending payments.
         address recipient;   // The account receiving the payments.
-        uint256 groupId;     // id of group of replicas who share the same payment channel
+        bytes32 groupId;     // id of group of replicas who share the same payment channel
                              // You should generate groupId randomly in order to prevent
                              // two PaymentChannel with the same [recipient, groupId]
         uint256 value;       // Total amount of tokens deposited to the channel. 
@@ -34,7 +34,7 @@ contract MultiPartyEscrow {
     
 
     // Events
-    event ChannelOpen(uint256 channelId, address indexed sender, address indexed recipient, uint256 indexed groupId, address signer, uint256 amount, uint256 expiration);
+    event ChannelOpen(uint256 channelId, address indexed sender, address indexed recipient, bytes32 indexed groupId, address signer, uint256 amount, uint256 expiration);
     event ChannelClaim(uint256 indexed channelId, address indexed recipient, uint256 claimAmount, uint256 sendBackAmount, uint256 keepAmpount);
     event ChannelSenderClaim(uint256 indexed channelId, uint256 claimAmount);
     event ChannelExtend(uint256 indexed channelId, uint256 newExpiration);
@@ -82,7 +82,7 @@ contract MultiPartyEscrow {
     //open a channel, token should be already being deposit
     //openChannel should be run only once for given sender, recipient, groupId
     //channel can be reused even after channelClaim(..., isSendback=true)
-    function openChannel(address  recipient, uint256 value, uint256 expiration, uint256 groupId, address signer) 
+    function openChannel(address  recipient, uint256 value, uint256 expiration, bytes32 groupId, address signer) 
     public
     returns(bool) 
     {
@@ -107,7 +107,7 @@ contract MultiPartyEscrow {
     
 
 
-    function depositAndOpenChannel(address  recipient, uint256 value, uint256 expiration, uint256 groupId, address signer)
+    function depositAndOpenChannel(address  recipient, uint256 value, uint256 expiration, bytes32 groupId, address signer)
     public
     returns(bool)
     {
