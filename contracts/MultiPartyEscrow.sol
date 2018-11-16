@@ -38,7 +38,7 @@ contract MultiPartyEscrow {
     event ChannelClaim(uint256 indexed channelId, address indexed recipient, uint256 claimAmount, uint256 sendBackAmount, uint256 keepAmpount);
     event ChannelSenderClaim(uint256 indexed channelId, uint256 claimAmount);
     event ChannelExtend(uint256 indexed channelId, uint256 newExpiration);
-    event ChannelAddFunds(uint256 indexed channelId, uint256 newFunds);
+    event ChannelAddFunds(uint256 indexed channelId, uint256 additionalFunds);
     event TransferFunds(address indexed sender, address indexed receiver, uint256 amount);
 
     constructor (address _token)
