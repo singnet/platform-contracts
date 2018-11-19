@@ -52,6 +52,21 @@ function isValidSignatureClaim(contractAddress, channelId, nonce, amount, signat
         ethereumjsutil.stripHexPrefix(expectedSigner).toLowerCase();
 }
 
+function getVRSFromSignature(signature) {
+    signature = signature.substr(2); //remove 0x
+    const r = '0x' + signature.slice(0, 64);
+    const s = '0x' + signature.slice(64, 128);
+    const v = '0x' + signature.slice(128, 130);    // Should be either 27 or 28
+    const v_decimal =  web3.toDecimal(v);
+    const v_compute = (web3.toDecimal(v) < 27 ) ? v_decimal + 27 : v_decimal ;
+
+    return {
+        v: v_compute,
+        r: r,
+        s: s
+    };
+
+}
 
 async function waitSignedClaimMessage(fromAccount, contractAddress, channelId, nonce, amount)
 {
@@ -70,6 +85,6 @@ async function waitSignedClaimMessage(fromAccount, contractAddress, channelId, n
 } 
 
 
-module.exports.waitSignedClaimMessage        = waitSignedClaimMessage;
-module.exports.isValidSignatureClaim         = isValidSignatureClaim;
-
+module.exports.waitSignedClaimMessage   = waitSignedClaimMessage;
+module.exports.isValidSignatureClaim    = isValidSignatureClaim;
+module.exports.getVRSFromSignature      = getVRSFromSignature; 

@@ -65,6 +65,21 @@ contract('MultiPartyEscrow', function(accounts) {
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3)
             assert.equal((await token.balanceOf(escrow.address)).toNumber(), N1 + N2 - N3)
             assert.equal((await token.balanceOf(accounts[4])).toNumber(), N3)
+
+            // Check for the Transfer Function
+            await token.transfer(accounts[8],  N2, {from:accounts[0]});
+            await token.approve(escrow.address,N2, {from:accounts[8]});
+            await escrow.deposit(N2, {from:accounts[8]});
+            escrow.transfer(accounts[9], N1, {from:accounts[8]} );
+            assert.equal((await escrow.balances.call(accounts[8])).toNumber(), N2 - N1)
+            assert.equal((await escrow.balances.call(accounts[9])).toNumber(), N1)
+
+            // Transferring back to a[0] to make the remaining functions in tact
+            escrow.withdraw(N2 - N1, {from:accounts[8]})
+            escrow.withdraw(N1, {from:accounts[9]})
+            await token.transfer(accounts[0],  N2 - N1, {from:accounts[8]});
+            await token.transfer(accounts[0],  N1, {from:accounts[9]});
+
         }); 
 
         it ("Initial openning (first and second channel)", async function()
@@ -72,17 +87,18 @@ contract('MultiPartyEscrow', function(accounts) {
             //first channel
 
             //first try to open with bigger amount (it must fail)
-            testErrorRevert( escrow.openChannel(accounts[5], N1 + 1, web3.eth.blockNumber + 10000000, 0, {from:accounts[0]}))
+            // sending signer as sender itself
+            testErrorRevert( escrow.openChannel(accounts[5], N1 + 1, web3.eth.blockNumber + 10000000, 0, accounts[0], {from:accounts[0]}))
             
             //normal open
-            await escrow.openChannel(accounts[5], N1, web3.eth.blockNumber + 10000000, 0, {from:accounts[0]})
+            await escrow.openChannel(accounts[5], N1, web3.eth.blockNumber + 10000000, 0, accounts[0], {from:accounts[0]})
             assert.equal((await escrow.nextChannelId.call()).toNumber(), 1)
 
             //full balance doesn't change
             assert.equal((await token.balanceOf(escrow.address)).toNumber(), N1 + N2 - N3)
             assert.equal((await escrow.balances.call(accounts[0])).toNumber(), 0)
             //second channel
-            await escrow.openChannel(accounts[6], N1 * 2, web3.eth.blockNumber + 10000000, 27, {from:accounts[4]})
+            await escrow.openChannel(accounts[6], N1 * 2, web3.eth.blockNumber + 10000000, 27, accounts[4], {from:accounts[4]})
             assert.equal((await escrow.nextChannelId.call()).toNumber(), 2)
             
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1 * 2)
@@ -101,7 +117,13 @@ contract('MultiPartyEscrow', function(accounts) {
         {
             //sign message by the privet key of accounts[0]
             let sgn = await signFuns.waitSignedClaimMessage(accounts[0], escrow.address, 0, 0, N1 - 1000);
-            await escrow.channelClaim(0, N1 - 1000, sgn.toString("hex"), true, {from:accounts[5]});
+
+            let vrs = signFuns.getVRSFromSignature(sgn.toString("hex"));
+
+            // With Signature Parameter
+            //await escrow.channelClaim(0, N1 - 1000, sgn.toString("hex"), true, {from:accounts[5]});
+            await escrow.channelClaim(0, N1 - 1000, vrs.v, vrs.r, vrs.s, true, {from:accounts[5]});
+            
             assert.equal((await escrow.balances.call(accounts[5])).toNumber(), N1 - 1000)
             assert.equal((await escrow.balances.call(accounts[0])).toNumber(), 1000)
           //  let balance4 = await token.balanceOf.call(accounts[4]);
@@ -111,17 +133,24 @@ contract('MultiPartyEscrow', function(accounts) {
         {
             //first we claim, and put remaing funds in the new channel (with nonce 1)
             let sgn = await signFuns.waitSignedClaimMessage(accounts[4], escrow.address, 1, 0, N1);
-            await escrow.channelClaim(1, N1, sgn.toString("hex"), false, {from:accounts[6]});
+            let vrs = signFuns.getVRSFromSignature(sgn.toString("hex"));
+            
+            //await escrow.channelClaim(1, N1, sgn.toString("hex"), false, {from:accounts[6]});
+            await escrow.channelClaim(1, N1, vrs.v, vrs.r, vrs.s, false, {from:accounts[6]});
             assert.equal((await escrow.balances.call(accounts[6])).toNumber(), N1)
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*2)
 
             //claim all funds and close channel
             //try to use old signutature (should fail)
-            testErrorRevert( escrow.channelClaim(1, N1, sgn.toString("hex"), false, {from:accounts[6]}))
+            //testErrorRevert( escrow.channelClaim(1, N1, sgn.toString("hex"), false, {from:accounts[6]}))
+            testErrorRevert( escrow.channelClaim(1, N1, vrs.v, vrs.r, vrs.s, false, {from:accounts[6]}))
 
             //make new signature with nonce 1
             let sgn2 = await signFuns.waitSignedClaimMessage(accounts[4], escrow.address, 1, 1, N1 - 1000);
-            await escrow.channelClaim(1, N1 - 1000, sgn2.toString("hex"), true, {from:accounts[6]});
+            let vrs2 = signFuns.getVRSFromSignature(sgn2.toString("hex"));
+            
+            //await escrow.channelClaim(1, N1 - 1000, sgn2.toString("hex"), true, {from:accounts[6]});
+            await escrow.channelClaim(1, N1 - 1000, vrs2.v, vrs2.r, vrs2.s, true, {from:accounts[6]});
             assert.equal((await escrow.balances.call(accounts[6])).toNumber(), N1 * 2 - 1000)
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*2 + 1000)
 
@@ -131,8 +160,8 @@ contract('MultiPartyEscrow', function(accounts) {
         {
             let expiration   = web3.eth.blockNumber + 10000000
             let value        = 1000
-            let groupId      = 44
-            await escrow.openChannel(accounts[7], value, expiration, groupId, {from:accounts[4]})
+            let groupId      = "group44"
+            await escrow.openChannel(accounts[7], value, expiration, groupId, accounts[4], {from:accounts[4]})
             assert.equal((await escrow.nextChannelId.call()).toNumber(), 3)     
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*2)
         });
@@ -157,7 +186,11 @@ contract('MultiPartyEscrow', function(accounts) {
         {
             //sign message by the privet key of accounts[0]
             let sgn = await signFuns.waitSignedClaimMessage(accounts[4], escrow.address, 2, 0, 1000 - 10);
-            await escrow.channelClaim(2, 1000 - 10, sgn.toString("hex"), true, {from:accounts[7]});
+         
+            let vrs = signFuns.getVRSFromSignature(sgn.toString("hex"));
+         
+            //await escrow.channelClaim(2, 1000 - 10, sgn.toString("hex"), true, {from:accounts[7]});
+            await escrow.channelClaim(2, 1000 - 10, vrs.v, vrs.r, vrs.s, true, {from:accounts[7]});
             assert.equal((await escrow.balances.call(accounts[7])).toNumber(), 1000 - 10)
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*2 + 10)
           //  let balance4 = await token.balanceOf.call(accounts[4]);
@@ -167,8 +200,8 @@ contract('MultiPartyEscrow', function(accounts) {
      it ("Open the fourh channel and close it by timeout", async function()
         {
             let expiration   = web3.eth.blockNumber - 1
-            let groupId      = 42
-            await escrow.openChannel(accounts[7], 10, expiration, groupId, {from:accounts[4]})
+            let groupId      = "group42"
+            await escrow.openChannel(accounts[7], 10, expiration, groupId, accounts[4], {from:accounts[4]})
             assert.equal((await escrow.nextChannelId.call()).toNumber(), 4)     
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*2)
             
@@ -193,4 +226,3 @@ contract('MultiPartyEscrow', function(accounts) {
         });
 
 });
-
