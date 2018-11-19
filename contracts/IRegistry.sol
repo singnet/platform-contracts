@@ -14,9 +14,9 @@ interface IRegistry {
     //   \___/|_|  \__, |\__,_|_| |_|_/___\__,_|\__|_|\___/|_| |_|     |_|  |_|\__, |_| |_| |_|\__|
     //             |___/                                                       |___/
 
-    event OrganizationCreated (bytes32 orgName, bytes32 indexed orgNameIndexed);
-    event OrganizationModified(bytes32 orgName, bytes32 indexed orgNameIndexed);
-    event OrganizationDeleted (bytes32 orgName, bytes32 indexed orgNameIndexed);
+    event OrganizationCreated (bytes32 indexed orgName);
+    event OrganizationModified(bytes32 indexed orgName);
+    event OrganizationDeleted (bytes32 indexed orgName);
 
     /**
       * @dev Adds a new organization that hosts SingularityNET services to the registry.
@@ -74,9 +74,10 @@ interface IRegistry {
     //  |____/ \___|_|    \_/ |_|\___\___|     |_|  |_|\__, |_| |_| |_|\__|
     //                                                 |___/
 
-    event ServiceCreated (bytes32 orgName, bytes32 serviceName, bytes32 indexed orgNameIndexed, bytes32 indexed serviceNameIndexed);
-    event ServiceModified(bytes32 orgName, bytes32 serviceName, bytes32 indexed orgNameIndexed, bytes32 indexed serviceNameIndexed);
-    event ServiceDeleted (bytes32 orgName, bytes32 serviceName, bytes32 indexed orgNameIndexed, bytes32 indexed serviceNameIndexed);
+    event ServiceCreated         (bytes32 indexed orgName, bytes32 indexed serviceName, bytes metadataURI);
+    event ServiceMetadataModified(bytes32 indexed orgName, bytes32 indexed serviceName, bytes metadataURI);
+    event ServiceTagsModified    (bytes32 indexed orgName, bytes32 indexed serviceName);
+    event ServiceDeleted         (bytes32 indexed orgName, bytes32 indexed serviceName);
 
     /**
       * @dev Adds a new service to the registry.
@@ -85,11 +86,11 @@ interface IRegistry {
       *
       * @param orgName       Name of SingularityNET organization that owns this service.
       * @param serviceName   Name of the service to create, must be unique organization-wide.
-      * @param servicePath   Optional hierarchical descriptor for organizational purposes.
-      * @param agentAddress  Address of deployed SingularityNET agent contract that runs this service.
+      * @param metadataURI   Service metadata. metadataURI should contain information for data consistency 
+      *                      validation (for example hash). We support: IPFS URI.
       * @param tags          Optional array of tags for discoverability.
       */
-    function createServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 servicePath, address agentAddress, bytes32[] tags) external;
+    function createServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes metadataURI, bytes32[] tags) external;
 
     /**
       * @dev Updates a service registration record.
@@ -98,10 +99,9 @@ interface IRegistry {
       *
       * @param orgName       Name of SingularityNET organization that owns this service.
       * @param serviceName   Name of the service to update.
-      * @param servicePath   Optional hierarchical descriptor for organizational purposes.
-      * @param agentAddress  Address of deployed SingularityNET agent contract that runs this service.
+      * @param metadataURI   Service metadata URI
       */
-    function updateServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 servicePath, address agentAddress) external;
+    function updateServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes metadataURI) external;
 
     /**
       * @dev Adds tags to a service registration record for discoverability.
@@ -143,9 +143,9 @@ interface IRegistry {
     //    |_| \__, | .__/ \___|      |_| \_\___| .__/ \___/      |_|  |_|\__, |_| |_| |_|\__|
     //        |___/|_|                         |_|                       |___/
 
-    event TypeRepositoryCreated (bytes32 orgName, bytes32 typeRepositoryName, bytes32 indexed orgNameIndexed, bytes32 indexed typeRepositoryNameIndexed);
-    event TypeRepositoryModified(bytes32 orgName, bytes32 typeRepositoryName, bytes32 indexed orgNameIndexed, bytes32 indexed typeRepositoryNameIndexed);
-    event TypeRepositoryDeleted (bytes32 orgName, bytes32 typeRepositoryName, bytes32 indexed orgNameIndexed, bytes32 indexed typeRepositoryNameIndexed);
+    event TypeRepositoryCreated (bytes32 indexed orgName, bytes32 indexed typeRepositoryName);
+    event TypeRepositoryModified(bytes32 indexed orgName, bytes32 indexed typeRepositoryName);
+    event TypeRepositoryDeleted (bytes32 indexed orgName, bytes32 indexed typeRepositoryName);
 
     /**
       * @dev Adds a new type repository to the registry.
@@ -154,11 +154,10 @@ interface IRegistry {
       *
       * @param orgName         Name of SingularityNET organization that owns this type repository.
       * @param repositoryName  Name of the repository to create, must be unique organization-wide.
-      * @param repositoryPath  Optional hierarchical descriptor for organizational purposes.
       * @param repositoryURI   Path to an offchain resource that contains type repository metadata.
       * @param tags            Optional array of tags for discoverability.
       */
-    function createTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath, bytes repositoryURI, bytes32[] tags) external;
+    function createTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes repositoryURI, bytes32[] tags) external;
 
     /**
       * @dev Updates a type repository registration record.
@@ -167,10 +166,9 @@ interface IRegistry {
       *
       * @param orgName         Name of SingularityNET organization that owns this type repository.
       * @param repositoryName  Name of the repository to update.
-      * @param repositoryPath  Optional hierarchical descriptor for organizational purposes.
       * @param repositoryURI   Path to an offchain resource that contains type repository metadata.
       */
-    function updateTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath, bytes repositoryURI) external;
+    function updateTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes repositoryURI) external;
 
     /**
       * @dev Adds tags to a type repository registration record for discoverability.
@@ -254,12 +252,11 @@ interface IRegistry {
       * @return found        true if an organization and service with these names exists, false otherwise. If false, all other
       *                      returned fields should be ignored.
       * @return name         Name of the service, should be the same as the serviceName parameter.
-      * @return servicePath  Optional hierarchical descriptor for organizational purposes.
-      * @return agentAddress Address of deployed Agent contract for interacting with this service.
+      * @return metadataURI  Service metadata URI
       * @return serviceTags  Optional array of tags for discoverability.
       */
     function getServiceRegistrationByName(bytes32 orgName, bytes32 serviceName) external view
-            returns (bool found, bytes32 name, bytes32 servicePath, address agentAddress, bytes32[] serviceTags);
+            returns (bool found, bytes32 name, bytes metadataURI, bytes32[] serviceTags);
 
     /**
       * @dev Returns an array of names of all type repositories owned by a given organization.
@@ -281,12 +278,11 @@ interface IRegistry {
       * @return found           true if an organization and repository with these names exists, false otherwise. If false, all other
       *                         returned fields should be ignored.
       * @return name            Name of the repository, should be the same as the repositoryName parameter.
-      * @return repositoryPath  Optional hierarchical descriptor for organizational purposes.
-      * @return agentAddress    Address of deployed Agent contract for interacting with this repository.
+      * @return repositoryURI   repository URI.
       * @return repositoryTags  Optional array of tags for discoverability.
       */
     function getTypeRepositoryByName(bytes32 orgName, bytes32 repositoryName) external view
-            returns (bool found, bytes32 name, bytes32 repositoryPath, bytes repositoryURI, bytes32[] repositoryTags);
+            returns (bool found, bytes32 name, bytes repositoryURI, bytes32[] repositoryTags);
 
     /**
       * @dev Returns a list of all tags placed on any service for discoverability.

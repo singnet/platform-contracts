@@ -16,11 +16,15 @@ contract('Registry', function(accounts) {
         { 
             let orgName     = "TestName" 
             let serviceName = "ServiceName"
-            let metadata    = "LONG \"BINARY\" STRING 42424242424242424242424242424242424242424242424242424242424"
+            let metadataURI = "ipfs://QmUfwZ7pEWBE5zSepKpHDaPibQxpPqoEDRo5Kzai8h5U9B"
             await registry.createOrganization(orgName, [accounts[1]]);
-            await registry.createServiceRegistration(orgName, serviceName, "", accounts[5], [])
-            await registry.setMetadataIPFSHashInServiceRegistration(orgName, serviceName,  metadata)
-            let rez = await registry.getMetadataIPFSHash(orgName, serviceName)
-            assert.equal(web3.toAscii(rez[1]), metadata)
+            await registry.createServiceRegistration(orgName, serviceName, metadataURI, [])
+            let rez = await registry.getServiceRegistrationByName(orgName, serviceName)
+            assert.equal(web3.toAscii(rez[2]), metadataURI)
+
+            //update service registration
+            await registry.updateServiceRegistration(orgName, serviceName, metadataURI + metadataURI)
+            let rez2 = await registry.getServiceRegistrationByName(orgName, serviceName)
+            assert.equal(web3.toAscii(rez2[2]), metadataURI + metadataURI)
         });
 });

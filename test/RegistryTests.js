@@ -69,11 +69,9 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                 getOrgName        : (i) => `${c.OrganizationName}_${i}`,
                 getMemberAddress  : (i) => `0x${String(i).padStart(40, '0')}`,
                 getServiceName    : (orgName, i) => `${orgName}_Service_${i}`,
-                getServicePath    : (orgName, i) => `/${orgName}/s${i}`,
-                getServiceAddress : (orgName, serviceName) => web3.fromAscii(`${orgName}-${serviceName}`).substring(0, 42),
+                getMetaUri        : (orgName, repoName) => 'ipfs://' + web3.fromAscii(`${repoName}-${orgName}`).substring(0, 50),
                 getServiceTagName : (i) => `serviceTagFoo_${i}`,
                 getRepoName       : (orgName, i) => `${orgName}_Repo_${i}`,
-                getRepoPath       : (orgName, i) => `/${orgName}/r${i}`,
                 getRepoUri        : (orgName, repoName) => 'ipfs://' + web3.fromAscii(`${orgName}-${repoName}`).substring(0, 50),
                 getRepoTagName    : (i) => `repoTagFoo_${i}`
             })
@@ -130,16 +128,16 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
             return {receipt: deleteResult.receipt, view: {found, name, owner, serviceNames, repositoryNames}};
         };
 
-        const createService = async (_orgName, _serviceName, _servicePath, _agentAddress, _tags) => {
+        const createService = async (_orgName, _serviceName, _metadataURI, _tags) => {
 
-            const createResult = await s.RegistryInstance.createServiceRegistration(_orgName, _serviceName, _servicePath, _agentAddress, _tags);
+            const createResult = await s.RegistryInstance.createServiceRegistration(_orgName, _serviceName, _metadataURI, _tags);
 
             s.Data.OrgsToServices.getOrCreateSet(_orgName).add(_serviceName);
             updateLocalServiceTagData(_orgName, _serviceName, _tags, true);
 
-            const [found, name, servicePath, agentAddress, serviceTags] = await s.RegistryInstance.getServiceRegistrationByName.call(_orgName, _serviceName);
+            const [found, name, metadataURI, serviceTags] = await s.RegistryInstance.getServiceRegistrationByName.call(_orgName, _serviceName);
 
-            return {receipt: createResult.receipt, view: {found, name, servicePath, agentAddress, serviceTags}};
+            return {receipt: createResult.receipt, view: {found, name, metadataURI, serviceTags}};
         };
 
         const deleteService = async (_orgName, _serviceName) => {
@@ -150,21 +148,21 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
 
             deleteAllLocalTagsForService(_serviceName);
 
-            const [found, name, servicePath, agentAddress, serviceTags] = await s.RegistryInstance.getServiceRegistrationByName.call(_orgName, _serviceName);
+            const [found, name, metadataURI, serviceTags] = await s.RegistryInstance.getServiceRegistrationByName.call(_orgName, _serviceName);
 
-            return {receipt: deleteResult.receipt, view: {found, name, servicePath, agentAddress, serviceTags}};
+            return {receipt: deleteResult.receipt, view: {found, name, metadataURI, serviceTags}};
         };
 
-        const createTypeRepository = async (_orgName, _repoName, _repoPath, _repoUri, _tags) => {
+        const createTypeRepository = async (_orgName, _repoName, _repoUri, _tags) => {
 
-            const createResult = await s.RegistryInstance.createTypeRepositoryRegistration(_orgName, _repoName, _repoPath, _repoUri, _tags);
+            const createResult = await s.RegistryInstance.createTypeRepositoryRegistration(_orgName, _repoName, _repoUri, _tags);
 
             s.Data.OrgsToRepos.getOrCreateSet(_orgName).add(_repoName);
             updateLocalRepoTagData(_orgName, _repoName, _tags, true);
 
-            const [found, name, repositoryPath, repositoryURI, repositoryTags] = await s.RegistryInstance.getTypeRepositoryByName.call(_orgName, _repoName);
+            const [found, name, repositoryURI, repositoryTags] = await s.RegistryInstance.getTypeRepositoryByName.call(_orgName, _repoName);
 
-            return {receipt: createResult.receipt, view: {found, name, repositoryPath, repositoryURI, repositoryTags}};
+            return {receipt: createResult.receipt, view: {found, name, repositoryURI, repositoryTags}};
         };
 
         const deleteRepo = async (_orgName, _repoName) => {
@@ -175,9 +173,9 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
 
             deleteAllLocalTagsForRepo(_repoName);
 
-            const [found, name, repositoryPath, repositoryURI, repositoryTags] = await s.RegistryInstance.getTypeRepositoryByName.call(_orgName, _repoName);
+            const [found, name, repositoryURI, repositoryTags] = await s.RegistryInstance.getTypeRepositoryByName.call(_orgName, _repoName);
 
-            return {receipt: deleteResult.receipt, view: {found, name, repositoryPath, repositoryURI, repositoryTags}};
+            return {receipt: deleteResult.receipt, view: {found, name, repositoryURI, repositoryTags}};
         };
 
         const addTagsToService = async (_orgName, _serviceName, _tags) => {
@@ -186,9 +184,9 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
 
             updateLocalServiceTagData(_orgName, _serviceName, _tags, true);
 
-            const [found, name, servicePath, agentAddress, serviceTags] = await s.RegistryInstance.getServiceRegistrationByName.call(_orgName, _serviceName);
+            const [found, name, metadataURI, serviceTags] = await s.RegistryInstance.getServiceRegistrationByName.call(_orgName, _serviceName);
 
-            return {receipt: addResult.receipt, view: {found, name, servicePath, agentAddress, serviceTags}};
+            return {receipt: addResult.receipt, view: {found, name, metadataURI, serviceTags}};
         };
 
         const addTagsToRepo = async (_orgName, _repoName, _tags) => {
@@ -197,9 +195,9 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
 
             updateLocalRepoTagData(_orgName, _repoName, _tags, true);
 
-            const [found, name, repositoryPath, repositoryURI, repositoryTags] = await s.RegistryInstance.getTypeRepositoryByName.call(_orgName, _repoName);
+            const [found, name, repositoryURI, repositoryTags] = await s.RegistryInstance.getTypeRepositoryByName.call(_orgName, _repoName);
 
-            return {receipt: addResult.receipt, view: {found, name, repositoryPath, repositoryURI, repositoryTags}};
+            return {receipt: addResult.receipt, view: {found, name, repositoryURI, repositoryTags}};
         };
 
         const removeTagsFromService = async (_orgName, _serviceName, _tags) => {
@@ -208,9 +206,9 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
 
             updateLocalServiceTagData(_orgName, _serviceName, _tags, false);
 
-            const [found, name, servicePath, agentAddress, serviceTags] = await s.RegistryInstance.getServiceRegistrationByName.call(_orgName, _serviceName);
+            const [found, name, metadataURI, serviceTags] = await s.RegistryInstance.getServiceRegistrationByName.call(_orgName, _serviceName);
 
-            return {receipt: removeResult.receipt, view: {found, name, servicePath, agentAddress, serviceTags}};
+            return {receipt: removeResult.receipt, view: {found, name, metadataURI, serviceTags}};
         };
 
         const removeTagsFromRepo = async (_orgName, _repoName, _tags) => {
@@ -219,9 +217,9 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
 
             updateLocalRepoTagData(_orgName, _repoName, _tags, false);
 
-            const [found, name, repositoryPath, repositoryURI, repositoryTags] = await s.RegistryInstance.getTypeRepositoryByName.call(_orgName, _repoName);
+            const [found, name, repositoryURI, repositoryTags] = await s.RegistryInstance.getTypeRepositoryByName.call(_orgName, _repoName);
 
-            return {receipt: removeResult.receipt, view: {found, name, repositoryPath, repositoryURI, repositoryTags}};
+            return {receipt: removeResult.receipt, view: {found, name, repositoryURI, repositoryTags}};
         };
 
         // helpers for local data store
@@ -361,26 +359,24 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                 for (let j = 0; j < servicesPerOrg; j++) {
                     const orgName = c.Format.getOrgName(i);
                     const serviceName = c.Format.getServiceName(orgName, j);
-                    const servicePath = c.Format.getServiceName(orgName, j);
-                    const agentAddress = c.Format.getServiceAddress(orgName, serviceName);
+                    const metadataURI = c.Format.getMetaUri(orgName, j);
 
                     it(`Creates a service ${serviceName} for org ${orgName} with ${serviceTagsFirstHalf.length} tags`, async () => {
                         // interact with contract
-                        const createResult = await createService(orgName, serviceName, servicePath, agentAddress, serviceTagsFirstHalf);
+                        const createResult = await createService(orgName, serviceName, metadataURI, serviceTagsFirstHalf);
 
                         // validate receipt
                         assert.equal(TX_STATUS.SUCCESS, parseInt(createResult.receipt.status), `createService tx should succeed for ${serviceName}`);
 
                         // destructure view
-                        const {found: found, name: viewServiceName, servicePath: viewServicePath, agentAddress: viewAgentAddress, serviceTags: viewServiceTags} = createResult.view;
-
+                        const {found: found, name: viewServiceName, metadataURI: viewMetadataURI, serviceTags: viewServiceTags} = createResult.view;
+                        
                         const viewServiceTagsDecoded = viewServiceTags.map(bytesToString);
 
                         // validate view
                         assert.equal(true, found, "Service not found after registration");
                         assert.equal(serviceName, bytesToString(viewServiceName), "Service registered with the wrong name");
-                        assert.equal(servicePath, bytesToString(viewServicePath), "Service registered with the wrong path");
-                        assert.equal(agentAddress, addressToString(viewAgentAddress), "Service registered with the wrong agent address");
+                        assert.equal(metadataURI, bytesToString(viewMetadataURI),  "Service registered with the wrong uri");
                         assertArraysEqual(assert.equal, serviceTagsFirstHalf, viewServiceTagsDecoded, "Service registered with incorrect tags");
                     });
                 }
@@ -392,24 +388,22 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                 for (let j = 0; j < reposPerOrg; j++) {
                     const orgName = c.Format.getOrgName(i);
                     const repoName = c.Format.getRepoName(orgName, j);
-                    const repoPath = c.Format.getRepoPath(orgName, j);
                     const repoUri = c.Format.getRepoUri(orgName, j);
 
                     it(`Creates a type repository ${repoName} for org ${orgName} with ${repoTagsFirstHalf.length} tags`, async () => {
                         // interact with contract
-                        const createResult = await createTypeRepository(orgName, repoName, repoPath, repoUri, repoTagsFirstHalf);
+                        const createResult = await createTypeRepository(orgName, repoName, repoUri, repoTagsFirstHalf);
 
                         // validate receipt
                         assert.equal(TX_STATUS.SUCCESS, parseInt(createResult.receipt.status), `createTypeRepository tx should succeed for ${repoName}`);
 
                         // destructure view
-                        const {found: found, name: viewRepoName, repositoryPath: viewRepoPath, repositoryURI: viewRepoUri, repositoryTags: viewRepoTags} = createResult.view;
+                        const {found: found, name: viewRepoName, repositoryURI: viewRepoUri, repositoryTags: viewRepoTags} = createResult.view;
                         const viewRepoTagsDecoded = viewRepoTags.map(bytesToString);
 
                         // validate view
                         assert.equal(true, found, "Repo not found after registration");
                         assert.equal(repoName, bytesToString(viewRepoName), "Repo registered with the wrong name");
-                        assert.equal(repoPath, bytesToString(viewRepoPath), "Repo registered with the wrong path");
                         assert.equal(repoUri, bytesToString(viewRepoUri), "Repo registered with the wrong URI");
                         assertArraysEqual(assert.equal, repoTagsFirstHalf, viewRepoTagsDecoded, "Repo registered with incorrect tags");
                     });
@@ -429,8 +423,7 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                     for (let j = 0; j < servicesPerOrg; j++) {
                         const orgName = c.Format.getOrgName(i);
                         const serviceName = c.Format.getServiceName(orgName, j);
-                        const servicePath = c.Format.getServiceName(orgName, j);
-                        const agentAddress = c.Format.getServiceAddress(orgName, serviceName);
+                        const metadataURI = c.Format.getMetaUri(orgName, j);
 
                         it(`Adds ${serviceTagsSecondHalf.length} more tags to ${serviceName}`, async () => {
 
@@ -439,7 +432,7 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                             assert.equal(TX_STATUS.SUCCESS, parseInt(addResult.receipt.status), `addTagsToService should succeed for ${serviceName} with ${serviceTagsSecondHalf.length} tags`);
 
                             // destructure view
-                            const {found: found, name: viewServiceName, servicePath: viewServicePath, agentAddress: viewAgentAddress, serviceTags: viewServiceTags} = addResult.view;
+                            const {found: found, name: viewServiceName, metadataURI: viewMetadataURI, serviceTags: viewServiceTags} = addResult.view;
                             const viewServiceTagsDecoded = viewServiceTags.map(bytesToString);
                             const expectedServiceTags = [...serviceTagsFirstHalf, ...serviceTagsSecondHalf];
 
@@ -447,8 +440,7 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                             // validate view
                             assert.equal(true, found, "Service not found after adding tags");
                             assert.equal(serviceName, bytesToString(viewServiceName), "Service name doesnt match after adding tags");
-                            assert.equal(servicePath, bytesToString(viewServicePath), "Service path doesnt match after adding tags");
-                            assert.equal(agentAddress, addressToString(viewAgentAddress), "Service address doesnt match after adding tags");
+                            assert.equal(metadataURI, bytesToString(viewMetadataURI), "Service metadataURI doesnt match after adding tags");
                             assertArraysEqual(assert.equal, expectedServiceTags, viewServiceTagsDecoded, "Service registered with incorrect tags");
                         });
                     }
@@ -461,7 +453,6 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                     for (let j = 0; j < reposPerOrg; j++) {
                         const orgName = c.Format.getOrgName(i);
                         const repoName = c.Format.getRepoName(orgName, j);
-                        const repoPath = c.Format.getRepoPath(orgName, j);
                         const repoUri = c.Format.getRepoUri(orgName, j);
 
                         it(`Adds ${repoTagsSecondHalf.length} more tags to ${repoName}`, async () => {
@@ -472,14 +463,13 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                             assert.equal(TX_STATUS.SUCCESS, parseInt(addResult.receipt.status), `addTagsToRepo should succeed for ${repoName}`);
 
                             // destructure view
-                            const {found: found, name: viewRepoName, repositoryPath: viewRepoPath, repositoryURI: viewRepoUri, repositoryTags: viewRepoTags} = addResult.view;
+                            const {found: found, name: viewRepoName, repositoryURI: viewRepoUri, repositoryTags: viewRepoTags} = addResult.view;
                             const viewRepoTagsDecoded = viewRepoTags.map(bytesToString);
                             const expectedRepoTags = [...repoTagsFirstHalf, ...repoTagsSecondHalf];
 
                             // validate view
                             assert.equal(true, found, "Repo not found after registration");
                             assert.equal(repoName, bytesToString(viewRepoName), "Repo registered with the wrong name");
-                            assert.equal(repoPath, bytesToString(viewRepoPath), "Repo registered with the wrong path");
                             assert.equal(repoUri, bytesToString(viewRepoUri), "Repo registered with the wrong URI");
                             assertArraysEqual(assert.equal, expectedRepoTags, viewRepoTagsDecoded, "Repo registered with incorrect tags");
                         });
@@ -519,8 +509,7 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
 
                         assert.equal(TX_STATUS.SUCCESS, parseInt(deleteResult.receipt.status), `deleteService should succeed for ${serviceName}`);
 
-                        const {found: found, name: viewServiceName, servicePath: viewServicePath, agentAddress: viewAgentAddress, serviceTags: viewServiceTags} = deleteResult.view;
-
+                        const {found: found, name: viewServiceName, serviceTags: viewServiceTags} = deleteResult.view;
                         assert.equal(false, found, "Service was still found after deletion");
                     });
                 });
@@ -558,7 +547,7 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
 
                         assert.equal(TX_STATUS.SUCCESS, parseInt(deleteResult.receipt.status), `deleteRepo should succeed for ${repoName}`);
 
-                        const {found: found, name: viewRepoName, repositoryPath: viewRepoPath, repositoryURI: viewRepoUri, repositoryTags: viewRepoTags} = deleteResult.view;
+                        const {found: found, name: viewRepoName, repositoryURI: viewRepoUri, repositoryTags: viewRepoTags} = deleteResult.view;
 
                         assert.equal(false, found, "Repo was still found after deletion");
                     });
@@ -623,22 +612,20 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                     for (const j of remainingServiceIndexes) {
                         const orgName = c.Format.getOrgName(i);
                         const serviceName = c.Format.getServiceName(orgName, j);
-                        const servicePath = c.Format.getServiceName(orgName, j);
-                        const agentAddress = c.Format.getServiceAddress(orgName, serviceName);
+                        const metadataURI = c.Format.getMetaUri(orgName, j);
 
                         it(`Removes ${serviceTagsToRemove.length} tags from ${serviceName}`, async () => {
                             const removeResult = await removeTagsFromService(orgName, serviceName, serviceTagsToRemove);
 
                             assert.equal(TX_STATUS.SUCCESS, parseInt(removeResult.receipt.status), `removeResult should succeed for ${serviceName} with ${serviceTagsToRemove.length} tags`);
 
-                            const {found: found, name: viewServiceName, servicePath: viewServicePath, agentAddress: viewAgentAddress, serviceTags: viewServiceTags} = removeResult.view;
+                            const {found: found, name: viewServiceName, metadataURI: viewMetadataURI, serviceTags: viewServiceTags} = removeResult.view;
                             const viewServiceTagsDecoded = viewServiceTags.map(bytesToString);
 
                             // validate view
                             assert.equal(true, found, "Service not found after removing tags");
                             assert.equal(serviceName, bytesToString(viewServiceName), "Service name doesnt match after removing tags");
-                            assert.equal(servicePath, bytesToString(viewServicePath), "Service path doesnt match after removing tags");
-                            assert.equal(agentAddress, addressToString(viewAgentAddress), "Service address doesnt match after removing tags");
+                            assert.equal(metadataURI, bytesToString(viewMetadataURI), "Service metadataURI doesnt match after removing tags");
                             assertArraysEqual(assert.equal, expectedServiceTags, viewServiceTagsDecoded, "Service registered with incorrect tags");
                         });
                     }
@@ -651,7 +638,6 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                     for (const j of remainingRepoIndexes) {
                         const orgName = c.Format.getOrgName(i);
                         const repoName = c.Format.getRepoName(orgName, j);
-                        const repoPath = c.Format.getRepoPath(orgName, j);
                         const repoUri = c.Format.getRepoUri(orgName, j);
 
                         it(`Removes ${repoTagsToRemove.length} tags from ${repoName}`, async () => {
@@ -660,13 +646,12 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                             assert.equal(TX_STATUS.SUCCESS, parseInt(removeResult.receipt.status), `removeResult should succeed for ${repoName} with ${repoTagsToRemove.length} tags`);
 
                             // destructure view
-                            const {found: found, name: viewRepoName, repositoryPath: viewRepoPath, repositoryURI: viewRepoUri, repositoryTags: viewRepoTags} = removeResult.view;
+                            const {found: found, name: viewRepoName, repositoryURI: viewRepoUri, repositoryTags: viewRepoTags} = removeResult.view;
                             const viewRepoTagsDecoded = viewRepoTags.map(bytesToString);
 
                             // validate view
                             assert.equal(true, found, "Repo not found after registration");
                             assert.equal(repoName, bytesToString(viewRepoName), "Repo registered with the wrong name");
-                            assert.equal(repoPath, bytesToString(viewRepoPath), "Repo registered with the wrong path");
                             assert.equal(repoUri, bytesToString(viewRepoUri), "Repo registered with the wrong URI");
                             assertArraysEqual(assert.equal, expectedRepoTags, viewRepoTagsDecoded, "Repo registered with incorrect tags");
                         });
