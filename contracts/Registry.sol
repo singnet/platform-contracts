@@ -26,10 +26,8 @@ contract Registry is IRegistry, ERC165 {
 
     struct ServiceRegistration {
         bytes32 serviceName;
-        bytes32 servicePath;
-        address agentAddress;
-        bytes   metadataIPFSHash;  // IPFSHash of service metadata (in the case of MPE payment system)
-
+        bytes   metadataURI;   //Service metadata. metadataURI should contain information for data consistency 
+                               //validation (for example hash). We support: IPFS URI.
         bytes32[] tags;
         mapping(bytes32 => Tag) tagsByName;
 
@@ -38,8 +36,7 @@ contract Registry is IRegistry, ERC165 {
 
     struct TypeRepositoryRegistration {
         bytes32 repositoryName;
-        bytes32 repositoryPath;
-        bytes repositoryURI;
+        bytes   repositoryURI;
 
         bytes32[] tags;
         mapping(bytes32 => Tag) tagsByName;
@@ -137,7 +134,7 @@ contract Registry is IRegistry, ERC165 {
 
         addOrganizationMembersInternal(orgName, members);
 
-        emit OrganizationCreated(orgName, orgName);
+        emit OrganizationCreated(orgName);
     }
 
     function changeOrganizationOwner(bytes32 orgName, address newOwner) external {
@@ -147,7 +144,7 @@ contract Registry is IRegistry, ERC165 {
 
         orgsByName[orgName].owner = newOwner;
 
-        emit OrganizationModified(orgName, orgName);
+        emit OrganizationModified(orgName);
     }
 
     function addOrganizationMembers(bytes32 orgName, address[] newMembers) external {
@@ -157,7 +154,7 @@ contract Registry is IRegistry, ERC165 {
 
         addOrganizationMembersInternal(orgName, newMembers);
 
-        emit OrganizationModified(orgName, orgName);
+        emit OrganizationModified(orgName);
     }
 
     function addOrganizationMembersInternal(bytes32 orgName, address[] newMembers) internal {
@@ -178,7 +175,7 @@ contract Registry is IRegistry, ERC165 {
             removeOrganizationMemberInternal(orgName, existingMembers[i]);
         }
 
-        emit OrganizationModified(orgName, orgName);
+        emit OrganizationModified(orgName);
     }
 
     function removeOrganizationMemberInternal(bytes32 orgName, address existingMember) internal {
@@ -234,7 +231,7 @@ contract Registry is IRegistry, ERC165 {
         // delete contents of organization registration
         delete orgsByName[orgName];
 
-        emit OrganizationDeleted(orgName, orgName);
+        emit OrganizationDeleted(orgName);
     }
 
     //   ____                  _                __  __                 _
@@ -244,38 +241,35 @@ contract Registry is IRegistry, ERC165 {
     //  |____/ \___|_|    \_/ |_|\___\___|     |_|  |_|\__, |_| |_| |_|\__|
     //                                                 |___/
 
-    function createServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 servicePath, address agentAddress, bytes32[] tags) external {
+    function createServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes metadataURI, bytes32[] tags) external {
 
         requireOrgExistenceConstraint(orgName, true);
         requireAuthorization(orgName, true);
         requireServiceExistenceConstraint(orgName, serviceName, false);
 
         ServiceRegistration memory service;
+        service.serviceName     = serviceName;
+        service.metadataURI     = metadataURI;
+        service.orgServiceIndex = orgsByName[orgName].serviceKeys.length;
         orgsByName[orgName].servicesByName[serviceName] = service;
-        orgsByName[orgName].servicesByName[serviceName].serviceName = serviceName;
-        orgsByName[orgName].servicesByName[serviceName].servicePath = servicePath;
-        orgsByName[orgName].servicesByName[serviceName].agentAddress = agentAddress;
-        orgsByName[orgName].servicesByName[serviceName].orgServiceIndex = orgsByName[orgName].serviceKeys.length;
         orgsByName[orgName].serviceKeys.push(serviceName);
 
         for (uint i = 0; i < tags.length; i++) {
             addTagToServiceRegistration(orgName, serviceName, tags[i]);
         }
 
-        emit ServiceCreated(orgName, serviceName, orgName, serviceName);
+        emit ServiceCreated(orgName, serviceName, metadataURI);
     }
 
-    function updateServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 servicePath, address agentAddress) external {
+    function updateServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes metadataURI) external {
 
         requireOrgExistenceConstraint(orgName, true);
         requireAuthorization(orgName, true);
         requireServiceExistenceConstraint(orgName, serviceName, true);
 
-        // update the servicePath and agentAddress
-        orgsByName[orgName].servicesByName[serviceName].servicePath = servicePath;
-        orgsByName[orgName].servicesByName[serviceName].agentAddress = agentAddress;
+        orgsByName[orgName].servicesByName[serviceName].metadataURI = metadataURI;
 
-        emit ServiceModified(orgName, serviceName, orgName, serviceName);
+        emit ServiceMetadataModified(orgName, serviceName, metadataURI);
     }
 
     function addTagsToServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32[] tags) external {
@@ -288,7 +282,7 @@ contract Registry is IRegistry, ERC165 {
             addTagToServiceRegistration(orgName, serviceName, tags[i]);
         }
 
-        emit ServiceModified(orgName, serviceName, orgName, serviceName);
+        emit ServiceTagsModified(orgName, serviceName);
     }
 
     function addTagToServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 tagName) internal {
@@ -316,13 +310,6 @@ contract Registry is IRegistry, ERC165 {
         }
     }
 
-    function setMetadataIPFSHashInServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes metadataIPFSHash) external {
-        requireOrgExistenceConstraint(orgName, true);
-        requireAuthorization(orgName, true);
-        requireServiceExistenceConstraint(orgName, serviceName, true);
-        orgsByName[orgName].servicesByName[serviceName].metadataIPFSHash = metadataIPFSHash;
-    }
-
     function removeTagsFromServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32[] tags) external {
 
         requireOrgExistenceConstraint(orgName, true);
@@ -333,7 +320,7 @@ contract Registry is IRegistry, ERC165 {
             removeTagFromServiceRegistration(orgName, serviceName, tags[i]);
         }
 
-        emit ServiceModified(orgName, serviceName, orgName, serviceName);
+        emit ServiceTagsModified(orgName, serviceName);
     }
 
     function removeTagFromServiceRegistration(bytes32 orgName, bytes32 serviceName, bytes32 tagName) internal {
@@ -384,7 +371,7 @@ contract Registry is IRegistry, ERC165 {
 
         deleteServiceRegistrationInternal(orgName, serviceName);
 
-        emit ServiceDeleted(orgName, serviceName, orgName, serviceName);
+        emit ServiceDeleted(orgName, serviceName);
     }
 
     function deleteServiceRegistrationInternal(bytes32 orgName, bytes32 serviceName) internal {
@@ -415,7 +402,7 @@ contract Registry is IRegistry, ERC165 {
     //    |_| \__, | .__/ \___|      |_| \_\___| .__/ \___/      |_|  |_|\__, |_| |_| |_|\__|
     //        |___/|_|                         |_|                       |___/
 
-    function createTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath,
+    function createTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName,
             bytes repositoryURI, bytes32[] tags) external {
 
         requireOrgExistenceConstraint(orgName, true);
@@ -425,7 +412,6 @@ contract Registry is IRegistry, ERC165 {
         TypeRepositoryRegistration memory typeRepo;
         orgsByName[orgName].typeReposByName[repositoryName] = typeRepo;
         orgsByName[orgName].typeReposByName[repositoryName].repositoryName = repositoryName;
-        orgsByName[orgName].typeReposByName[repositoryName].repositoryPath = repositoryPath;
         orgsByName[orgName].typeReposByName[repositoryName].repositoryURI = repositoryURI;
         orgsByName[orgName].typeReposByName[repositoryName].orgTypeRepoIndex = orgsByName[orgName].typeRepoKeys.length;
         orgsByName[orgName].typeRepoKeys.push(repositoryName);
@@ -434,20 +420,19 @@ contract Registry is IRegistry, ERC165 {
             addTagToTypeRepositoryRegistration(orgName, repositoryName, tags[i]);
         }
 
-        emit TypeRepositoryCreated(orgName, repositoryName, orgName, repositoryName);
+        emit TypeRepositoryCreated(orgName, repositoryName);
     }
 
-    function updateTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 repositoryPath,
+    function updateTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName,
         bytes repositoryURI) external {
 
         requireOrgExistenceConstraint(orgName, true);
         requireAuthorization(orgName, true);
         requireTypeRepositoryExistenceConstraint(orgName, repositoryName, true);
 
-        orgsByName[orgName].typeReposByName[repositoryName].repositoryPath = repositoryPath;
         orgsByName[orgName].typeReposByName[repositoryName].repositoryURI = repositoryURI;
 
-        emit TypeRepositoryModified(orgName, repositoryName, orgName, repositoryName);
+        emit TypeRepositoryModified(orgName, repositoryName);
     }
 
     function addTagsToTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32[] tags) external {
@@ -460,7 +445,7 @@ contract Registry is IRegistry, ERC165 {
             addTagToTypeRepositoryRegistration(orgName, repositoryName, tags[i]);
         }
 
-        emit TypeRepositoryModified(orgName, repositoryName, orgName, repositoryName);
+        emit TypeRepositoryModified(orgName, repositoryName);
     }
 
     function addTagToTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 tagName) internal {
@@ -497,7 +482,7 @@ contract Registry is IRegistry, ERC165 {
             removeTagFromTypeRepositoryRegistration(orgName, repositoryName, tags[i]);
         }
 
-        emit TypeRepositoryModified(orgName, repositoryName, orgName, repositoryName);
+        emit TypeRepositoryModified(orgName, repositoryName);
     }
 
     function removeTagFromTypeRepositoryRegistration(bytes32 orgName, bytes32 repositoryName, bytes32 tagName) internal {
@@ -549,7 +534,7 @@ contract Registry is IRegistry, ERC165 {
 
         deleteTypeRepositoryRegistrationInternal(orgName, repositoryName);
 
-        emit TypeRepositoryDeleted(orgName, repositoryName, orgName, repositoryName);
+        emit TypeRepositoryDeleted(orgName, repositoryName);
     }
 
     function deleteTypeRepositoryRegistrationInternal(bytes32 orgName, bytes32 repositoryName) internal {
@@ -616,7 +601,7 @@ contract Registry is IRegistry, ERC165 {
     }
 
     function getServiceRegistrationByName(bytes32 orgName, bytes32 serviceName) external view
-            returns (bool found, bytes32 name, bytes32 path, address agentAddress, bytes32[] tags) {
+            returns (bool found, bytes32 name, bytes metadataURI, bytes32[] tags) {
 
         // check to see if this organization exists
         if(orgsByName[orgName].organizationName == bytes32(0x0)) {
@@ -630,30 +615,10 @@ contract Registry is IRegistry, ERC165 {
             return;
         }
 
-        found = true;
-        name = orgsByName[orgName].servicesByName[serviceName].serviceName;
-        path = orgsByName[orgName].servicesByName[serviceName].servicePath;
-        agentAddress = orgsByName[orgName].servicesByName[serviceName].agentAddress;
-        tags = orgsByName[orgName].servicesByName[serviceName].tags;
-    }
-
-    function getMetadataIPFSHash(bytes32 orgName, bytes32 serviceName) external view
-            returns (bool found, bytes metadataIPFSHash) {
-
-        // check to see if this organization exists
-        if(orgsByName[orgName].organizationName == bytes32(0x0)) {
-            found = false;
-            return;
-        }
-
-        // check to see if this repo exists
-        if(orgsByName[orgName].servicesByName[serviceName].serviceName == bytes32(0x0)) {
-            found = false;
-            return;
-        }
-
-        found = true;
-        metadataIPFSHash = orgsByName[orgName].servicesByName[serviceName].metadataIPFSHash;
+        found        = true;
+        name         = orgsByName[orgName].servicesByName[serviceName].serviceName;
+        metadataURI  = orgsByName[orgName].servicesByName[serviceName].metadataURI;
+        tags         = orgsByName[orgName].servicesByName[serviceName].tags;
     }
 
     function listTypeRepositoriesForOrganization(bytes32 orgName) external view returns (bool found, bytes32[] repositoryNames) {
@@ -669,7 +634,7 @@ contract Registry is IRegistry, ERC165 {
     }
 
     function getTypeRepositoryByName(bytes32 orgName, bytes32 repositoryName) external view
-            returns (bool found, bytes32 name, bytes32 path, bytes uri, bytes32[] tags) {
+            returns (bool found, bytes32 name, bytes repositoryURI, bytes32[] tags) {
 
         // check to see if this organization exists
         if(orgsByName[orgName].organizationName == bytes32(0x0)) {
@@ -685,8 +650,7 @@ contract Registry is IRegistry, ERC165 {
 
         found = true;
         name = repositoryName;
-        path = orgsByName[orgName].typeReposByName[repositoryName].repositoryPath;
-        uri = orgsByName[orgName].typeReposByName[repositoryName].repositoryURI;
+        repositoryURI = orgsByName[orgName].typeReposByName[repositoryName].repositoryURI;
         tags = orgsByName[orgName].typeReposByName[repositoryName].tags;
     }
 
@@ -712,6 +676,6 @@ contract Registry is IRegistry, ERC165 {
     function supportsInterface(bytes4 interfaceID) external view returns (bool) {
         return
             interfaceID == this.supportsInterface.selector || // ERC165
-            interfaceID == 0xbd523993; // IRegistry
+            interfaceID == 0x256b3545; // IRegistry
     }
 }

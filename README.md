@@ -8,27 +8,22 @@ Includes SingularityNET platform contracts, migrations, tests
 
 ## Contracts
 
-### Agent
-* Per-service contract that manages the creation of Job instances at the request of consumers.
-
-### AgentFactory
-* Per-network contract that manages the creation of Agent instances at the request of service owners.
-
-### Job
-* Per-service-invocation contract that performs escrow functionality with release of funds gated on a valid consumer signature.
-
 ### Registry
 * Per-network contract that maintains a registration structure including organizations, services, and type repositories. Consumers can query this registry by organization, service name, or tag in order to find AI services to use.
+
+### MultiPartyEscrow
+* Contract which support payment channels in SingularityNet.
 
 ## Interfaces
 
 | Name      | InterfaceID ([ERC-165](https://eips.ethereum.org/EIPS/eip-165)) | Source Code                              |
 |-----------|-----------------------------------------------------------------|------------------------------------------|
-| IRegistry | 0xbd523993                                                      | [IRegistry.sol](contracts/IRegistry.sol) |
+| IRegistry | 0x256b3545                                                      | [IRegistry.sol](contracts/IRegistry.sol) |
 
 ## Deployed Contracts
-* AgentFactory (Kovan): [0x1faa8ec70afe4f5ce904da935a6ddf5f3482eedb](https://kovan.etherscan.io/address/0x1faa8ec70afe4f5ce904da935a6ddf5f3482eedb)
-* Registry (Kovan): [0x440cf8424fcd7fc2d2ff3a5668c919e93a3d2aab](https://kovan.etherscan.io/address/0x440cf8424fcd7fc2d2ff3a5668c919e93a3d2aab)
+* Registry (Kovan): [0x570758c56f988e359fe9a8f3df78b112873f13e7](https://kovan.etherscan.io/address/0x570758c56f988e359fe9a8f3df78b112873f13e7)
+* Multi Party Escrow (Kovan): [0x5296403233bd035cfb97ba5a3f490ae8bdf4bedb](https://kovan.etherscan.io/address/0x5296403233bd035cfb97ba5a3f490ae8bdf4bedb)
+* AGI Token (Kovan) :  [0x3b226fF6AAd7851d3263e53Cb7688d13A07f6E81](https://kovan.etherscan.io/address/0x3b226fF6AAd7851d3263e53Cb7688d13A07f6E81)
 
 ## Requirements
 * [Node.js](https://github.com/nodejs/node) (8+)
