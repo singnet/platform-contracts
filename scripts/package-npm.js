@@ -14,6 +14,7 @@ const mapDirs = {
 const mapFiles = {
     "contracts/IRegistry.sol": "sol/IRegistry.sol",
     "contracts/Registry.sol":  "sol/Registry.sol",
+    "contracts/MultiPartyEscrow.sol":  "sol/MultiPartyEscrow.sol",
     "build/contracts/Registry.json": {
         "abi": "abi/Registry.json",
         "networks": "networks/Registry.json",
