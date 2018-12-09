@@ -106,12 +106,10 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
         const createOrganization = async (_orgId, _orgName, _membersArray) => {
 
             const createResult = await s.RegistryInstance.createOrganization(_orgId, _orgName, _membersArray);
-
             s.Data.Orgs.add(_orgId);
 
-            const [found, name, owner, members, serviceIds, repositoryNames] = await s.RegistryInstance.getOrganizationById.call(_orgId);
-
-            return {receipt: createResult.receipt, view: {found, name, owner, members, serviceIds, repositoryNames}};
+            const [found, id, name, owner, members, serviceIds, repositoryNames] = await s.RegistryInstance.getOrganizationById.call(_orgId);
+            return {receipt: createResult.receipt, view: {found, id, name, owner, members, serviceIds, repositoryNames}};
         };
 
         const deleteOrganization = async (_orgId) => {
@@ -125,9 +123,9 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
             s.Data.OrgsToServices.delete(_orgId);
             s.Data.OrgsToRepos.delete(_orgId);
 
-            const [found, name, owner, serviceIds, repositoryNames] = await s.RegistryInstance.getOrganizationById.call(_orgId);
+            const [found, id, name, owner, serviceIds, repositoryNames] = await s.RegistryInstance.getOrganizationById.call(_orgId);
 
-            return {receipt: deleteResult.receipt, view: {found, name, owner, serviceIds, repositoryNames}};
+            return {receipt: deleteResult.receipt, view: {found, id, name, owner, serviceIds, repositoryNames}};
         };
 
         const createService = async (_orgId, _serviceId, _metadataURI, _tags) => {
@@ -343,12 +341,14 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
 
 
                     // destructure view
-                    const {found, name, owner, members, serviceIds, repositoryNames} = createResult.view;
+                    const {found, id, name, owner, members, serviceIds, repositoryNames} = createResult.view;
                     const membersDecoded = members.map(m => addressToString(m));
 
                     // validate view
                     assert.equal(true, found, "Org not found after registration");
-                    assert.equal(orgId, bytesToString(name), "Org registered with the wrong name");
+                    assert.equal(orgId, bytesToString(id), "Org registered with the wrong id");
+
+                    assert.equal(orgName, bytesToString(name), "Org registered with the wrong name");
                     assert.equal(c.CreatorAccount, addressToString(owner), "Org registered with the wrong owner");
                     assertArraysEqual(assert.equal, membersArray, membersDecoded, "Org registered with incorrect members");
                     assert.equal(0, serviceIds.length, "Org registered with pre-existing services");

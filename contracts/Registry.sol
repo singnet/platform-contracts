@@ -149,6 +149,16 @@ contract Registry is IRegistry, ERC165 {
         emit OrganizationModified(orgId);
     }
 
+    function changeOrganizationName(bytes32 orgId, bytes32 orgName) external {
+
+        requireOrgExistenceConstraint(orgId, true);
+        requireAuthorization(orgId, false);
+
+        orgsById[orgId].organizationName = orgName;
+
+        emit OrganizationModified(orgId);
+    }
+
     function addOrganizationMembers(bytes32 orgId, address[] newMembers) external {
 
         requireOrgExistenceConstraint(orgId, true);
@@ -574,7 +584,7 @@ contract Registry is IRegistry, ERC165 {
     }
 
     function getOrganizationById(bytes32 orgId) external view
-            returns(bool found, bytes32 id, address owner, address[] members, bytes32[] serviceIds, bytes32[] repositoryIds) {
+            returns(bool found, bytes32 id, bytes32 name, address owner, address[] members, bytes32[] serviceIds, bytes32[] repositoryIds) {
 
         // check to see if this organization exists
         if(orgsById[orgId].organizationId == bytes32(0x0)) {
@@ -584,6 +594,7 @@ contract Registry is IRegistry, ERC165 {
 
         found = true;
         id = orgsById[orgId].organizationId;
+        name = orgsById[orgId].organizationName;
         owner = orgsById[orgId].owner;
         members = orgsById[orgId].memberKeys;
         serviceIds = orgsById[orgId].serviceKeys;
@@ -678,6 +689,6 @@ contract Registry is IRegistry, ERC165 {
     function supportsInterface(bytes4 interfaceID) external view returns (bool) {
         return
             interfaceID == this.supportsInterface.selector || // ERC165
-            interfaceID == 0x312efde5; // IRegistry
+            interfaceID == 0x7bb95e18; // IRegistry
     }
 }

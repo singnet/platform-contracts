@@ -39,6 +39,16 @@ interface IRegistry {
     function changeOrganizationOwner(bytes32 orgId, address newOwner) external;
 
     /**
+      * @dev Updates the name of the organization.
+      *      Only the organization owner can invoke this method.
+      *      Reverts if the given organization Id is unregistered.
+      *
+      * @param orgId     Id of organization to update.
+      * @param orgName   Name of the organization.
+      */
+    function changeOrganizationName(bytes32 orgId, bytes32 orgName) external;
+
+    /**
       * @dev Updates an organization to add members.
       *      Only an organization member can invoke this method.
       *      Reverts if the given organization Id is unregistered.
@@ -231,7 +241,7 @@ interface IRegistry {
       * @return repositoryIds   Array of ids of type repositories owned by the organization.
       */
     function getOrganizationById(bytes32 orgId) external view
-            returns (bool found, bytes32 id, address owner, address[] members, bytes32[] serviceIds, bytes32[] repositoryIds);
+            returns (bool found, bytes32 id, bytes32 name, address owner, address[] members, bytes32[] serviceIds, bytes32[] repositoryIds);
 
     /**
       * @dev Returns an array of ids of all services owned by a given organization.
