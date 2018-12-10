@@ -39,6 +39,8 @@ contract MultiPartyEscrow {
     event ChannelSenderClaim(uint256 indexed channelId, uint256 nonce, uint256 claimAmount);
     event ChannelExtend(uint256 indexed channelId, uint256 newExpiration);
     event ChannelAddFunds(uint256 indexed channelId, uint256 additionalFunds);
+    event DepositFunds(address indexed sender, uint256 amount);
+    event WithdrawFunds(address indexed sender, uint256 amount);
     event TransferFunds(address indexed sender, address indexed receiver, uint256 amount);
 
     constructor (address _token)
@@ -53,6 +55,7 @@ contract MultiPartyEscrow {
     {
         require(token.transferFrom(msg.sender, this, value), "Unable to transfer token to the contract"); 
         balances[msg.sender] = balances[msg.sender].add(value);
+        emit DepositFunds(msg.sender, value);
         return true;
     }
     
@@ -63,6 +66,7 @@ contract MultiPartyEscrow {
         require(balances[msg.sender] >= value);
         require(token.transfer(msg.sender, value));
         balances[msg.sender] = balances[msg.sender].sub(value);
+        emit WithdrawFunds(msg.sender, value);
         return true;
     }
     
