@@ -10,18 +10,18 @@ contract MultiPartyEscrow {
     //TODO: we could use uint64 for value, nonce and expiration (it could be cheaper to store but more expensive to operate with)
     //the full ID of "atomic" payment channel = "[this, channelId, nonce]"
     struct PaymentChannel {
+        uint256 nonce;       // "nonce" of the channel (by changing nonce we effectivly close the old channel ([this, channelId, oldNonce])
+                             //  and open the new channel [this, channelId, newNonce])
+                             //!!! nonce also prevents race conditon between channelClaim and channelExtendAndAddFunds
         address sender;      // The account sending payments.
+        address signer;      // signer on behalf of sender
         address recipient;   // The account receiving the payments.
         bytes32 groupId;     // id of group of replicas who share the same payment channel
                              // You should generate groupId randomly in order to prevent
                              // two PaymentChannel with the same [recipient, groupId]
         uint256 value;       // Total amount of tokens deposited to the channel. 
-        uint256 nonce;       // "nonce" of the channel (by changing nonce we effectivly close the old channel ([this, channelId, oldNonce])
-                             //  and open the new channel [this, channelId, newNonce])
-                             //!!! nonce also prevents race conditon between channelClaim and channelExtendAndAddFunds 
         uint256 expiration;  // Timeout (in block numbers) in case the recipient never closes.
                              // if block.number > expiration then sender can call channelClaimTimeout
-        address signer;     // signer on behalf of sender
     }
 
 
@@ -34,7 +34,7 @@ contract MultiPartyEscrow {
     
 
     // Events
-    event ChannelOpen(uint256 channelId, uint256 nonce, address indexed sender, address indexed recipient, bytes32 indexed groupId, address signer, uint256 amount, uint256 expiration);
+    event ChannelOpen(uint256 channelId, uint256 nonce, address indexed sender, address signer, address indexed recipient, bytes32 indexed groupId, uint256 amount, uint256 expiration);
     event ChannelClaim(uint256 indexed channelId, uint256 nonce, address indexed recipient, uint256 claimAmount, uint256 sendBackAmount, uint256 keepAmount);
     event ChannelSenderClaim(uint256 indexed channelId, uint256 nonce, uint256 claimAmount);
     event ChannelExtend(uint256 indexed channelId, uint256 newExpiration);
@@ -100,7 +100,7 @@ contract MultiPartyEscrow {
         });
       
         balances[msg.sender] = balances[msg.sender].sub(value);  
-        emit ChannelOpen(nextChannelId, 0, msg.sender, recipient, groupId, signer, value, expiration);
+        emit ChannelOpen(nextChannelId, 0, msg.sender, signer, recipient, groupId, value, expiration);
         nextChannelId += 1;
         return true;
     }
