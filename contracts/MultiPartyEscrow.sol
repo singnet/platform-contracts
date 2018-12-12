@@ -86,21 +86,21 @@ contract MultiPartyEscrow {
     //open a channel, token should be already being deposit
     //openChannel should be run only once for given sender, recipient, groupId
     //channel can be reused even after channelClaim(..., isSendback=true)
-    function openChannel(address  recipient, uint256 value, uint256 expiration, bytes32 groupId, address signer) 
+    function openChannel(address signer, address recipient, bytes32 groupId, uint256 value, uint256 expiration)
     public
-    returns(bool) 
+    returns(bool)
     {
         require(balances[msg.sender] >= value);
         require(signer != address(0));
 
         channels[nextChannelId] = PaymentChannel({
-            sender       : msg.sender,
-            recipient    : recipient,
-            value        : value,
-            groupId      : groupId,
             nonce        : 0,
-            expiration   : expiration,
-            signer       : signer
+            sender       : msg.sender,
+            signer       : signer,
+            recipient    : recipient,
+            groupId      : groupId,
+            value        : value,
+            expiration   : expiration
         });
       
         balances[msg.sender] = balances[msg.sender].sub(value);  
@@ -111,12 +111,12 @@ contract MultiPartyEscrow {
     
 
 
-    function depositAndOpenChannel(address  recipient, uint256 value, uint256 expiration, bytes32 groupId, address signer)
+    function depositAndOpenChannel(address signer, address recipient, bytes32 groupId, uint256 value, uint256 expiration)
     public
     returns(bool)
     {
         require(deposit(value));
-        require(openChannel(recipient, value, expiration, groupId, signer));
+        require(openChannel(signer, recipient, groupId, value, expiration));
         return true;
     }
 
