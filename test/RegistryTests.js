@@ -348,7 +348,7 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                     assert.equal(true, found, "Org not found after registration");
                     assert.equal(orgId, bytesToString(id), "Org registered with the wrong id");
 
-                    assert.equal(orgName, bytesToString(name), "Org registered with the wrong name");
+                    assert.equal(orgName, name, "Org registered with the wrong name");
                     assert.equal(c.CreatorAccount, addressToString(owner), "Org registered with the wrong owner");
                     assertArraysEqual(assert.equal, membersArray, membersDecoded, "Org registered with incorrect members");
                     assert.equal(0, serviceIds.length, "Org registered with pre-existing services");

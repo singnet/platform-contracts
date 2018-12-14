@@ -34,11 +34,11 @@ contract('Registry', function(accounts) {
             assert.equal(web3.toAscii(rez2[2]), metadataURI + metadataURI)
 
             let rez3 = await registry.getOrganizationById(orgId);
-            assert.equal(bytesToString(rez3[2]), orgName);
+            assert.equal(rez3[2], orgName);
 
             await registry.changeOrganizationName(orgId, orgName2);
             let rez4 = await registry.getOrganizationById(orgId);
-            assert.equal(bytesToString(rez4[2]), orgName2);
+            assert.equal(rez4[2], orgName2);
 
         });
 });

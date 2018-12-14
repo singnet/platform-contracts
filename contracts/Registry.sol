@@ -7,7 +7,7 @@ contract Registry is IRegistry, ERC165 {
 
     struct OrganizationRegistration {
         bytes32 organizationId;
-        bytes organizationName;
+        string organizationName;
         address owner;
 
         // member indexing note:
@@ -122,7 +122,7 @@ contract Registry is IRegistry, ERC165 {
     //   \___/|_|  \__, |\__,_|_| |_|_/___\__,_|\__|_|\___/|_| |_|     |_|  |_|\__, |_| |_| |_|\__|
     //             |___/                                                       |___/
 
-    function createOrganization(bytes32 orgId, bytes orgName, address[] members) external {
+    function createOrganization(bytes32 orgId, string orgName, address[] members) external {
 
         requireOrgExistenceConstraint(orgId, false);
 
@@ -149,7 +149,7 @@ contract Registry is IRegistry, ERC165 {
         emit OrganizationModified(orgId);
     }
 
-    function changeOrganizationName(bytes32 orgId, bytes orgName) external {
+    function changeOrganizationName(bytes32 orgId, string orgName) external {
 
         requireOrgExistenceConstraint(orgId, true);
         requireAuthorization(orgId, false);
@@ -584,7 +584,7 @@ contract Registry is IRegistry, ERC165 {
     }
 
     function getOrganizationById(bytes32 orgId) external view
-            returns(bool found, bytes32 id, bytes name, address owner, address[] members, bytes32[] serviceIds, bytes32[] repositoryIds) {
+            returns(bool found, bytes32 id, string name, address owner, address[] members, bytes32[] serviceIds, bytes32[] repositoryIds) {
 
         // check to see if this organization exists
         if(orgsById[orgId].organizationId == bytes32(0x0)) {
@@ -689,6 +689,6 @@ contract Registry is IRegistry, ERC165 {
     function supportsInterface(bytes4 interfaceID) external view returns (bool) {
         return
             interfaceID == this.supportsInterface.selector || // ERC165
-            interfaceID == 0xe2e33839; // IRegistry
+            interfaceID == 0x91372c6a; // IRegistry
     }
 }

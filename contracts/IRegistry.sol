@@ -26,7 +26,7 @@ interface IRegistry {
       * @param orgName  Name of organization to create, must be unique registry-wide.
       * @param members  Array of member addresses to seed the organization with.
       */
-    function createOrganization(bytes32 orgId, bytes orgName, address[] members) external;
+    function createOrganization(bytes32 orgId, string orgName, address[] members) external;
 
     /**
       * @dev Updates the owner of the organization.
@@ -46,7 +46,7 @@ interface IRegistry {
       * @param orgId     Id of organization to update.
       * @param orgName   Name of the organization.
       */
-    function changeOrganizationName(bytes32 orgId, bytes orgName) external;
+    function changeOrganizationName(bytes32 orgId, string orgName) external;
 
     /**
       * @dev Updates an organization to add members.
@@ -241,7 +241,7 @@ interface IRegistry {
       * @return repositoryIds   Array of ids of type repositories owned by the organization.
       */
     function getOrganizationById(bytes32 orgId) external view
-            returns (bool found, bytes32 id, bytes name, address owner, address[] members, bytes32[] serviceIds, bytes32[] repositoryIds);
+            returns (bool found, bytes32 id, string name, address owner, address[] members, bytes32[] serviceIds, bytes32[] repositoryIds);
 
     /**
       * @dev Returns an array of ids of all services owned by a given organization.
