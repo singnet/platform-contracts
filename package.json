@@ -39,6 +39,6 @@
     "moment": "^2.22.2",
     "webpack-cli": "^3.0.8",
     "ethereumjs-abi": "^0.6.5",
-    "ethereumjs-util":"^5.2.0"
+    "ethereumjs-util": "^5.2.0"
   }
 }
