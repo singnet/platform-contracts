@@ -88,17 +88,17 @@ contract('MultiPartyEscrow', function(accounts) {
 
             //first try to open with bigger amount (it must fail)
             // sending signer as sender itself
-            testErrorRevert( escrow.openChannel(accounts[5], N1 + 1, web3.eth.blockNumber + 10000000, 0, accounts[0], {from:accounts[0]}))
+            testErrorRevert( escrow.openChannel(accounts[0], accounts[5], 0, N1 + 1, web3.eth.blockNumber + 10000000, {from:accounts[0]}))
             
             //normal open
-            await escrow.openChannel(accounts[5], N1, web3.eth.blockNumber + 10000000, 0, accounts[0], {from:accounts[0]})
+            await escrow.openChannel(accounts[0], accounts[5], 0, N1, web3.eth.blockNumber + 10000000, {from:accounts[0]})
             assert.equal((await escrow.nextChannelId.call()).toNumber(), 1)
 
             //full balance doesn't change
             assert.equal((await token.balanceOf(escrow.address)).toNumber(), N1 + N2 - N3)
             assert.equal((await escrow.balances.call(accounts[0])).toNumber(), 0)
             //second channel
-            await escrow.openChannel(accounts[6], N1 * 2, web3.eth.blockNumber + 10000000, 27, accounts[4], {from:accounts[4]})
+            await escrow.openChannel(accounts[4], accounts[6], 27, N1 * 2, web3.eth.blockNumber + 10000000, {from:accounts[4]})
             assert.equal((await escrow.nextChannelId.call()).toNumber(), 2)
             
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1 * 2)
@@ -161,7 +161,7 @@ contract('MultiPartyEscrow', function(accounts) {
             let expiration   = web3.eth.blockNumber + 10000000
             let value        = 1000
             let groupId      = "group44"
-            await escrow.openChannel(accounts[7], value, expiration, groupId, accounts[4], {from:accounts[4]})
+            await escrow.openChannel(accounts[4], accounts[7], groupId, value, expiration, {from:accounts[4]})
             assert.equal((await escrow.nextChannelId.call()).toNumber(), 3)     
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*2)
         });
@@ -201,7 +201,7 @@ contract('MultiPartyEscrow', function(accounts) {
         {
             let expiration   = web3.eth.blockNumber - 1
             let groupId      = "group42"
-            await escrow.openChannel(accounts[7], 10, expiration, groupId, accounts[4], {from:accounts[4]})
+            await escrow.openChannel(accounts[4], accounts[7], groupId, 10, expiration, {from:accounts[4]})
             assert.equal((await escrow.nextChannelId.call()).toNumber(), 4)     
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*2)
             

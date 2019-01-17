@@ -21,8 +21,8 @@ Includes SingularityNET platform contracts, migrations, tests
 | IRegistry | 0x256b3545                                                      | [IRegistry.sol](contracts/IRegistry.sol) |
 
 ## Deployed Contracts
-* Registry (Kovan): [0x2e4b2f2b72402b9b2d6a7851e37c856c329afe38](https://kovan.etherscan.io/address/0x2e4b2f2b72402b9b2d6a7851e37c856c329afe38)
-* Multi Party Escrow (Kovan): [0xdd4292864063d0da1f294ac65d74d55a44f4766c](https://kovan.etherscan.io/address/0xdd4292864063d0da1f294ac65d74d55a44f4766c)
+* Registry (Kovan): [0xe331bf20044a5b24c1a744abc90c1fd711d2c08d](https://kovan.etherscan.io/address/0xe331bf20044a5b24c1a744abc90c1fd711d2c08d)
+* Multi Party Escrow (Kovan): [0x39f31ac7b393fe2c6660b95b878feb16ea8f3156](https://kovan.etherscan.io/address/0x39f31ac7b393fe2c6660b95b878feb16ea8f3156)
 * AGI Token (Kovan) :  [0x3b226fF6AAd7851d3263e53Cb7688d13A07f6E81](https://kovan.etherscan.io/address/0x3b226fF6AAd7851d3263e53Cb7688d13A07f6E81)
 
 ## Requirements
