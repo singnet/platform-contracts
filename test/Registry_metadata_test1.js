@@ -41,4 +41,43 @@ contract('Registry', function(accounts) {
             assert.equal(rez4[2], orgName2);
 
         });
+
+        it ("Delete Operations as Foundation Owner", async function()
+        { 
+            let orgId     = "TestIdForDelete"
+            let orgName     = "Original Org Name For Delete"
+            let orgName2     = "Updated Org Name For Delete" 
+            let serviceId = "ServiceIdForDelete"
+            let metadataURI = "ipfs://QmUfwZ7pEWBE5zSepKpHDaPibQxpPqoEDRo5Kzai8h5U9B"
+
+            // Check for foundationOwner
+            const foundationOwner = await registry.foundationOwner.call();
+            assert.equal(foundationOwner, accounts[0]);
+
+            await registry.createOrganization(orgId, orgName, [accounts[1]]);
+
+            await registry.createServiceRegistration(orgId, serviceId, metadataURI, ["tag1","tag2"], {from: accounts[1]})
+            let rez = await registry.getServiceRegistrationById(orgId, serviceId)
+            assert.equal(web3.toAscii(rez[2]), metadataURI)
+
+            // Delete Tags for a Service
+            const removeTagResult = await registry.removeTagsFromServiceRegistration(orgId, serviceId, ["tag1","tag2"], {from: accounts[0]});
+            assert.equal(1, parseInt(removeTagResult.receipt.status));
+            const [ofound0, oname0, ometadataURI0, oserviceTags0] = await registry.getServiceRegistrationById.call(orgId, serviceId, {from: accounts[0]});
+            assert.equal(oserviceTags0.length, 0);
+
+            // Delete Service Registration Check by Owner
+            const deleteServiceResult = await registry.deleteServiceRegistration(orgId, serviceId, {from: accounts[0]});
+            const [ofound1, oname1, ometadataURI1, oserviceTags1] = await registry.getServiceRegistrationById.call(orgId, serviceId, {from: accounts[0]});
+            assert.equal(ofound1, false);
+            assert.equal(1, parseInt(deleteServiceResult.receipt.status));
+
+
+            // Delete Org Check by Owner
+            const deleteOrgResult = await registry.deleteOrganization(orgId, {from: accounts[0]});
+            const [ofound2, oid2, oname2, oowner2, omembers2, oserviceIds2, orepositoryNames2] = await registry.getOrganizationById.call(orgId);
+            assert.equal(ofound2, false);
+            assert.equal(1, parseInt(deleteOrgResult.receipt.status));
+
+        });
 });
