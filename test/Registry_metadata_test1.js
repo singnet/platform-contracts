@@ -3,6 +3,16 @@ var Registry = artifacts.require("./Registry.sol");
 let { HELPERS } = require("./util/Util.js");
 let { bytesToString} = HELPERS;
 
+async function testErrorRevert(prom)
+{
+    let rezE = -1
+    try { await prom }
+    catch(e) {
+        rezE = e.message.indexOf('revert') 
+    }
+    assert(rezE >= 0, "Must generate error and error message must contain revert");
+}
+
 contract('Registry', function(accounts) {
 
     var registry;
@@ -54,7 +64,7 @@ contract('Registry', function(accounts) {
             const foundationOwner = await registry.foundationOwner.call();
             assert.equal(foundationOwner, accounts[0]);
 
-            await registry.createOrganization(orgId, orgName, [accounts[1]]);
+            await registry.createOrganization(orgId, orgName, [accounts[1]], {from: accounts[1]});
 
             await registry.createServiceRegistration(orgId, serviceId, metadataURI, ["tag1","tag2"], {from: accounts[1]})
             let rez = await registry.getServiceRegistrationById(orgId, serviceId)
@@ -72,6 +82,50 @@ contract('Registry', function(accounts) {
             assert.equal(ofound1, false);
             assert.equal(1, parseInt(deleteServiceResult.receipt.status));
 
+            // Delete Org Check by Owner
+            const deleteOrgResult = await registry.deleteOrganization(orgId, {from: accounts[0]});
+            const [ofound2, oid2, oname2, oowner2, omembers2, oserviceIds2, orepositoryNames2] = await registry.getOrganizationById.call(orgId);
+            assert.equal(ofound2, false);
+            assert.equal(1, parseInt(deleteOrgResult.receipt.status));
+
+        });
+
+        it ("Negative test cases as Foundation Owner", async function()
+        { 
+            let orgId     = "TestIdForDelete1"
+            let orgName     = "Original Org Name For Delete1"
+            let orgName2     = "Updated Org Name For Delete1" 
+            let serviceId = "ServiceIdForDelete1"
+            let metadataURI = "ipfs://QmUfwZ7pEWBE5zSepKpHDaPibQxpPqoEDRo5Kzai8h5U9B"
+
+            // Check for foundationOwner
+            const foundationOwner = await registry.foundationOwner.call();
+            assert.equal(foundationOwner, accounts[0]);
+
+            await registry.createOrganization(orgId, orgName, [accounts[1]], {from: accounts[1]});
+
+            await registry.createServiceRegistration(orgId, serviceId, metadataURI, ["tag1","tag2"], {from: accounts[1]})
+            let rez = await registry.getServiceRegistrationById(orgId, serviceId)
+            assert.equal(web3.toAscii(rez[2]), metadataURI)
+
+            // Negative Test - try deleting with a different account - Should Revert
+            await testErrorRevert(registry.removeTagsFromServiceRegistration(orgId, serviceId, ["tag1","tag2"], {from: accounts[3]}))
+            await testErrorRevert(registry.deleteServiceRegistration(orgId, serviceId, {from: accounts[3]}))
+            await testErrorRevert(registry.deleteOrganization(orgId, {from: accounts[3]}))
+            // Negative Test - Test adding Tags using Foundation Owner - Should Revert
+            await testErrorRevert(registry.addTagsToServiceRegistration(orgId, serviceId, ["tag3","tag4"]), {from: accounts[0]})
+
+            // Delete Tags for a Service
+            const removeTagResult = await registry.removeTagsFromServiceRegistration(orgId, serviceId, ["tag1","tag2"], {from: accounts[0]});
+            assert.equal(1, parseInt(removeTagResult.receipt.status));
+            const [ofound0, oname0, ometadataURI0, oserviceTags0] = await registry.getServiceRegistrationById.call(orgId, serviceId, {from: accounts[0]});
+            assert.equal(oserviceTags0.length, 0);
+
+            // Delete Service Registration Check by Owner
+            const deleteServiceResult = await registry.deleteServiceRegistration(orgId, serviceId, {from: accounts[0]});
+            const [ofound1, oname1, ometadataURI1, oserviceTags1] = await registry.getServiceRegistrationById.call(orgId, serviceId, {from: accounts[0]});
+            assert.equal(ofound1, false);
+            assert.equal(1, parseInt(deleteServiceResult.receipt.status));
 
             // Delete Org Check by Owner
             const deleteOrgResult = await registry.deleteOrganization(orgId, {from: accounts[0]});
