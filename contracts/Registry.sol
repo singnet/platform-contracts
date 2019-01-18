@@ -65,12 +65,12 @@ contract Registry is IRegistry, ERC165 {
     mapping(bytes32 => ServiceOrTypeRepositoryList) servicesByTag;
     mapping(bytes32 => ServiceOrTypeRepositoryList) typeReposByTag;
 
-    address public foundationOwner;
+    address public curator;
 
     constructor ()
     public
     {
-        foundationOwner = msg.sender;
+        curator = msg.sender;
     }
 
     /**
@@ -79,8 +79,8 @@ contract Registry is IRegistry, ERC165 {
       *
       * @param membersAllowed if true, revert when sender is non-owner and non-member, else revert when sender is non-owner
       */
-    function requireAuthorization(bytes32 orgId, bool membersAllowed, bool foundationAllowed) internal view {
-        require(msg.sender == orgsById[orgId].owner || (membersAllowed && orgsById[orgId].members[msg.sender] > 0) || (foundationAllowed && msg.sender == foundationOwner)
+    function requireAuthorization(bytes32 orgId, bool membersAllowed, bool curationAllowed) internal view {
+        require(msg.sender == orgsById[orgId].owner || (membersAllowed && orgsById[orgId].members[msg.sender] > 0) || (curationAllowed && msg.sender == curator)
             , "unauthorized invocation");
     }
 

@@ -52,7 +52,7 @@ contract('Registry', function(accounts) {
 
         });
 
-        it ("Delete Operations as Foundation Owner", async function()
+        it ("Delete Operations as curator", async function()
         { 
             let orgId     = "TestIdForDelete"
             let orgName     = "Original Org Name For Delete"
@@ -60,9 +60,9 @@ contract('Registry', function(accounts) {
             let serviceId = "ServiceIdForDelete"
             let metadataURI = "ipfs://QmUfwZ7pEWBE5zSepKpHDaPibQxpPqoEDRo5Kzai8h5U9B"
 
-            // Check for foundationOwner
-            const foundationOwner = await registry.foundationOwner.call();
-            assert.equal(foundationOwner, accounts[0]);
+            // Check for curator
+            const curator = await registry.curator.call();
+            assert.equal(curator, accounts[0]);
 
             await registry.createOrganization(orgId, orgName, [accounts[1]], {from: accounts[1]});
 
@@ -90,7 +90,7 @@ contract('Registry', function(accounts) {
 
         });
 
-        it ("Negative test cases as Foundation Owner", async function()
+        it ("Negative test cases as curator", async function()
         { 
             let orgId     = "TestIdForDelete1"
             let orgName     = "Original Org Name For Delete1"
@@ -98,9 +98,9 @@ contract('Registry', function(accounts) {
             let serviceId = "ServiceIdForDelete1"
             let metadataURI = "ipfs://QmUfwZ7pEWBE5zSepKpHDaPibQxpPqoEDRo5Kzai8h5U9B"
 
-            // Check for foundationOwner
-            const foundationOwner = await registry.foundationOwner.call();
-            assert.equal(foundationOwner, accounts[0]);
+            // Check for curator
+            const curator = await registry.curator.call();
+            assert.equal(curator, accounts[0]);
 
             await registry.createOrganization(orgId, orgName, [accounts[1]], {from: accounts[1]});
 
@@ -112,7 +112,7 @@ contract('Registry', function(accounts) {
             await testErrorRevert(registry.removeTagsFromServiceRegistration(orgId, serviceId, ["tag1","tag2"], {from: accounts[3]}))
             await testErrorRevert(registry.deleteServiceRegistration(orgId, serviceId, {from: accounts[3]}))
             await testErrorRevert(registry.deleteOrganization(orgId, {from: accounts[3]}))
-            // Negative Test - Test adding Tags using Foundation Owner - Should Revert
+            // Negative Test - Test adding Tags using curator - Should Revert
             await testErrorRevert(registry.addTagsToServiceRegistration(orgId, serviceId, ["tag3","tag4"]), {from: accounts[0]})
 
             // Delete Tags for a Service
