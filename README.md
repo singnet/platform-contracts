@@ -25,6 +25,10 @@ Includes SingularityNET platform contracts, migrations, tests
 * Multi Party Escrow (Kovan): [0x39f31ac7b393fe2c6660b95b878feb16ea8f3156](https://kovan.etherscan.io/address/0x39f31ac7b393fe2c6660b95b878feb16ea8f3156)
 * AGI Token (Kovan) :  [0x3b226fF6AAd7851d3263e53Cb7688d13A07f6E81](https://kovan.etherscan.io/address/0x3b226fF6AAd7851d3263e53Cb7688d13A07f6E81)
 
+* Multi Party Escrow (Ropsten) :  [0x7e6366fbe3bdfce3c906667911fc5237cc96bd08](https://ropsten.etherscan.io/address/0x7e6366fbe3bdfce3c906667911fc5237cc96bd08)
+* Registry (Ropsten) :  [0x5156fde2ca71da4398f8c76763c41bc9633875e4](https://ropsten.etherscan.io/address/0x5156fde2ca71da4398f8c76763c41bc9633875e4)
+* AGI Token (Ropsten) :  [0xb97E9bBB6fd49865709d3F1576e8506ad640a13B](https://ropsten.etherscan.io/address/0xb97E9bBB6fd49865709d3F1576e8506ad640a13B)
+
 ## Requirements
 * [Node.js](https://github.com/nodejs/node) (8+)
 * [Npm](https://www.npmjs.com/package/npm)
