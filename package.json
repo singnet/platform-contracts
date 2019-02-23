@@ -1,6 +1,6 @@
 {
   "name": "singularitynet-platform-contracts",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "private": true,
   "description": "Includes SingularityNET platform contracts, migrations, tests",
   "directories": {
@@ -25,7 +25,7 @@
   "homepage": "https://github.com/singnet/platform-contracts#readme",
   "dependencies": {
     "openzeppelin-solidity": "1.11.0",
-    "singularitynet-token-contracts": "2.0.0",
+    "singularitynet-token-contracts": "2.0.1",
     "truffle": "4.1.13",
     "truffle-contract": "3.0.6",
     "truffle-hdwallet-provider": "0.0.5"
