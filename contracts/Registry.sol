@@ -7,7 +7,7 @@ contract Registry is IRegistry, ERC165 {
 
     struct OrganizationRegistration {
         bytes32 organizationId;
-        string organizationName;
+        bytes orgMetadataURI;
         address owner;
 
         // member indexing note:
@@ -65,22 +65,14 @@ contract Registry is IRegistry, ERC165 {
     mapping(bytes32 => ServiceOrTypeRepositoryList) servicesByTag;
     mapping(bytes32 => ServiceOrTypeRepositoryList) typeReposByTag;
 
-    address public contractOwner;
-
-    constructor ()
-    public
-    {
-        contractOwner = msg.sender;
-    }
-
     /**
       * @dev Guard function that forces a revert if the tx sender is unauthorized.
       *      Always authorizes org owner. Can also authorize org members.
       *
       * @param membersAllowed if true, revert when sender is non-owner and non-member, else revert when sender is non-owner
       */
-    function requireAuthorization(bytes32 orgId, bool membersAllowed, bool contractOwnerAllowed) internal view {
-        require(msg.sender == orgsById[orgId].owner || (membersAllowed && orgsById[orgId].members[msg.sender] > 0) || (contractOwnerAllowed && msg.sender == contractOwner)
+    function requireAuthorization(bytes32 orgId, bool membersAllowed) internal view {
+        require(msg.sender == orgsById[orgId].owner || (membersAllowed && orgsById[orgId].members[msg.sender] > 0)
             , "unauthorized invocation");
     }
 
@@ -130,14 +122,14 @@ contract Registry is IRegistry, ERC165 {
     //   \___/|_|  \__, |\__,_|_| |_|_/___\__,_|\__|_|\___/|_| |_|     |_|  |_|\__, |_| |_| |_|\__|
     //             |___/                                                       |___/
 
-    function createOrganization(bytes32 orgId, string orgName, address[] members) external {
+    function createOrganization(bytes32 orgId, bytes orgMetadataURI, address[] members) external {
 
         requireOrgExistenceConstraint(orgId, false);
 
         OrganizationRegistration memory organization;
         orgsById[orgId] = organization;
         orgsById[orgId].organizationId = orgId;
-        orgsById[orgId].organizationName = orgName;
+        orgsById[orgId].orgMetadataURI = orgMetadataURI;
         orgsById[orgId].owner = msg.sender;
         orgsById[orgId].globalOrgIndex = orgKeys.length;
         orgKeys.push(orgId);
@@ -150,19 +142,19 @@ contract Registry is IRegistry, ERC165 {
     function changeOrganizationOwner(bytes32 orgId, address newOwner) external {
 
         requireOrgExistenceConstraint(orgId, true);
-        requireAuthorization(orgId, false, false);
+        requireAuthorization(orgId, false);
 
         orgsById[orgId].owner = newOwner;
 
         emit OrganizationModified(orgId);
     }
 
-    function changeOrganizationName(bytes32 orgId, string orgName) external {
+    function changeOrganizationMetadataURI(bytes32 orgId, bytes orgMetadataURI) external {
 
         requireOrgExistenceConstraint(orgId, true);
-        requireAuthorization(orgId, false, false);
+        requireAuthorization(orgId, false);
 
-        orgsById[orgId].organizationName = orgName;
+        orgsById[orgId].orgMetadataURI = orgMetadataURI;
 
         emit OrganizationModified(orgId);
     }
@@ -170,7 +162,7 @@ contract Registry is IRegistry, ERC165 {
     function addOrganizationMembers(bytes32 orgId, address[] newMembers) external {
 
         requireOrgExistenceConstraint(orgId, true);
-        requireAuthorization(orgId, true, false);
+        requireAuthorization(orgId, true);
 
         addOrganizationMembersInternal(orgId, newMembers);
 
@@ -189,7 +181,7 @@ contract Registry is IRegistry, ERC165 {
     function removeOrganizationMembers(bytes32 orgId, address[] existingMembers) external {
 
         requireOrgExistenceConstraint(orgId, true);
-        requireAuthorization(orgId, true, false);
+        requireAuthorization(orgId, true);
 
         for (uint i = 0; i < existingMembers.length; i++) {
             removeOrganizationMemberInternal(orgId, existingMembers[i]);
@@ -222,7 +214,7 @@ contract Registry is IRegistry, ERC165 {
     function deleteOrganization(bytes32 orgId) external {
 
         requireOrgExistenceConstraint(orgId, true);
-        requireAuthorization(orgId, false, true);
+        requireAuthorization(orgId, false);
 
         for (uint serviceIndex = orgsById[orgId].serviceKeys.length; serviceIndex > 0; serviceIndex--) {
             deleteServiceRegistrationInternal(orgId, orgsById[orgId].serviceKeys[serviceIndex-1]);
@@ -264,7 +256,7 @@ contract Registry is IRegistry, ERC165 {
     function createServiceRegistration(bytes32 orgId, bytes32 serviceId, bytes metadataURI, bytes32[] tags) external {
 
         requireOrgExistenceConstraint(orgId, true);
-        requireAuthorization(orgId, true, false);
+        requireAuthorization(orgId, true);
         requireServiceExistenceConstraint(orgId, serviceId, false);
 
         ServiceRegistration memory service;
@@ -284,7 +276,7 @@ contract Registry is IRegistry, ERC165 {
     function updateServiceRegistration(bytes32 orgId, bytes32 serviceId, bytes metadataURI) external {
 
         requireOrgExistenceConstraint(orgId, true);
-        requireAuthorization(orgId, true, false);
+        requireAuthorization(orgId, true);
         requireServiceExistenceConstraint(orgId, serviceId, true);
 
         orgsById[orgId].servicesById[serviceId].metadataURI = metadataURI;
@@ -295,7 +287,7 @@ contract Registry is IRegistry, ERC165 {
     function addTagsToServiceRegistration(bytes32 orgId, bytes32 serviceId, bytes32[] tags) external {
 
         requireOrgExistenceConstraint(orgId, true);
-        requireAuthorization(orgId, true, false);
+        requireAuthorization(orgId, true);
         requireServiceExistenceConstraint(orgId, serviceId, true);
 
         for (uint i = 0; i < tags.length; i++) {
@@ -333,7 +325,7 @@ contract Registry is IRegistry, ERC165 {
     function removeTagsFromServiceRegistration(bytes32 orgId, bytes32 serviceId, bytes32[] tags) external {
 
         requireOrgExistenceConstraint(orgId, true);
-        requireAuthorization(orgId, true, true);
+        requireAuthorization(orgId, true);
         requireServiceExistenceConstraint(orgId, serviceId, true);
 
         for (uint i = 0; i < tags.length; i++) {
@@ -386,7 +378,7 @@ contract Registry is IRegistry, ERC165 {
     function deleteServiceRegistration(bytes32 orgId, bytes32 serviceId) external {
 
         requireOrgExistenceConstraint(orgId, true);
-        requireAuthorization(orgId, true, true);
+        requireAuthorization(orgId, true);
         requireServiceExistenceConstraint(orgId, serviceId, true);
 
         deleteServiceRegistrationInternal(orgId, serviceId);
@@ -426,7 +418,7 @@ contract Registry is IRegistry, ERC165 {
             bytes repositoryURI, bytes32[] tags) external {
 
         requireOrgExistenceConstraint(orgId, true);
-        requireAuthorization(orgId, true, false);
+        requireAuthorization(orgId, true);
         requireTypeRepositoryExistenceConstraint(orgId, repositoryId, false);
 
         TypeRepositoryRegistration memory typeRepo;
@@ -447,7 +439,7 @@ contract Registry is IRegistry, ERC165 {
         bytes repositoryURI) external {
 
         requireOrgExistenceConstraint(orgId, true);
-        requireAuthorization(orgId, true, false);
+        requireAuthorization(orgId, true);
         requireTypeRepositoryExistenceConstraint(orgId, repositoryId, true);
 
         orgsById[orgId].typeReposById[repositoryId].repositoryURI = repositoryURI;
@@ -458,7 +450,7 @@ contract Registry is IRegistry, ERC165 {
     function addTagsToTypeRepositoryRegistration(bytes32 orgId, bytes32 repositoryId, bytes32[] tags) external {
 
         requireOrgExistenceConstraint(orgId, true);
-        requireAuthorization(orgId, true, false);
+        requireAuthorization(orgId, true);
         requireTypeRepositoryExistenceConstraint(orgId, repositoryId, true);
 
         for (uint i = 0; i < tags.length; i++) {
@@ -495,7 +487,7 @@ contract Registry is IRegistry, ERC165 {
     function removeTagsFromTypeRepositoryRegistration(bytes32 orgId, bytes32 repositoryId, bytes32[] tags) external {
 
         requireOrgExistenceConstraint(orgId, true);
-        requireAuthorization(orgId, true, true);
+        requireAuthorization(orgId, true);
         requireTypeRepositoryExistenceConstraint(orgId, repositoryId, true);
 
         for (uint i = 0; i < tags.length; i++) {
@@ -549,7 +541,7 @@ contract Registry is IRegistry, ERC165 {
     function deleteTypeRepositoryRegistration(bytes32 orgId, bytes32 repositoryId) external {
 
         requireOrgExistenceConstraint(orgId, true);
-        requireAuthorization(orgId, true, true);
+        requireAuthorization(orgId, true);
         requireTypeRepositoryExistenceConstraint(orgId, repositoryId, true);
 
         deleteTypeRepositoryRegistrationInternal(orgId, repositoryId);
@@ -592,7 +584,7 @@ contract Registry is IRegistry, ERC165 {
     }
 
     function getOrganizationById(bytes32 orgId) external view
-            returns(bool found, bytes32 id, string name, address owner, address[] members, bytes32[] serviceIds, bytes32[] repositoryIds) {
+            returns(bool found, bytes32 id, bytes orgMetadataURI, address owner, address[] members, bytes32[] serviceIds, bytes32[] repositoryIds) {
 
         // check to see if this organization exists
         if(orgsById[orgId].organizationId == bytes32(0x0)) {
@@ -602,7 +594,7 @@ contract Registry is IRegistry, ERC165 {
 
         found = true;
         id = orgsById[orgId].organizationId;
-        name = orgsById[orgId].organizationName;
+        orgMetadataURI = orgsById[orgId].orgMetadataURI;
         owner = orgsById[orgId].owner;
         members = orgsById[orgId].memberKeys;
         serviceIds = orgsById[orgId].serviceKeys;
@@ -697,6 +689,6 @@ contract Registry is IRegistry, ERC165 {
     function supportsInterface(bytes4 interfaceID) external view returns (bool) {
         return
             interfaceID == this.supportsInterface.selector || // ERC165
-            interfaceID == 0x91372c6a; // IRegistry
+            interfaceID == 0x1d466fef; // IRegistry
     }
 }
