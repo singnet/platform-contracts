@@ -53,7 +53,7 @@ contract MultiPartyEscrow {
     public
     returns(bool) 
     {
-        require(token.transferFrom(msg.sender, this, value), "Unable to transfer token to the contract"); 
+        require(token.transferFrom(msg.sender, this, value), "Unable to transfer token to the contract."); 
         balances[msg.sender] = balances[msg.sender].add(value);
         emit DepositFunds(msg.sender, value);
         return true;
@@ -63,8 +63,8 @@ contract MultiPartyEscrow {
     public
     returns(bool)
     {
-        require(balances[msg.sender] >= value);
-        require(token.transfer(msg.sender, value));
+        require(balances[msg.sender] >= value, "Insufficient balance in the contract.");
+        require(token.transfer(msg.sender, value), "Unable to transfer token to the contract.");
         balances[msg.sender] = balances[msg.sender].sub(value);
         emit WithdrawFunds(msg.sender, value);
         return true;
@@ -74,7 +74,7 @@ contract MultiPartyEscrow {
     public
     returns(bool)
     {
-        require(balances[msg.sender] >= value);
+        require(balances[msg.sender] >= value, "Insufficient balance in the contract");
         balances[msg.sender] = balances[msg.sender].sub(value);
         balances[receiver] = balances[receiver].add(value);
 
@@ -90,7 +90,7 @@ contract MultiPartyEscrow {
     public
     returns(bool)
     {
-        require(balances[msg.sender] >= value);
+        require(balances[msg.sender] >= value, "Insufficient balance in the contract.");
         require(signer != address(0));
 
         channels[nextChannelId] = PaymentChannel({
@@ -115,8 +115,8 @@ contract MultiPartyEscrow {
     public
     returns(bool)
     {
-        require(deposit(value));
-        require(openChannel(signer, recipient, groupId, value, expiration));
+        require(deposit(value), "Unable to deposit token to the contract.");
+        require(openChannel(signer, recipient, groupId, value, expiration), "Unable to open channel.");
         return true;
     }
 
@@ -146,7 +146,7 @@ contract MultiPartyEscrow {
     {
         uint256 len = channelIds.length;
         
-        require(amounts.length == len && isSendbacks.length == len && v.length == len && r.length == len && s.length == len);
+        require(amounts.length == len && isSendbacks.length == len && v.length == len && r.length == len && s.length == len, "Invalid function parameters.");
         for(uint256 i=0; i<len ; i++) {
             channelClaim(channelIds[i], amounts[i], v[i], r[i], s[i], isSendbacks[i]);
         }
@@ -157,14 +157,14 @@ contract MultiPartyEscrow {
     public 
     {
         PaymentChannel storage channel = channels[channelId];
-        require(amount <= channel.value);
-        require(msg.sender == channel.recipient);
+        require(amount <= channel.value, "Insufficient channel amount.");
+        require(msg.sender == channel.recipient, "Invalid recipient");
         
         //compose the message which was signed
         bytes32 message = prefixed(keccak256(abi.encodePacked(this, channelId, channel.nonce, amount)));
         // check that the signature is from the signer
         address signAddress = ecrecover(message, v, r, s);
-        require(signAddress == channel.signer);
+        require(signAddress == channel.signer, "Invalid signature");
         
         //transfer amount from the channel to the sender
         channel.value        =        channel.value.sub(amount);
@@ -192,8 +192,8 @@ contract MultiPartyEscrow {
     {
         PaymentChannel storage channel = channels[channelId];
 
-        require(msg.sender == channel.sender);
-        require(newExpiration >= channel.expiration);
+        require(msg.sender == channel.sender, "Sender not authorized");
+        require(newExpiration >= channel.expiration, "Invalid expiration.");
 
         channels[channelId].expiration = newExpiration;
         
@@ -207,7 +207,7 @@ contract MultiPartyEscrow {
     public
     returns(bool)
     {
-        require(balances[msg.sender] >= amount);
+        require(balances[msg.sender] >= amount, "Insufficient balance in the contract");
 
         //tranfser amount from sender to the channel
         balances[msg.sender]      = balances[msg.sender].sub     (amount);
@@ -220,16 +220,16 @@ contract MultiPartyEscrow {
     function channelExtendAndAddFunds(uint256 channelId, uint256 newExpiration, uint256 amount)
     public
     {
-        require(channelExtend(channelId, newExpiration));
-        require(channelAddFunds(channelId, amount));
+        require(channelExtend(channelId, newExpiration), "Unable to extend the channel.");
+        require(channelAddFunds(channelId, amount), "Unable to add funds to channel.");
     }
     
     // sender can claim refund if the timeout is reached 
     function channelClaimTimeout(uint256 channelId) 
     public 
     {
-        require(msg.sender == channels[channelId].sender);
-        require(block.number >= channels[channelId].expiration);
+        require(msg.sender == channels[channelId].sender, "Sender not authorized.");
+        require(block.number >= channels[channelId].expiration, "Claim called too early.");
         _channelSendbackAndReopenSuspended(channelId);
         
         emit ChannelSenderClaim(channelId, channels[channelId].nonce, channels[channelId].value);
