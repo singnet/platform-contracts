@@ -35,7 +35,7 @@ contract MultiPartyEscrow {
 
     // Events
     event ChannelOpen(uint256 channelId, uint256 nonce, address indexed sender, address signer, address indexed recipient, bytes32 indexed groupId, uint256 amount, uint256 expiration);
-    event ChannelClaim(uint256 indexed channelId, uint256 nonce, address indexed recipient, uint256 claimAmount, uint256 sendBackAmount, uint256 keepAmount);
+    event ChannelClaim(uint256 indexed channelId, uint256 nonce, address indexed recipient, uint256 claimAmount, uint256 plannedAmount, uint256 sendBackAmount, uint256 keepAmount);
     event ChannelSenderClaim(uint256 indexed channelId, uint256 nonce, uint256 claimAmount);
     event ChannelExtend(uint256 indexed channelId, uint256 newExpiration);
     event ChannelAddFunds(uint256 indexed channelId, uint256 additionalFunds);
@@ -135,51 +135,53 @@ contract MultiPartyEscrow {
     /**
      * @dev function to claim multiple channels at a time. Needs to send limited channels per call
      * @param channelIds list of channel Ids
-     * @param amounts list of amounts should be aligned with channel ids index
+     * @param actualAmounts list of actual amounts should be aligned with channel ids index
+     * @param plannedAmounts list of planned amounts should be aligned with channel ids index
      * @param isSendbacks list of sendbacks flags
      * @param v channel senders signatures in V R S for each channel
      * @param r channel senders signatures in V R S for each channel
      * @param s channel senders signatures in V R S for each channel
      */
-    function multiChannelClaim(uint256[] channelIds, uint256[] amounts, bool[] isSendbacks, uint8[] v, bytes32[] r, bytes32[] s) 
+    function multiChannelClaim(uint256[] channelIds, uint256[] actualAmounts, uint256[] plannedAmounts, bool[] isSendbacks, uint8[] v, bytes32[] r, bytes32[] s) 
     public 
     {
         uint256 len = channelIds.length;
         
-        require(amounts.length == len && isSendbacks.length == len && v.length == len && r.length == len && s.length == len, "Invalid function parameters.");
+        require(plannedAmounts.length == len && actualAmounts.length == len && isSendbacks.length == len && v.length == len && r.length == len && s.length == len, "Invalid function parameters.");
         for(uint256 i=0; i<len ; i++) {
-            channelClaim(channelIds[i], amounts[i], v[i], r[i], s[i], isSendbacks[i]);
+            channelClaim(channelIds[i], actualAmounts[i], plannedAmounts[i], v[i], r[i], s[i], isSendbacks[i]);
         }
         
     }
 
-    function channelClaim(uint256 channelId, uint256 amount, uint8 v, bytes32 r, bytes32 s, bool isSendback) 
+    function channelClaim(uint256 channelId, uint256 actualAmount, uint256 plannedAmount, uint8 v, bytes32 r, bytes32 s, bool isSendback) 
     public 
     {
         PaymentChannel storage channel = channels[channelId];
-        require(amount <= channel.value, "Insufficient channel amount.");
+        require(actualAmount <= channel.value, "Insufficient channel amount");
         require(msg.sender == channel.recipient, "Invalid recipient");
+        require(actualAmount <= plannedAmount, "Invalid actual amount");
         
         //compose the message which was signed
-        bytes32 message = prefixed(keccak256(abi.encodePacked(this, channelId, channel.nonce, amount)));
+        bytes32 message = prefixed(keccak256(abi.encodePacked(this, channelId, channel.nonce, plannedAmount)));
         // check that the signature is from the signer
         address signAddress = ecrecover(message, v, r, s);
         require(signAddress == channel.signer, "Invalid signature");
         
         //transfer amount from the channel to the sender
-        channel.value        =        channel.value.sub(amount);
-        balances[msg.sender] = balances[msg.sender].add(amount);
+        channel.value        =        channel.value.sub(actualAmount);
+        balances[msg.sender] = balances[msg.sender].add(actualAmount);
    
         if (isSendback)    
             {
                 _channelSendbackAndReopenSuspended(channelId);
-                emit ChannelClaim(channelId, channel.nonce, msg.sender, amount, channel.value, 0);
+                emit ChannelClaim(channelId, channel.nonce, msg.sender, actualAmount, plannedAmount, channel.value, 0);
             }
             else
             {
                 //reopen new "channel", without sending back funds to "sender"        
                 channel.nonce += 1;
-                emit ChannelClaim(channelId, channel.nonce, msg.sender, amount, 0, channel.value);
+                emit ChannelClaim(channelId, channel.nonce, msg.sender, actualAmount, plannedAmount, 0, channel.value);
             }
     }
 

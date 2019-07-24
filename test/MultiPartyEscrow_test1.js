@@ -122,7 +122,7 @@ contract('MultiPartyEscrow', function(accounts) {
 
             // With Signature Parameter
             //await escrow.channelClaim(0, N1 - 1000, sgn.toString("hex"), true, {from:accounts[5]});
-            await escrow.channelClaim(0, N1 - 1000, vrs.v, vrs.r, vrs.s, true, {from:accounts[5]});
+            await escrow.channelClaim(0, N1 - 1000, N1 - 1000, vrs.v, vrs.r, vrs.s, true, {from:accounts[5]});
             
             assert.equal((await escrow.balances.call(accounts[5])).toNumber(), N1 - 1000)
             assert.equal((await escrow.balances.call(accounts[0])).toNumber(), 1000)
@@ -136,21 +136,21 @@ contract('MultiPartyEscrow', function(accounts) {
             let vrs = signFuns.getVRSFromSignature(sgn.toString("hex"));
             
             //await escrow.channelClaim(1, N1, sgn.toString("hex"), false, {from:accounts[6]});
-            await escrow.channelClaim(1, N1, vrs.v, vrs.r, vrs.s, false, {from:accounts[6]});
+            await escrow.channelClaim(1, N1, N1, vrs.v, vrs.r, vrs.s, false, {from:accounts[6]});
             assert.equal((await escrow.balances.call(accounts[6])).toNumber(), N1)
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*2)
 
             //claim all funds and close channel
             //try to use old signutature (should fail)
             //testErrorRevert( escrow.channelClaim(1, N1, sgn.toString("hex"), false, {from:accounts[6]}))
-            testErrorRevert( escrow.channelClaim(1, N1, vrs.v, vrs.r, vrs.s, false, {from:accounts[6]}))
+            testErrorRevert( escrow.channelClaim(1, N1, N1, vrs.v, vrs.r, vrs.s, false, {from:accounts[6]}))
 
             //make new signature with nonce 1
             let sgn2 = await signFuns.waitSignedClaimMessage(accounts[4], escrow.address, 1, 1, N1 - 1000);
             let vrs2 = signFuns.getVRSFromSignature(sgn2.toString("hex"));
             
             //await escrow.channelClaim(1, N1 - 1000, sgn2.toString("hex"), true, {from:accounts[6]});
-            await escrow.channelClaim(1, N1 - 1000, vrs2.v, vrs2.r, vrs2.s, true, {from:accounts[6]});
+            await escrow.channelClaim(1, N1 - 1000, N1 - 1000, vrs2.v, vrs2.r, vrs2.s, true, {from:accounts[6]});
             assert.equal((await escrow.balances.call(accounts[6])).toNumber(), N1 * 2 - 1000)
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*2 + 1000)
 
@@ -190,7 +190,11 @@ contract('MultiPartyEscrow', function(accounts) {
             let vrs = signFuns.getVRSFromSignature(sgn.toString("hex"));
          
             //await escrow.channelClaim(2, 1000 - 10, sgn.toString("hex"), true, {from:accounts[7]});
-            await escrow.channelClaim(2, 1000 - 10, vrs.v, vrs.r, vrs.s, true, {from:accounts[7]});
+
+            testErrorRevert(escrow.channelClaim(2, 1000, 1000 - 10, vrs.v, vrs.r, vrs.s, true, {from:accounts[7]}));
+
+            // Claiming the lower amount
+            await escrow.channelClaim(2, 1000 - 10, 1000 - 10, vrs.v, vrs.r, vrs.s, true, {from:accounts[7]});
             assert.equal((await escrow.balances.call(accounts[7])).toNumber(), 1000 - 10)
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3 - N1*2 + 10)
           //  let balance4 = await token.balanceOf.call(accounts[4]);
@@ -211,6 +215,34 @@ contract('MultiPartyEscrow', function(accounts) {
             assert.equal((await escrow.balances.call(accounts[7])).toNumber(), 1000 - 10)
         });
 
+        it ("Open the fifth channel for actual claim lesser than planned amount", async function()
+        {
+            //sign message by the privet key of accounts[0]
+
+            let channelDepositAmount = 100
+            let plannedAmount = 90
+            let actualAmount = 80
+            
+            let expiration   = web3.eth.blockNumber + 10000000
+            let groupId      = "group42"
+            let currentChannelId = (await escrow.nextChannelId.call()).toNumber()
+            let accountBal_4 = (await escrow.balances.call(accounts[4])).toNumber()
+            let accountBal_7 = (await escrow.balances.call(accounts[7])).toNumber()
+
+            await escrow.openChannel(accounts[4], accounts[7], groupId, channelDepositAmount, expiration, {from:accounts[4]})
+            assert.equal((await escrow.balances.call(accounts[4])).toNumber(), accountBal_4 - channelDepositAmount)
+
+            let sgn = await signFuns.waitSignedClaimMessage(accounts[4], escrow.address, currentChannelId, 0, plannedAmount);
+            let vrs = signFuns.getVRSFromSignature(sgn.toString("hex"));
+
+            // Testing for Actual Amount > Planned Amount
+            testErrorRevert(escrow.channelClaim(currentChannelId, actualAmount+plannedAmount, plannedAmount, vrs.v, vrs.r, vrs.s, true, {from:accounts[7]}));
+            // Claiming the lower amount and sending remaining channel value back to user
+            await escrow.channelClaim(currentChannelId, actualAmount, plannedAmount, vrs.v, vrs.r, vrs.s, true, {from:accounts[7]});
+            assert.equal((await escrow.balances.call(accounts[7])).toNumber(), accountBal_7 + actualAmount)
+            assert.equal((await escrow.balances.call(accounts[4])).toNumber(), accountBal_4 - actualAmount)
+
+        });        
  
     it ("Check validity of the signatures with js-server part (claim)", async function()
         {
