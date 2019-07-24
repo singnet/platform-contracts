@@ -20,6 +20,7 @@ async function testErrorRevert(prom)
     try { await prom }
     catch(e) {
         rezE = e.message.indexOf('revert') 
+//console.log("Error " + e)        
     }
     assert(rezE >= 0, "Must generate error and error message must contain revert");
 }
@@ -242,7 +243,46 @@ contract('MultiPartyEscrow', function(accounts) {
             assert.equal((await escrow.balances.call(accounts[7])).toNumber(), accountBal_7 + actualAmount)
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), accountBal_4 - actualAmount)
 
-        });        
+        });
+
+        it ("Open the sixth channel by third party", async function()
+        {
+            //sign message by the privet key of accounts[0]
+
+            let channelDepositAmount = 100
+            
+            let expiration   = web3.eth.blockNumber + 100000000
+            let messageNonce   = web3.eth.blockNumber + 2
+            let groupId      = "group42"
+            let currentChannelId = (await escrow.nextChannelId.call()).toNumber()
+
+            let accountBal_4 = (await escrow.balances.call(accounts[4])).toNumber()
+            let accountBal_7 = (await escrow.balances.call(accounts[7])).toNumber()
+
+            //await escrow.openChannel(accounts[4], accounts[7], groupId, channelDepositAmount, expiration, {from:accounts[4]})
+            //assert.equal((await escrow.balances.call(accounts[4])).toNumber(), accountBal_4 - channelDepositAmount)
+
+            // Account 4 Provides the Sign to Account 7 to execute on Blockchain
+            let sgn = await signFuns.waitSignOpenChannelMessage(accounts[4], escrow.address, accounts[7], accounts[4], accounts[3], groupId, channelDepositAmount, expiration, messageNonce)
+            let vrs = signFuns.getVRSFromSignature(sgn.toString("hex"));
+
+            await escrow.openChannelByThirdParty(accounts[4], accounts[4], accounts[3], groupId, channelDepositAmount, expiration, messageNonce, vrs.v, vrs.r, vrs.s, {from:accounts[7]})
+
+            const [nonce_a, sender_a, signer_a, recipient_a, groupId_a, value_a, expiration_a]
+            = await escrow.channels.call(currentChannelId);
+
+            assert.equal((await escrow.nextChannelId.call()).toNumber(), currentChannelId + 1)
+            assert.equal((await escrow.balances.call(accounts[4])).toNumber(), accountBal_4)
+            assert.equal((await escrow.balances.call(accounts[7])).toNumber(), accountBal_7 - channelDepositAmount)
+            assert.equal(sender_a, accounts[4])
+            assert.equal(signer_a, accounts[4])
+            assert.equal(recipient_a, accounts[3])
+//console.log(value_a + "===" + channelDepositAmount);            
+            assert.equal(value_a.toNumber(), channelDepositAmount)
+
+            // Test for a replay attack
+            await testErrorRevert(escrow.openChannelByThirdParty(accounts[4], accounts[4], accounts[3], groupId, channelDepositAmount, expiration, messageNonce, vrs.v, vrs.r, vrs.s, {from:accounts[7]}));
+        });    
  
     it ("Check validity of the signatures with js-server part (claim)", async function()
         {

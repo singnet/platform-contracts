@@ -28,6 +28,14 @@ function signClaimMessage(fromAccount, contractAddress, channelId, nonce, amount
     signMessage(fromAccount, message, callback);
 }
 
+function signOpenChannelMessage(fromAccount, contractAddress, sender, signer, recipient, groupId, value, expiration, messageNonce, callback)
+{
+    var message = ethereumjsabi.soliditySHA3(
+        ["address", "address", "address", "address", "bytes32", "uint256", "uint256", "uint256"],
+        [contractAddress, sender, signer, recipient, groupId, value, expiration, messageNonce]);
+    signMessage(fromAccount, message, callback);    
+}
+
 
 // this mimics the prefixing behavior of the ethSign JSON-RPC method.
 function prefixed(hash) {
@@ -84,7 +92,24 @@ async function waitSignedClaimMessage(fromAccount, contractAddress, channelId, n
     return rezSign;
 } 
 
+async function waitSignOpenChannelMessage(fromAccount, contractAddress, sender, signer, recipient, groupId, value, expiration, messageNonce, callback)
+{
+    let detWait = true;
+    let rezSign;
+    signOpenChannelMessage(fromAccount, contractAddress, sender, signer, recipient, groupId, value, expiration, messageNonce, function(err,sgn)
+        {   
+            detWait = false;
+            rezSign = sgn
+        });
+    while(detWait)
+    {
+        await sleep(1)
+    }
+    return rezSign;
+}
+
 
 module.exports.waitSignedClaimMessage   = waitSignedClaimMessage;
+module.exports.waitSignOpenChannelMessage = waitSignOpenChannelMessage;
 module.exports.isValidSignatureClaim    = isValidSignatureClaim;
 module.exports.getVRSFromSignature      = getVRSFromSignature; 

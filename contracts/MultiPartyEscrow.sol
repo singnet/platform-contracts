@@ -32,6 +32,8 @@ contract MultiPartyEscrow {
  
     ERC20 public token; // Address of token contract
     
+    //already used messages for openChannelByThirdParty in order to prevent replay attack
+    mapping (bytes32 => bool) public usedMessages; 
 
     // Events
     event ChannelOpen(uint256 channelId, uint256 nonce, address indexed sender, address signer, address indexed recipient, bytes32 indexed groupId, uint256 amount, uint256 expiration);
@@ -93,9 +95,41 @@ contract MultiPartyEscrow {
         require(balances[msg.sender] >= value, "Insufficient balance in the contract.");
         require(signer != address(0));
 
+        require(_openChannel(msg.sender, signer, recipient, groupId, value, expiration), "Unable to open channel");
+        return true;
+    }
+    
+    //open a channel on behalf of the user. Sender should send the signed permission to open the channel
+    function openChannelByThirdParty(address sender, address signer, address recipient, bytes32 groupId, uint256 value, uint256 expiration, uint256 messageNonce, uint8 v, bytes32 r, bytes32 s) 
+    public
+    returns(bool) 
+    {
+        require(balances[sender] >= value, "Insufficient balance");
+
+        require(messageNonce >= block.number-5 && messageNonce <= block.number+5, "Invalid message nonce");
+
+        //compose the message which was signed
+        bytes32 message = prefixed(keccak256(abi.encodePacked(this, msg.sender, signer, recipient, groupId, value, expiration, messageNonce)));
+        
+        //check for replay attack (message can be used only once)
+        require( ! usedMessages[message], "Invalid signature");
+        usedMessages[message] = true;
+
+        // check that the signature is from the "sender"
+        require(ecrecover(message, v, r, s) == sender, "Invalid signature");
+
+        require(_openChannel(sender, signer, recipient, groupId, value, expiration), "Unable to open channel");
+        
+        return true;
+    }
+
+    function _openChannel(address sender, address signer, address recipient, bytes32 groupId, uint256 value, uint256 expiration)
+    private
+    returns(bool)
+    {
         channels[nextChannelId] = PaymentChannel({
             nonce        : 0,
-            sender       : msg.sender,
+            sender       : sender,
             signer       : signer,
             recipient    : recipient,
             groupId      : groupId,
@@ -103,13 +137,11 @@ contract MultiPartyEscrow {
             expiration   : expiration
         });
       
-        balances[msg.sender] = balances[msg.sender].sub(value);  
-        emit ChannelOpen(nextChannelId, 0, msg.sender, signer, recipient, groupId, value, expiration);
+        balances[msg.sender] = balances[msg.sender].sub(value);
+        emit ChannelOpen(nextChannelId, 0, sender, signer, recipient, groupId, value, expiration);
         nextChannelId += 1;
         return true;
     }
-    
-
 
     function depositAndOpenChannel(address signer, address recipient, bytes32 groupId, uint256 value, uint256 expiration)
     public
