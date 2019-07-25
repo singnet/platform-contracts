@@ -32,10 +32,12 @@ contract MultiPartyEscrow {
  
     ERC20 public token; // Address of token contract
     
+    //already used messages for openChannelByThirdParty in order to prevent replay attack
+    mapping (bytes32 => bool) public usedMessages; 
 
     // Events
     event ChannelOpen(uint256 channelId, uint256 nonce, address indexed sender, address signer, address indexed recipient, bytes32 indexed groupId, uint256 amount, uint256 expiration);
-    event ChannelClaim(uint256 indexed channelId, uint256 nonce, address indexed recipient, uint256 claimAmount, uint256 sendBackAmount, uint256 keepAmount);
+    event ChannelClaim(uint256 indexed channelId, uint256 nonce, address indexed recipient, uint256 claimAmount, uint256 plannedAmount, uint256 sendBackAmount, uint256 keepAmount);
     event ChannelSenderClaim(uint256 indexed channelId, uint256 nonce, uint256 claimAmount);
     event ChannelExtend(uint256 indexed channelId, uint256 newExpiration);
     event ChannelAddFunds(uint256 indexed channelId, uint256 additionalFunds);
@@ -53,7 +55,7 @@ contract MultiPartyEscrow {
     public
     returns(bool) 
     {
-        require(token.transferFrom(msg.sender, this, value), "Unable to transfer token to the contract"); 
+        require(token.transferFrom(msg.sender, this, value), "Unable to transfer token to the contract."); 
         balances[msg.sender] = balances[msg.sender].add(value);
         emit DepositFunds(msg.sender, value);
         return true;
@@ -63,8 +65,8 @@ contract MultiPartyEscrow {
     public
     returns(bool)
     {
-        require(balances[msg.sender] >= value);
-        require(token.transfer(msg.sender, value));
+        require(balances[msg.sender] >= value, "Insufficient balance in the contract.");
+        require(token.transfer(msg.sender, value), "Unable to transfer token to the contract.");
         balances[msg.sender] = balances[msg.sender].sub(value);
         emit WithdrawFunds(msg.sender, value);
         return true;
@@ -74,7 +76,7 @@ contract MultiPartyEscrow {
     public
     returns(bool)
     {
-        require(balances[msg.sender] >= value);
+        require(balances[msg.sender] >= value, "Insufficient balance in the contract");
         balances[msg.sender] = balances[msg.sender].sub(value);
         balances[receiver] = balances[receiver].add(value);
 
@@ -90,12 +92,45 @@ contract MultiPartyEscrow {
     public
     returns(bool)
     {
-        require(balances[msg.sender] >= value);
+        require(balances[msg.sender] >= value, "Insufficient balance in the contract.");
         require(signer != address(0));
 
+        require(_openChannel(msg.sender, signer, recipient, groupId, value, expiration), "Unable to open channel");
+        return true;
+    }
+    
+    //open a channel on behalf of the user. Sender should send the signed permission to open the channel
+    function openChannelByThirdParty(address sender, address signer, address recipient, bytes32 groupId, uint256 value, uint256 expiration, uint256 messageNonce, uint8 v, bytes32 r, bytes32 s) 
+    public
+    returns(bool) 
+    {
+        require(balances[sender] >= value, "Insufficient balance");
+
+        // Blocks seems to take variable time based on network congestion for now removing it. Message nounce will be a blocknumber
+        //require(messageNonce >= block.number-5 && messageNonce <= block.number+5, "Invalid message nonce");
+
+        //compose the message which was signed
+        bytes32 message = prefixed(keccak256(abi.encodePacked("__openChannelByThirdParty", this, msg.sender, signer, recipient, groupId, value, expiration, messageNonce)));
+        
+        //check for replay attack (message can be used only once)
+        require( ! usedMessages[message], "Signature has already been used");
+        usedMessages[message] = true;
+
+        // check that the signature is from the "sender"
+        require(ecrecover(message, v, r, s) == sender, "Invalid signature");
+
+        require(_openChannel(sender, signer, recipient, groupId, value, expiration), "Unable to open channel");
+        
+        return true;
+    }
+
+    function _openChannel(address sender, address signer, address recipient, bytes32 groupId, uint256 value, uint256 expiration)
+    private
+    returns(bool)
+    {
         channels[nextChannelId] = PaymentChannel({
             nonce        : 0,
-            sender       : msg.sender,
+            sender       : sender,
             signer       : signer,
             recipient    : recipient,
             groupId      : groupId,
@@ -103,20 +138,18 @@ contract MultiPartyEscrow {
             expiration   : expiration
         });
       
-        balances[msg.sender] = balances[msg.sender].sub(value);  
-        emit ChannelOpen(nextChannelId, 0, msg.sender, signer, recipient, groupId, value, expiration);
+        balances[msg.sender] = balances[msg.sender].sub(value);
+        emit ChannelOpen(nextChannelId, 0, sender, signer, recipient, groupId, value, expiration);
         nextChannelId += 1;
         return true;
     }
-    
-
 
     function depositAndOpenChannel(address signer, address recipient, bytes32 groupId, uint256 value, uint256 expiration)
     public
     returns(bool)
     {
-        require(deposit(value));
-        require(openChannel(signer, recipient, groupId, value, expiration));
+        require(deposit(value), "Unable to deposit token to the contract.");
+        require(openChannel(signer, recipient, groupId, value, expiration), "Unable to open channel.");
         return true;
     }
 
@@ -135,51 +168,53 @@ contract MultiPartyEscrow {
     /**
      * @dev function to claim multiple channels at a time. Needs to send limited channels per call
      * @param channelIds list of channel Ids
-     * @param amounts list of amounts should be aligned with channel ids index
+     * @param actualAmounts list of actual amounts should be aligned with channel ids index
+     * @param plannedAmounts list of planned amounts should be aligned with channel ids index
      * @param isSendbacks list of sendbacks flags
      * @param v channel senders signatures in V R S for each channel
      * @param r channel senders signatures in V R S for each channel
      * @param s channel senders signatures in V R S for each channel
      */
-    function multiChannelClaim(uint256[] channelIds, uint256[] amounts, bool[] isSendbacks, uint8[] v, bytes32[] r, bytes32[] s) 
+    function multiChannelClaim(uint256[] channelIds, uint256[] actualAmounts, uint256[] plannedAmounts, bool[] isSendbacks, uint8[] v, bytes32[] r, bytes32[] s) 
     public 
     {
         uint256 len = channelIds.length;
         
-        require(amounts.length == len && isSendbacks.length == len && v.length == len && r.length == len && s.length == len);
+        require(plannedAmounts.length == len && actualAmounts.length == len && isSendbacks.length == len && v.length == len && r.length == len && s.length == len, "Invalid function parameters.");
         for(uint256 i=0; i<len ; i++) {
-            channelClaim(channelIds[i], amounts[i], v[i], r[i], s[i], isSendbacks[i]);
+            channelClaim(channelIds[i], actualAmounts[i], plannedAmounts[i], v[i], r[i], s[i], isSendbacks[i]);
         }
         
     }
 
-    function channelClaim(uint256 channelId, uint256 amount, uint8 v, bytes32 r, bytes32 s, bool isSendback) 
+    function channelClaim(uint256 channelId, uint256 actualAmount, uint256 plannedAmount, uint8 v, bytes32 r, bytes32 s, bool isSendback) 
     public 
     {
         PaymentChannel storage channel = channels[channelId];
-        require(amount <= channel.value);
-        require(msg.sender == channel.recipient);
+        require(actualAmount <= channel.value, "Insufficient channel amount");
+        require(msg.sender == channel.recipient, "Invalid recipient");
+        require(actualAmount <= plannedAmount, "Invalid actual amount");
         
         //compose the message which was signed
-        bytes32 message = prefixed(keccak256(abi.encodePacked(this, channelId, channel.nonce, amount)));
+        bytes32 message = prefixed(keccak256(abi.encodePacked("__MPE_claim_message", this, channelId, channel.nonce, plannedAmount)));
         // check that the signature is from the signer
         address signAddress = ecrecover(message, v, r, s);
-        require(signAddress == channel.signer);
+        require(signAddress == channel.signer, "Invalid signature");
         
         //transfer amount from the channel to the sender
-        channel.value        =        channel.value.sub(amount);
-        balances[msg.sender] = balances[msg.sender].add(amount);
+        channel.value        =        channel.value.sub(actualAmount);
+        balances[msg.sender] = balances[msg.sender].add(actualAmount);
    
         if (isSendback)    
             {
                 _channelSendbackAndReopenSuspended(channelId);
-                emit ChannelClaim(channelId, channel.nonce, msg.sender, amount, channel.value, 0);
+                emit ChannelClaim(channelId, channel.nonce, msg.sender, actualAmount, plannedAmount, channel.value, 0);
             }
             else
             {
                 //reopen new "channel", without sending back funds to "sender"        
                 channel.nonce += 1;
-                emit ChannelClaim(channelId, channel.nonce, msg.sender, amount, 0, channel.value);
+                emit ChannelClaim(channelId, channel.nonce, msg.sender, actualAmount, plannedAmount, 0, channel.value);
             }
     }
 
@@ -192,8 +227,8 @@ contract MultiPartyEscrow {
     {
         PaymentChannel storage channel = channels[channelId];
 
-        require(msg.sender == channel.sender);
-        require(newExpiration >= channel.expiration);
+        require(msg.sender == channel.sender, "Sender not authorized");
+        require(newExpiration >= channel.expiration, "Invalid expiration.");
 
         channels[channelId].expiration = newExpiration;
         
@@ -207,7 +242,7 @@ contract MultiPartyEscrow {
     public
     returns(bool)
     {
-        require(balances[msg.sender] >= amount);
+        require(balances[msg.sender] >= amount, "Insufficient balance in the contract");
 
         //tranfser amount from sender to the channel
         balances[msg.sender]      = balances[msg.sender].sub     (amount);
@@ -220,16 +255,16 @@ contract MultiPartyEscrow {
     function channelExtendAndAddFunds(uint256 channelId, uint256 newExpiration, uint256 amount)
     public
     {
-        require(channelExtend(channelId, newExpiration));
-        require(channelAddFunds(channelId, amount));
+        require(channelExtend(channelId, newExpiration), "Unable to extend the channel.");
+        require(channelAddFunds(channelId, amount), "Unable to add funds to channel.");
     }
     
     // sender can claim refund if the timeout is reached 
     function channelClaimTimeout(uint256 channelId) 
     public 
     {
-        require(msg.sender == channels[channelId].sender);
-        require(block.number >= channels[channelId].expiration);
+        require(msg.sender == channels[channelId].sender, "Sender not authorized.");
+        require(block.number >= channels[channelId].expiration, "Claim called too early.");
         _channelSendbackAndReopenSuspended(channelId);
         
         emit ChannelSenderClaim(channelId, channels[channelId].nonce, channels[channelId].value);

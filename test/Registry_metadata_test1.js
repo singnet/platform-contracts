@@ -21,8 +21,10 @@ contract('Registry', function(accounts) {
             let orgName2     = "Updated Org Name" 
             let serviceId = "ServiceId"
             let metadataURI = "ipfs://QmUfwZ7pEWBE5zSepKpHDaPibQxpPqoEDRo5Kzai8h5U9B"
+            let orgMetadataURI = "ipfs://QmUfwZ7pEWBE5zSepKpHDaPibQxpPqoEDRo5Kzai8h5U8B"
+            let orgMetadataURI2 = "ipfs://QmUfwZ7pEWBE5zSepKpHDaPibQxpPqoEDRo5Kzai8h5U7B"
 
-            await registry.createOrganization(orgId, orgName, [accounts[1]]);
+            await registry.createOrganization(orgId, orgMetadataURI, [accounts[1]]);
 
             await registry.createServiceRegistration(orgId, serviceId, metadataURI, [])
             let rez = await registry.getServiceRegistrationById(orgId, serviceId)
@@ -34,11 +36,11 @@ contract('Registry', function(accounts) {
             assert.equal(web3.toAscii(rez2[2]), metadataURI + metadataURI)
 
             let rez3 = await registry.getOrganizationById(orgId);
-            assert.equal(rez3[2], orgName);
+            assert.equal(web3.toAscii(rez3[2]), orgMetadataURI);
 
-            await registry.changeOrganizationName(orgId, orgName2);
+            await registry.changeOrganizationMetadataURI(orgId, orgMetadataURI2);
             let rez4 = await registry.getOrganizationById(orgId);
-            assert.equal(rez4[2], orgName2);
+            assert.equal(web3.toAscii(rez4[2]), orgMetadataURI2);
 
         });
 });

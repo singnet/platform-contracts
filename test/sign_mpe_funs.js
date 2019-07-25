@@ -16,9 +16,10 @@ function signMessage(fromAccount, message, callback)
 
 function composeClaimMessage(contractAddress, channelId, nonce, amount)
 {
+    var sigPrefix = "__MPE_claim_message";
     return ethereumjsabi.soliditySHA3(
-        ["address",        "uint256",  "uint256", "uint256"],
-        [contractAddress, channelId, nonce,      amount]);
+        ["string", "address",        "uint256",  "uint256", "uint256"],
+        [sigPrefix, contractAddress, channelId, nonce,      amount]);
 }
 
 
@@ -26,6 +27,15 @@ function signClaimMessage(fromAccount, contractAddress, channelId, nonce, amount
 {
     var message = composeClaimMessage(contractAddress, channelId, nonce, amount);
     signMessage(fromAccount, message, callback);
+}
+
+function signOpenChannelMessage(fromAccount, contractAddress, sender, signer, recipient, groupId, value, expiration, messageNonce, callback)
+{
+    var sigPrefix = "__openChannelByThirdParty";
+    var message = ethereumjsabi.soliditySHA3(
+        ["string", "address", "address", "address", "address", "bytes32", "uint256", "uint256", "uint256"],
+        [sigPrefix, contractAddress, sender, signer, recipient, groupId, value, expiration, messageNonce]);
+    signMessage(fromAccount, message, callback);    
 }
 
 
@@ -84,7 +94,24 @@ async function waitSignedClaimMessage(fromAccount, contractAddress, channelId, n
     return rezSign;
 } 
 
+async function waitSignOpenChannelMessage(fromAccount, contractAddress, sender, signer, recipient, groupId, value, expiration, messageNonce, callback)
+{
+    let detWait = true;
+    let rezSign;
+    signOpenChannelMessage(fromAccount, contractAddress, sender, signer, recipient, groupId, value, expiration, messageNonce, function(err,sgn)
+        {   
+            detWait = false;
+            rezSign = sgn
+        });
+    while(detWait)
+    {
+        await sleep(1)
+    }
+    return rezSign;
+}
+
 
 module.exports.waitSignedClaimMessage   = waitSignedClaimMessage;
+module.exports.waitSignOpenChannelMessage = waitSignOpenChannelMessage;
 module.exports.isValidSignatureClaim    = isValidSignatureClaim;
 module.exports.getVRSFromSignature      = getVRSFromSignature; 

@@ -103,13 +103,12 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
         //
         //  also keeps track of what should be in the contract in s.Data. We validate against this data later.
 
-        const createOrganization = async (_orgId, _orgName, _membersArray) => {
+        const createOrganization = async (_orgId, _orgMetadataURI, _membersArray) => {
 
-            const createResult = await s.RegistryInstance.createOrganization(_orgId, _orgName, _membersArray);
+            const createResult = await s.RegistryInstance.createOrganization(_orgId, _orgMetadataURI, _membersArray);
             s.Data.Orgs.add(_orgId);
-
-            const [found, id, name, owner, members, serviceIds, repositoryNames] = await s.RegistryInstance.getOrganizationById.call(_orgId);
-            return {receipt: createResult.receipt, view: {found, id, name, owner, members, serviceIds, repositoryNames}};
+            const [found, id, orgMetadataURI, owner, members, serviceIds, repositoryNames] = await s.RegistryInstance.getOrganizationById.call(_orgId);
+            return {receipt: createResult.receipt, view: {found, id, orgMetadataURI, owner, members, serviceIds, repositoryNames}};
         };
 
         const deleteOrganization = async (_orgId) => {
@@ -123,9 +122,9 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
             s.Data.OrgsToServices.delete(_orgId);
             s.Data.OrgsToRepos.delete(_orgId);
 
-            const [found, id, name, owner, serviceIds, repositoryNames] = await s.RegistryInstance.getOrganizationById.call(_orgId);
+            const [found, id, orgMetadataURI, owner, serviceIds, repositoryNames] = await s.RegistryInstance.getOrganizationById.call(_orgId);
 
-            return {receipt: deleteResult.receipt, view: {found, id, name, owner, serviceIds, repositoryNames}};
+            return {receipt: deleteResult.receipt, view: {found, id, orgMetadataURI, owner, serviceIds, repositoryNames}};
         };
 
         const createService = async (_orgId, _serviceId, _metadataURI, _tags) => {
@@ -328,27 +327,23 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
             for (let i = 0; i < numOrgs; i++) {
                 // setup params
                 const orgId = c.Format.getOrgId(i);
-                const orgName = c.Format.getOrgName(i);
+                const _orgMetadataURI = c.Format.getMetaUri(orgId, i); //c.Format.getOrgName(i);
                 const membersArray = intRange(0, i+1).map(c.Format.getMemberAddress);
 
                 it(`Creates org ${orgId} with ${membersArray.length} members`, async () => {
                     // interact with contract
-                    const createResult = await createOrganization(orgId, orgName, membersArray);
-
+                    const createResult = await createOrganization(orgId, _orgMetadataURI, membersArray);
                     // validate receipt
                     assert.equal(TX_STATUS.SUCCESS, parseInt(createResult.receipt.status)
                         , `createOrganization tx should succeed for ${orgId}`);
 
-
                     // destructure view
-                    const {found, id, name, owner, members, serviceIds, repositoryNames} = createResult.view;
+                    const {found, id, orgMetadataURI, owner, members, serviceIds, repositoryNames} = createResult.view;
                     const membersDecoded = members.map(m => addressToString(m));
-
                     // validate view
                     assert.equal(true, found, "Org not found after registration");
                     assert.equal(orgId, bytesToString(id), "Org registered with the wrong id");
-
-                    assert.equal(orgName, name, "Org registered with the wrong name");
+                    assert.equal(_orgMetadataURI, bytesToString(orgMetadataURI), "Org registered with the wrong MetadataURI");
                     assert.equal(c.CreatorAccount, addressToString(owner), "Org registered with the wrong owner");
                     assertArraysEqual(assert.equal, membersArray, membersDecoded, "Org registered with incorrect members");
                     assert.equal(0, serviceIds.length, "Org registered with pre-existing services");

@@ -2,6 +2,7 @@ let HDWalletProvider = require("truffle-hdwallet-provider");
 let Web3 = require("web3");
 
 let provider = (endpoint) => {
+    
     if (process.env.HDWALLET_MNEMONIC) {
         return new HDWalletProvider(process.env.HDWALLET_MNEMONIC, endpoint);
     } else {
@@ -26,18 +27,18 @@ let truffleOptions = {
             network_id: "*" // Any network ID
         },
         kovan: {
-            gasPrice: 500000000,
-            provider: () => provider("https://kovan.infura.io"),
+            gasPrice: 50000000000,
+            provider: () => provider("https://kovan.infura.io/v3/" + process.env.InfuraKey),
             network_id: "42" // Kovan network ID
         },
         ropsten: {
              gasPrice: 50000000000,
-             provider: () => provider("https://ropsten.infura.io"),
+             provider: () => provider("https://ropsten.infura.io/v3/" + process.env.InfuraKey),
             network_id: "3", // ropsten network ID, 
         },
         main: {
             gasPrice: 50000000000,
-            provider: () => provider("https://mainnet.infura.io"),
+            provider: () => provider("https://mainnet.infura.io/v3/" + process.env.InfuraKey),
             network_id: "1" // mainnet network ID
        },
     },
