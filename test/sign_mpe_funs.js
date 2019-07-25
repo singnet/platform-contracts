@@ -16,9 +16,10 @@ function signMessage(fromAccount, message, callback)
 
 function composeClaimMessage(contractAddress, channelId, nonce, amount)
 {
+    var sigPrefix = "__MPE_claim_message";
     return ethereumjsabi.soliditySHA3(
-        ["address",        "uint256",  "uint256", "uint256"],
-        [contractAddress, channelId, nonce,      amount]);
+        ["string", "address",        "uint256",  "uint256", "uint256"],
+        [sigPrefix, contractAddress, channelId, nonce,      amount]);
 }
 
 
@@ -30,9 +31,10 @@ function signClaimMessage(fromAccount, contractAddress, channelId, nonce, amount
 
 function signOpenChannelMessage(fromAccount, contractAddress, sender, signer, recipient, groupId, value, expiration, messageNonce, callback)
 {
+    var sigPrefix = "__openChannelByThirdParty";
     var message = ethereumjsabi.soliditySHA3(
-        ["address", "address", "address", "address", "bytes32", "uint256", "uint256", "uint256"],
-        [contractAddress, sender, signer, recipient, groupId, value, expiration, messageNonce]);
+        ["string", "address", "address", "address", "address", "bytes32", "uint256", "uint256", "uint256"],
+        [sigPrefix, contractAddress, sender, signer, recipient, groupId, value, expiration, messageNonce]);
     signMessage(fromAccount, message, callback);    
 }
 

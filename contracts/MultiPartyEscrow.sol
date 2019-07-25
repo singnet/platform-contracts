@@ -106,13 +106,14 @@ contract MultiPartyEscrow {
     {
         require(balances[sender] >= value, "Insufficient balance");
 
-        require(messageNonce >= block.number-5 && messageNonce <= block.number+5, "Invalid message nonce");
+        // Blocks seems to take variable time based on network congestion for now removing it. Message nounce will be a blocknumber
+        //require(messageNonce >= block.number-5 && messageNonce <= block.number+5, "Invalid message nonce");
 
         //compose the message which was signed
-        bytes32 message = prefixed(keccak256(abi.encodePacked(this, msg.sender, signer, recipient, groupId, value, expiration, messageNonce)));
+        bytes32 message = prefixed(keccak256(abi.encodePacked("__openChannelByThirdParty", this, msg.sender, signer, recipient, groupId, value, expiration, messageNonce)));
         
         //check for replay attack (message can be used only once)
-        require( ! usedMessages[message], "Invalid signature");
+        require( ! usedMessages[message], "Signature has already been used");
         usedMessages[message] = true;
 
         // check that the signature is from the "sender"
@@ -195,7 +196,7 @@ contract MultiPartyEscrow {
         require(actualAmount <= plannedAmount, "Invalid actual amount");
         
         //compose the message which was signed
-        bytes32 message = prefixed(keccak256(abi.encodePacked(this, channelId, channel.nonce, plannedAmount)));
+        bytes32 message = prefixed(keccak256(abi.encodePacked("__MPE_claim_message", this, channelId, channel.nonce, plannedAmount)));
         // check that the signature is from the signer
         address signAddress = ecrecover(message, v, r, s);
         require(signAddress == channel.signer, "Invalid signature");
