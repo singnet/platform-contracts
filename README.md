@@ -44,9 +44,14 @@ Includes SingularityNET platform contracts, migrations, tests
 npm install
 ```
 
+### Compile 
+```bash
+truffle compile
+```
+
 ### Test 
 ```bash
-npm run test
+truffle test
 ```
 
 ## Package

@@ -282,7 +282,69 @@ contract('MultiPartyEscrow', function(accounts) {
 
             // Test for a replay attack
             await testErrorRevert(escrow.openChannelByThirdParty(accounts[4], accounts[4], accounts[3], groupId, channelDepositAmount, expiration, messageNonce, vrs.v, vrs.r, vrs.s, {from:accounts[7]}));
-        });    
+        });
+        
+        it ("Open the seventh channel for Claim signed by sender", async function()
+        {
+            //sign message by the privet key of accounts[0]
+
+            let channelDepositAmount = 100
+            let plannedAmount = 90
+            let actualAmount = 80
+            
+            let expiration   = web3.eth.blockNumber + 10000000
+            let groupId      = "group42"
+            let currentChannelId = (await escrow.nextChannelId.call()).toNumber()
+            let accountBal_4 = (await escrow.balances.call(accounts[4])).toNumber()
+            let accountBal_7 = (await escrow.balances.call(accounts[7])).toNumber()
+
+            // Signer is Different than the sender
+            await escrow.openChannel(accounts[5], accounts[7], groupId, channelDepositAmount, expiration, {from:accounts[4]})
+            assert.equal((await escrow.balances.call(accounts[4])).toNumber(), accountBal_4 - channelDepositAmount)
+
+            // Message signed by the sender/channel owner or creater
+            let sgn = await signFuns.waitSignedClaimMessage(accounts[4], escrow.address, currentChannelId, 0, plannedAmount);
+            let vrs = signFuns.getVRSFromSignature(sgn.toString("hex"));
+
+            // Testing for Actual Amount > Planned Amount
+            testErrorRevert(escrow.channelClaim(currentChannelId, actualAmount+plannedAmount, plannedAmount, vrs.v, vrs.r, vrs.s, true, {from:accounts[7]}));
+            // Claiming the lower amount and sending remaining channel value back to user
+            await escrow.channelClaim(currentChannelId, actualAmount, plannedAmount, vrs.v, vrs.r, vrs.s, true, {from:accounts[7]});
+            assert.equal((await escrow.balances.call(accounts[7])).toNumber(), accountBal_7 + actualAmount)
+            assert.equal((await escrow.balances.call(accounts[4])).toNumber(), accountBal_4 - actualAmount)
+
+        });
+
+        it ("Open the eight channel for Claim signed by signer", async function()
+        {
+            //sign message by the privet key of accounts[0]
+
+            let channelDepositAmount = 100
+            let plannedAmount = 90
+            let actualAmount = 80
+            
+            let expiration   = web3.eth.blockNumber + 10000000
+            let groupId      = "group42"
+            let currentChannelId = (await escrow.nextChannelId.call()).toNumber()
+            let accountBal_4 = (await escrow.balances.call(accounts[4])).toNumber()
+            let accountBal_7 = (await escrow.balances.call(accounts[7])).toNumber()
+
+            // Signer is Different than the sender
+            await escrow.openChannel(accounts[5], accounts[7], groupId, channelDepositAmount, expiration, {from:accounts[4]})
+            assert.equal((await escrow.balances.call(accounts[4])).toNumber(), accountBal_4 - channelDepositAmount)
+
+            // Message signed by the Signer
+            let sgn = await signFuns.waitSignedClaimMessage(accounts[5], escrow.address, currentChannelId, 0, plannedAmount);
+            let vrs = signFuns.getVRSFromSignature(sgn.toString("hex"));
+
+            // Testing for Actual Amount > Planned Amount
+            testErrorRevert(escrow.channelClaim(currentChannelId, actualAmount+plannedAmount, plannedAmount, vrs.v, vrs.r, vrs.s, true, {from:accounts[7]}));
+            // Claiming the lower amount and sending remaining channel value back to user
+            await escrow.channelClaim(currentChannelId, actualAmount, plannedAmount, vrs.v, vrs.r, vrs.s, true, {from:accounts[7]});
+            assert.equal((await escrow.balances.call(accounts[7])).toNumber(), accountBal_7 + actualAmount)
+            assert.equal((await escrow.balances.call(accounts[4])).toNumber(), accountBal_4 - actualAmount)
+
+        });
  
     it ("Check validity of the signatures with js-server part (claim)", async function()
         {
