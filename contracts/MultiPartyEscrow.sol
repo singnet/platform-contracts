@@ -199,7 +199,7 @@ contract MultiPartyEscrow {
         bytes32 message = prefixed(keccak256(abi.encodePacked("__MPE_claim_message", this, channelId, channel.nonce, plannedAmount)));
         // check that the signature is from the signer
         address signAddress = ecrecover(message, v, r, s);
-        require(signAddress == channel.signer, "Invalid signature");
+        require(signAddress == channel.signer || signAddress == channel.sender, "Invalid signature");
         
         //transfer amount from the channel to the sender
         channel.value        =        channel.value.sub(actualAmount);
