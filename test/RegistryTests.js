@@ -20,17 +20,17 @@ assert.notEqual = assert.notStrictEqual;
 // 1, 3, 6, and 9 orgs and all the combinations of the other parameters.
 
 const start = Object.freeze({
-     Orgs     : 2,
-     Services : 5,
-     TypeRepos: 5,
-     Tags     : 10
+     Orgs     : 1,
+     Services : 2,
+     TypeRepos: 2,
+     Tags     : 5
 });
 
 const end = Object.freeze({
-     Orgs     : 2,
-     Services : 5,
-     TypeRepos: 5,
-     Tags     : 10
+     Orgs     : 1,
+     Services : 2,
+     TypeRepos: 2,
+     Tags     : 5
 });
 
 const increment = Object.freeze({

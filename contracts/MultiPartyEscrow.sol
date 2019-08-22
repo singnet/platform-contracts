@@ -104,7 +104,7 @@ contract MultiPartyEscrow {
     public
     returns(bool) 
     {
-        require(balances[sender] >= value, "Insufficient balance");
+        require(balances[msg.sender] >= value, "Insufficient balance");
 
         // Blocks seems to take variable time based on network congestion for now removing it. Message nounce will be a blocknumber
         //require(messageNonce >= block.number-5 && messageNonce <= block.number+5, "Invalid message nonce");

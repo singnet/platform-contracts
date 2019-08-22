@@ -256,32 +256,32 @@ contract('MultiPartyEscrow', function(accounts) {
             let groupId      = "group42"
             let currentChannelId = (await escrow.nextChannelId.call()).toNumber()
 
+            let accountBal_2 = (await escrow.balances.call(accounts[2])).toNumber()
+//console.log("accountBal_2 - ", accountBal_2)
             let accountBal_4 = (await escrow.balances.call(accounts[4])).toNumber()
             let accountBal_7 = (await escrow.balances.call(accounts[7])).toNumber()
-
+//console.log("accountBal_7 - ", accountBal_7)
             //await escrow.openChannel(accounts[4], accounts[7], groupId, channelDepositAmount, expiration, {from:accounts[4]})
             //assert.equal((await escrow.balances.call(accounts[4])).toNumber(), accountBal_4 - channelDepositAmount)
 
             // Account 4 Provides the Sign to Account 7 to execute on Blockchain
-            let sgn = await signFuns.waitSignOpenChannelMessage(accounts[4], escrow.address, accounts[7], accounts[4], accounts[3], groupId, channelDepositAmount, expiration, messageNonce)
+            let sgn = await signFuns.waitSignOpenChannelMessage(accounts[2], escrow.address, accounts[7], accounts[4], accounts[3], groupId, channelDepositAmount, expiration, messageNonce)
             let vrs = signFuns.getVRSFromSignature(sgn.toString("hex"));
-
-            await escrow.openChannelByThirdParty(accounts[4], accounts[4], accounts[3], groupId, channelDepositAmount, expiration, messageNonce, vrs.v, vrs.r, vrs.s, {from:accounts[7]})
+            await escrow.openChannelByThirdParty(accounts[2], accounts[4], accounts[3], groupId, channelDepositAmount, expiration, messageNonce, vrs.v, vrs.r, vrs.s, {from:accounts[7]})
 
             const [nonce_a, sender_a, signer_a, recipient_a, groupId_a, value_a, expiration_a]
             = await escrow.channels.call(currentChannelId);
-
             assert.equal((await escrow.nextChannelId.call()).toNumber(), currentChannelId + 1)
+            assert.equal((await escrow.balances.call(accounts[2])).toNumber(), accountBal_2)
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), accountBal_4)
             assert.equal((await escrow.balances.call(accounts[7])).toNumber(), accountBal_7 - channelDepositAmount)
-            assert.equal(sender_a, accounts[4])
+            assert.equal(sender_a, accounts[2])
             assert.equal(signer_a, accounts[4])
             assert.equal(recipient_a, accounts[3])
-//console.log(value_a + "===" + channelDepositAmount);            
             assert.equal(value_a.toNumber(), channelDepositAmount)
 
             // Test for a replay attack
-            await testErrorRevert(escrow.openChannelByThirdParty(accounts[4], accounts[4], accounts[3], groupId, channelDepositAmount, expiration, messageNonce, vrs.v, vrs.r, vrs.s, {from:accounts[7]}));
+            await testErrorRevert(escrow.openChannelByThirdParty(accounts[2], accounts[4], accounts[3], groupId, channelDepositAmount, expiration, messageNonce, vrs.v, vrs.r, vrs.s, {from:accounts[7]}));
         });
         
         it ("Open the seventh channel for Claim signed by sender", async function()
