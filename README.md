@@ -20,18 +20,18 @@ Includes SingularityNET platform contracts, migrations, tests
 |-----------|-----------------------------------------------------------------|------------------------------------------|
 | IRegistry | 0x1d466fef                                                      | [IRegistry.sol](contracts/IRegistry.sol) |
 
-## Deployed Contracts (npm version 0.3.2)
+## Deployed Contracts (npm version 0.3.3)
 
-* Registry (Mainnet): [0x2d367d5b442135b29a4705871e4c7d34382cb442](https://etherscan.io/address/0x2d367d5b442135b29a4705871e4c7d34382cb442)
-* Multi Party Escrow (Mainnet): [0xd519dfc46263aebaa4fa43c7666c091016c344ce](https://etherscan.io/address/0xd519dfc46263aebaa4fa43c7666c091016c344ce)
+* Registry (Mainnet): [0xdce9c76ccb881af94f7fb4fac94e4acc584fa9a5](https://etherscan.io/address/0xdce9c76ccb881af94f7fb4fac94e4acc584fa9a5)
+* Multi Party Escrow (Mainnet): [0x34e2eee197efaabecc495fdf3b1781a3b894eb5f](https://etherscan.io/address/0x34e2eee197efaabecc495fdf3b1781a3b894eb5f)
 * AGI Token (Mainnet) :  [0x8eb24319393716668d768dcec29356ae9cffe285](https://etherscan.io/address/0x8eb24319393716668d768dcec29356ae9cffe285)
 
-* Registry (Kovan): [0x65d13448b00ed15598de35532e4131b816692986](https://kovan.etherscan.io/address/0x65d13448b00ed15598de35532e4131b816692986)
-* Multi Party Escrow (Kovan): [0x45ae5546b1f7cca0e58bd5146590a215a8d17583](https://kovan.etherscan.io/address/0x45ae5546b1f7cca0e58bd5146590a215a8d17583)
+* Registry (Kovan): [0x89a780619a7b0542b52bbb929bc1ea01516542ec](https://kovan.etherscan.io/address/0x89a780619a7b0542b52bbb929bc1ea01516542ec)
+* Multi Party Escrow (Kovan): [0x5e3b04dba48b775fcae65d738b7a75589a42fd3a](https://kovan.etherscan.io/address/0x5e3b04dba48b775fcae65d738b7a75589a42fd3a)
 * AGI Token (Kovan) :  [0x3b226fF6AAd7851d3263e53Cb7688d13A07f6E81](https://kovan.etherscan.io/address/0x3b226fF6AAd7851d3263e53Cb7688d13A07f6E81)
 
-* Registry (Ropsten) :  [0x51ec07787757f9a12cf8368f99145bfb4c5aa70e](https://ropsten.etherscan.io/address/0x51ec07787757f9a12cf8368f99145bfb4c5aa70e)
-* Multi Party Escrow (Ropsten) :  [0x11e8944d237c5af3320eba80591e5cfe15aa4468](https://ropsten.etherscan.io/address/0x11e8944d237c5af3320eba80591e5cfe15aa4468)
+* Registry (Ropsten) :  [0x663422c6999ff94933dbcb388623952cf2407f6f](https://ropsten.etherscan.io/address/0x663422c6999ff94933dbcb388623952cf2407f6f)
+* Multi Party Escrow (Ropsten) :  [0x8fb1dc8df86b388c7e00689d1ecb533a160b4d0c](https://ropsten.etherscan.io/address/0x8fb1dc8df86b388c7e00689d1ecb533a160b4d0c)
 * AGI Token (Ropsten) :  [0xb97E9bBB6fd49865709d3F1576e8506ad640a13B](https://ropsten.etherscan.io/address/0xb97E9bBB6fd49865709d3F1576e8506ad640a13B)
 
 
