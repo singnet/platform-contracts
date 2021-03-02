@@ -688,8 +688,6 @@ contract(`Registry ERC-165 test`, async (accounts) => {
 
         const registryIdentifier  = generateInterfaceId(generateSelectorArray(Registry));
         const iregistryIdentifier = generateInterfaceId(generateSelectorArray(IRegistry));
-console.log("registryIdentifier - ", registryIdentifier);
-console.log("iregistryIdentifier - ", iregistryIdentifier);
 
         assert.notEqual(registryIdentifier, iregistryIdentifier, "Registry and IRegistry should never have the same identifier");
     });
