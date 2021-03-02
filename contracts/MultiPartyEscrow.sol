@@ -1,7 +1,7 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.6.0;
 
-import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
-import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/math/SafeMath.sol";
 
 contract MultiPartyEscrow {
     
@@ -55,7 +55,7 @@ contract MultiPartyEscrow {
     public
     returns(bool) 
     {
-        require(token.transferFrom(msg.sender, this, value), "Unable to transfer token to the contract."); 
+        require(token.transferFrom(msg.sender, address(this), value), "Unable to transfer token to the contract."); 
         balances[msg.sender] = balances[msg.sender].add(value);
         emit DepositFunds(msg.sender, value);
         return true;
@@ -175,7 +175,7 @@ contract MultiPartyEscrow {
      * @param r channel senders signatures in V R S for each channel
      * @param s channel senders signatures in V R S for each channel
      */
-    function multiChannelClaim(uint256[] channelIds, uint256[] actualAmounts, uint256[] plannedAmounts, bool[] isSendbacks, uint8[] v, bytes32[] r, bytes32[] s) 
+    function multiChannelClaim(uint256[] memory channelIds, uint256[] memory actualAmounts, uint256[] memory plannedAmounts, bool[] memory isSendbacks, uint8[] memory v, bytes32[] memory r, bytes32[] memory s) 
     public 
     {
         uint256 len = channelIds.length;

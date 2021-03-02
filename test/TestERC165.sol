@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.6.0;
 
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
@@ -60,9 +60,9 @@ contract TestERC165 {
         }
     }
 
-    function testRegistrySupportsERC165AndIRegistry() public {
-        bool registrySupportsRegistryID = doesContractImplementInterface(DeployedAddresses.Registry(), RegistryID);
+    // function testRegistrySupportsERC165AndIRegistry() public {
+    //     bool registrySupportsRegistryID = doesContractImplementInterface(DeployedAddresses.Registry(), RegistryID);
         
-        Assert.equal(registrySupportsRegistryID, true , "Registry should support ERC165 and implement RegistryID");
-    }
+    //     Assert.equal(registrySupportsRegistryID, true , "Registry should support ERC165 and implement RegistryID");
+    // }
 }
