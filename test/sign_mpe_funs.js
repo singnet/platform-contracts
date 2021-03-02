@@ -10,7 +10,7 @@ function sleep(ms)
 
 function signMessage(fromAccount, message, callback) 
 {
-    web3.eth.sign(fromAccount, "0x" + message.toString("hex"), callback)
+    web3.eth.sign("0x" + message.toString("hex"),fromAccount,callback);
 }
 
 
@@ -67,8 +67,8 @@ function getVRSFromSignature(signature) {
     const r = '0x' + signature.slice(0, 64);
     const s = '0x' + signature.slice(64, 128);
     const v = '0x' + signature.slice(128, 130);    // Should be either 27 or 28
-    const v_decimal =  web3.toDecimal(v);
-    const v_compute = (web3.toDecimal(v) < 27 ) ? v_decimal + 27 : v_decimal ;
+    const v_decimal =  web3.utils.toDecimal(v);
+    const v_compute = (web3.utils.toDecimal(v) < 27 ) ? v_decimal + 27 : v_decimal ;
 
     return {
         v: v_compute,
