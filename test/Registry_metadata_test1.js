@@ -16,31 +16,32 @@ contract('Registry', function(accounts) {
 
     it ("set/get metadata", async function()
         { 
-            let orgId     = "TestId"
-            let orgName     = "Original Org Name"
-            let orgName2     = "Updated Org Name" 
-            let serviceId = "ServiceId"
-            let metadataURI = "ipfs://QmUfwZ7pEWBE5zSepKpHDaPibQxpPqoEDRo5Kzai8h5U9B"
-            let orgMetadataURI = "ipfs://QmUfwZ7pEWBE5zSepKpHDaPibQxpPqoEDRo5Kzai8h5U8B"
-            let orgMetadataURI2 = "ipfs://QmUfwZ7pEWBE5zSepKpHDaPibQxpPqoEDRo5Kzai8h5U7B"
+            let orgId     = web3.utils.asciiToHex("TestId");
+            let orgName     = web3.utils.asciiToHex("Original Org Name");
+            let orgName2     = web3.utils.asciiToHex("Updated Org Name");
+            let serviceId = web3.utils.asciiToHex("ServiceId");
+            let metadataURI = web3.utils.asciiToHex("ipfs://QmUfwZ7pEWBE5zSepKpHDaPibQxpPqoEDRo5Kzai8h5U9B");
+            let metadataURI_Updated = web3.utils.asciiToHex("ipfs://QmUfwZ7pEWBE5zSepKpHDaPibQxpPqoEDRo5Kzai8h5U6B");
+            let orgMetadataURI = web3.utils.asciiToHex("ipfs://QmUfwZ7pEWBE5zSepKpHDaPibQxpPqoEDRo5Kzai8h5U8B");
+            let orgMetadataURI2 = web3.utils.asciiToHex("ipfs://QmUfwZ7pEWBE5zSepKpHDaPibQxpPqoEDRo5Kzai8h5U7B");
 
             await registry.createOrganization(orgId, orgMetadataURI, [accounts[1]]);
 
             await registry.createServiceRegistration(orgId, serviceId, metadataURI, [])
             let rez = await registry.getServiceRegistrationById(orgId, serviceId)
-            assert.equal(web3.toAscii(rez[2]), metadataURI)
+            assert.equal(rez[2], metadataURI)
 
             //update service registration
-            await registry.updateServiceRegistration(orgId, serviceId, metadataURI + metadataURI)
+            await registry.updateServiceRegistration(orgId, serviceId, metadataURI_Updated)
             let rez2 = await registry.getServiceRegistrationById(orgId, serviceId)
-            assert.equal(web3.toAscii(rez2[2]), metadataURI + metadataURI)
+            assert.equal(rez2[2], metadataURI_Updated)
 
             let rez3 = await registry.getOrganizationById(orgId);
-            assert.equal(web3.toAscii(rez3[2]), orgMetadataURI);
+            assert.equal(rez3[2], orgMetadataURI);
 
             await registry.changeOrganizationMetadataURI(orgId, orgMetadataURI2);
             let rez4 = await registry.getOrganizationById(orgId);
-            assert.equal(web3.toAscii(rez4[2]), orgMetadataURI2);
+            assert.equal(rez4[2], orgMetadataURI2);
 
         });
 });

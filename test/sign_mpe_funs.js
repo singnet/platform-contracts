@@ -10,7 +10,7 @@ function sleep(ms)
 
 function signMessage(fromAccount, message, callback) 
 {
-    web3.eth.sign("0x" + message.toString("hex"),fromAccount,callback)
+    web3.eth.sign("0x" + message.toString("hex"),fromAccount,callback);
 }
 
 
