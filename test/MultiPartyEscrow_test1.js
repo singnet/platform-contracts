@@ -45,7 +45,7 @@ contract('MultiPartyEscrow', function(accounts) {
     it ("Test Simple wallet 1", async function()
         {   
             // Minting enough tokens for the testcases
-            // An explicit call is required to min the tokens
+            // An explicit call is required to mint the tokens
             //await token.mint(accounts[0],N1 + N2 + N2, {from:accounts[0]});
 
             //Deposit 42000 from accounts[0]
