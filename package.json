@@ -9,9 +9,9 @@
   "scripts": {
     "package-npm": "node scripts/package-npm.js",
     "deploy": "scripts/truffle-migrate",
-    "compile": "node_modules/.bin/truffle compile",
-    "test": "rm -rf build && node_modules/.bin/truffle test",
-    "test-develop": "rm -rf build && node_modules/.bin/truffle test --network develop"
+    "compile": "truffle compile",
+    "test": "rm -rf build && truffle test",
+    "test-develop": "rm -rf build && truffle test --network develop"
   },
   "repository": {
     "type": "git",
