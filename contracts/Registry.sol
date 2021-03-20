@@ -213,7 +213,6 @@ contract Registry is IRegistry, ERC165 {
             }
 
             // shorten keys array
-            //orgsById[orgId].memberKeys.length--;
             orgsById[orgId].memberKeys.pop();
 
             // delete the mapping entry
@@ -248,7 +247,6 @@ contract Registry is IRegistry, ERC165 {
         }
 
         // shorten keys array
-        //orgKeys.length--;
         orgKeys.pop();
 
         // delete contents of organization registration
@@ -361,7 +359,6 @@ contract Registry is IRegistry, ERC165 {
                 orgsById[orgId].servicesById[serviceId].tagsByName[tagNameToMove].itemTagIndex = tagIndexToReplace;
             }
 
-            //orgsById[orgId].servicesById[serviceId].tags.length--;
             orgsById[orgId].servicesById[serviceId].tags.pop();
 
             // swap global tag index lut entries
@@ -379,9 +376,7 @@ contract Registry is IRegistry, ERC165 {
                 orgsById[orgIdToMove].servicesById[itemNameToMove].tagsByName[tagName].globalTagIndex = tagIndexToReplace;
             }
 
-            //servicesByTag[tagName].orgIds.length--;
             servicesByTag[tagName].orgIds.pop();
-            //servicesByTag[tagName].itemNames.length--;
             servicesByTag[tagName].itemNames.pop();
 
             // delete contents of the tag entry
@@ -415,7 +410,6 @@ contract Registry is IRegistry, ERC165 {
             orgsById[orgId].servicesById[serviceToUpdate].orgServiceIndex = indexToUpdate;
         }
 
-        //orgsById[orgId].serviceKeys.length--;
         orgsById[orgId].serviceKeys.pop();
 
         // delete contents of service registration
@@ -528,7 +522,6 @@ contract Registry is IRegistry, ERC165 {
                 orgsById[orgId].typeReposById[repositoryId].tagsByName[tagNameToMove].itemTagIndex = tagIndexToReplace;
             }
 
-            //orgsById[orgId].typeReposById[repositoryId].tags.length--;
             orgsById[orgId].typeReposById[repositoryId].tags.pop();
 
             // swap global tag index lut entries
@@ -546,9 +539,7 @@ contract Registry is IRegistry, ERC165 {
                 orgsById[orgIdToMove].typeReposById[repoNameToMove].tagsByName[tagName].globalTagIndex = tagIndexToReplace;
             }
 
-            //typeReposByTag[tagName].orgIds.length--;
             typeReposByTag[tagName].orgIds.pop();
-            //typeReposByTag[tagName].itemNames.length--;
             typeReposByTag[tagName].itemNames.pop();
 
             // delete contents of the tag entry
@@ -584,7 +575,6 @@ contract Registry is IRegistry, ERC165 {
             orgsById[orgId].typeReposById[typeRepoToUpdate].orgTypeRepoIndex = indexToUpdate;
         }
 
-        //orgsById[orgId].typeRepoKeys.length--;
         orgsById[orgId].typeRepoKeys.pop();
 
         // delete contents of repo registration
