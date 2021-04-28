@@ -1,4 +1,4 @@
-pragma solidity >=0.4.22 <0.8.0;
+pragma solidity ^0.6.0;
 
 /**
   * @title Open registry for management of AI services run on SingularityNET
