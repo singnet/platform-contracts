@@ -45,7 +45,7 @@ const HELPERS = Object.freeze({
     /**
      * Convert bytes retrieved from the EVM to a usable/printable javascript string.
      */
-    bytesToString : (string) => HELPERS.trimByChar(web3.toAscii(string), '\0'),
+    bytesToString : (string) => HELPERS.trimByChar(web3.utils.toAscii(string), '\0'),
     /**
      * Convert an address retrieved from the EVM to a usable/printable javascript string.
      */
@@ -96,7 +96,7 @@ const HELPERS = Object.freeze({
      */
     generateInterfaceId : (methodSignatures = []) =>
         "0x" + methodSignatures
-            .map(methodSignature => web3.sha3(methodSignature)) // keccak256
+            .map(methodSignature => web3.utils.sha3(methodSignature)) // keccak256
             .map(h => Buffer
                 .from(h.substring(2), 'hex')
                 .slice(0, 4) // bytes4()

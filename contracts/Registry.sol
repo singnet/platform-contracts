@@ -1,6 +1,6 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.6.0;
 
-import "openzeppelin-solidity/contracts/introspection/ERC165.sol";
+import "@openzeppelin/contracts/introspection/ERC165.sol";
 import "./IRegistry.sol";
 
 contract Registry is IRegistry, ERC165 {
@@ -65,6 +65,15 @@ contract Registry is IRegistry, ERC165 {
     mapping(bytes32 => ServiceOrTypeRepositoryList) servicesByTag;
     mapping(bytes32 => ServiceOrTypeRepositoryList) typeReposByTag;
 
+    constructor ()
+    public
+    {
+        //ERC165: https://eips.ethereum.org/EIPS/eip-165
+        _registerInterface(0x1d466fef);
+
+    }
+
+
     /**
       * @dev Guard function that forces a revert if the tx sender is unauthorized.
       *      Always authorizes org owner. Can also authorize org members.
@@ -122,7 +131,7 @@ contract Registry is IRegistry, ERC165 {
     //   \___/|_|  \__, |\__,_|_| |_|_/___\__,_|\__|_|\___/|_| |_|     |_|  |_|\__, |_| |_| |_|\__|
     //             |___/                                                       |___/
 
-    function createOrganization(bytes32 orgId, bytes orgMetadataURI, address[] members) external {
+    function createOrganization(bytes32 orgId, bytes calldata orgMetadataURI, address[] calldata members) external override {
 
         requireOrgExistenceConstraint(orgId, false);
 
@@ -139,7 +148,7 @@ contract Registry is IRegistry, ERC165 {
         emit OrganizationCreated(orgId);
     }
 
-    function changeOrganizationOwner(bytes32 orgId, address newOwner) external {
+    function changeOrganizationOwner(bytes32 orgId, address newOwner) external override {
 
         requireOrgExistenceConstraint(orgId, true);
         requireAuthorization(orgId, false);
@@ -149,7 +158,7 @@ contract Registry is IRegistry, ERC165 {
         emit OrganizationModified(orgId);
     }
 
-    function changeOrganizationMetadataURI(bytes32 orgId, bytes orgMetadataURI) external {
+    function changeOrganizationMetadataURI(bytes32 orgId, bytes calldata orgMetadataURI) external override {
 
         requireOrgExistenceConstraint(orgId, true);
         requireAuthorization(orgId, false);
@@ -159,7 +168,7 @@ contract Registry is IRegistry, ERC165 {
         emit OrganizationModified(orgId);
     }
 
-    function addOrganizationMembers(bytes32 orgId, address[] newMembers) external {
+    function addOrganizationMembers(bytes32 orgId, address[] calldata newMembers) external override {
 
         requireOrgExistenceConstraint(orgId, true);
         requireAuthorization(orgId, true);
@@ -169,7 +178,7 @@ contract Registry is IRegistry, ERC165 {
         emit OrganizationModified(orgId);
     }
 
-    function addOrganizationMembersInternal(bytes32 orgId, address[] newMembers) internal {
+    function addOrganizationMembersInternal(bytes32 orgId, address[] memory newMembers) internal {
         for (uint i = 0; i < newMembers.length; i++) {
             if (orgsById[orgId].members[newMembers[i]] == 0) {
                 orgsById[orgId].memberKeys.push(newMembers[i]);
@@ -178,7 +187,7 @@ contract Registry is IRegistry, ERC165 {
         }
     }
 
-    function removeOrganizationMembers(bytes32 orgId, address[] existingMembers) external {
+    function removeOrganizationMembers(bytes32 orgId, address[] calldata existingMembers) external override {
 
         requireOrgExistenceConstraint(orgId, true);
         requireAuthorization(orgId, true);
@@ -204,14 +213,14 @@ contract Registry is IRegistry, ERC165 {
             }
 
             // shorten keys array
-            orgsById[orgId].memberKeys.length--;
+            orgsById[orgId].memberKeys.pop();
 
             // delete the mapping entry
             delete orgsById[orgId].members[existingMember];
         }
     }
 
-    function deleteOrganization(bytes32 orgId) external {
+    function deleteOrganization(bytes32 orgId) external override {
 
         requireOrgExistenceConstraint(orgId, true);
         requireAuthorization(orgId, false);
@@ -238,7 +247,7 @@ contract Registry is IRegistry, ERC165 {
         }
 
         // shorten keys array
-        orgKeys.length--;
+        orgKeys.pop();
 
         // delete contents of organization registration
         delete orgsById[orgId];
@@ -253,7 +262,7 @@ contract Registry is IRegistry, ERC165 {
     //  |____/ \___|_|    \_/ |_|\___\___|     |_|  |_|\__, |_| |_| |_|\__|
     //                                                 |___/
 
-    function createServiceRegistration(bytes32 orgId, bytes32 serviceId, bytes metadataURI, bytes32[] tags) external {
+    function createServiceRegistration(bytes32 orgId, bytes32 serviceId, bytes calldata metadataURI, bytes32[] calldata tags) external override {
 
         requireOrgExistenceConstraint(orgId, true);
         requireAuthorization(orgId, true);
@@ -273,7 +282,7 @@ contract Registry is IRegistry, ERC165 {
         emit ServiceCreated(orgId, serviceId, metadataURI);
     }
 
-    function updateServiceRegistration(bytes32 orgId, bytes32 serviceId, bytes metadataURI) external {
+    function updateServiceRegistration(bytes32 orgId, bytes32 serviceId, bytes calldata metadataURI) external override {
 
         requireOrgExistenceConstraint(orgId, true);
         requireAuthorization(orgId, true);
@@ -284,7 +293,7 @@ contract Registry is IRegistry, ERC165 {
         emit ServiceMetadataModified(orgId, serviceId, metadataURI);
     }
 
-    function addTagsToServiceRegistration(bytes32 orgId, bytes32 serviceId, bytes32[] tags) external {
+    function addTagsToServiceRegistration(bytes32 orgId, bytes32 serviceId, bytes32[] calldata tags) external override {
 
         requireOrgExistenceConstraint(orgId, true);
         requireAuthorization(orgId, true);
@@ -322,7 +331,7 @@ contract Registry is IRegistry, ERC165 {
         }
     }
 
-    function removeTagsFromServiceRegistration(bytes32 orgId, bytes32 serviceId, bytes32[] tags) external {
+    function removeTagsFromServiceRegistration(bytes32 orgId, bytes32 serviceId, bytes32[] calldata tags) external override {
 
         requireOrgExistenceConstraint(orgId, true);
         requireAuthorization(orgId, true);
@@ -350,7 +359,7 @@ contract Registry is IRegistry, ERC165 {
                 orgsById[orgId].servicesById[serviceId].tagsByName[tagNameToMove].itemTagIndex = tagIndexToReplace;
             }
 
-            orgsById[orgId].servicesById[serviceId].tags.length--;
+            orgsById[orgId].servicesById[serviceId].tags.pop();
 
             // swap global tag index lut entries
             tagIndexToReplace = orgsById[orgId].servicesById[serviceId].tagsByName[tagName].globalTagIndex;
@@ -367,15 +376,15 @@ contract Registry is IRegistry, ERC165 {
                 orgsById[orgIdToMove].servicesById[itemNameToMove].tagsByName[tagName].globalTagIndex = tagIndexToReplace;
             }
 
-            servicesByTag[tagName].orgIds.length--;
-            servicesByTag[tagName].itemNames.length--;
+            servicesByTag[tagName].orgIds.pop();
+            servicesByTag[tagName].itemNames.pop();
 
             // delete contents of the tag entry
             delete orgsById[orgId].servicesById[serviceId].tagsByName[tagName];
         }
     }
 
-    function deleteServiceRegistration(bytes32 orgId, bytes32 serviceId) external {
+    function deleteServiceRegistration(bytes32 orgId, bytes32 serviceId) external override {
 
         requireOrgExistenceConstraint(orgId, true);
         requireAuthorization(orgId, true);
@@ -401,7 +410,7 @@ contract Registry is IRegistry, ERC165 {
             orgsById[orgId].servicesById[serviceToUpdate].orgServiceIndex = indexToUpdate;
         }
 
-        orgsById[orgId].serviceKeys.length--;
+        orgsById[orgId].serviceKeys.pop();
 
         // delete contents of service registration
         delete orgsById[orgId].servicesById[serviceId];
@@ -415,7 +424,7 @@ contract Registry is IRegistry, ERC165 {
     //        |___/|_|                         |_|                       |___/
 
     function createTypeRepositoryRegistration(bytes32 orgId, bytes32 repositoryId,
-            bytes repositoryURI, bytes32[] tags) external {
+            bytes calldata repositoryURI, bytes32[] calldata tags) external override {
 
         requireOrgExistenceConstraint(orgId, true);
         requireAuthorization(orgId, true);
@@ -436,7 +445,7 @@ contract Registry is IRegistry, ERC165 {
     }
 
     function updateTypeRepositoryRegistration(bytes32 orgId, bytes32 repositoryId,
-        bytes repositoryURI) external {
+        bytes calldata repositoryURI) external override {
 
         requireOrgExistenceConstraint(orgId, true);
         requireAuthorization(orgId, true);
@@ -447,7 +456,7 @@ contract Registry is IRegistry, ERC165 {
         emit TypeRepositoryModified(orgId, repositoryId);
     }
 
-    function addTagsToTypeRepositoryRegistration(bytes32 orgId, bytes32 repositoryId, bytes32[] tags) external {
+    function addTagsToTypeRepositoryRegistration(bytes32 orgId, bytes32 repositoryId, bytes32[] calldata tags) external override {
 
         requireOrgExistenceConstraint(orgId, true);
         requireAuthorization(orgId, true);
@@ -484,7 +493,7 @@ contract Registry is IRegistry, ERC165 {
         }
     }
 
-    function removeTagsFromTypeRepositoryRegistration(bytes32 orgId, bytes32 repositoryId, bytes32[] tags) external {
+    function removeTagsFromTypeRepositoryRegistration(bytes32 orgId, bytes32 repositoryId, bytes32[] calldata tags) external override {
 
         requireOrgExistenceConstraint(orgId, true);
         requireAuthorization(orgId, true);
@@ -513,7 +522,7 @@ contract Registry is IRegistry, ERC165 {
                 orgsById[orgId].typeReposById[repositoryId].tagsByName[tagNameToMove].itemTagIndex = tagIndexToReplace;
             }
 
-            orgsById[orgId].typeReposById[repositoryId].tags.length--;
+            orgsById[orgId].typeReposById[repositoryId].tags.pop();
 
             // swap global tag index lut entries
             tagIndexToReplace = orgsById[orgId].typeReposById[repositoryId].tagsByName[tagName].globalTagIndex;
@@ -530,15 +539,15 @@ contract Registry is IRegistry, ERC165 {
                 orgsById[orgIdToMove].typeReposById[repoNameToMove].tagsByName[tagName].globalTagIndex = tagIndexToReplace;
             }
 
-            typeReposByTag[tagName].orgIds.length--;
-            typeReposByTag[tagName].itemNames.length--;
+            typeReposByTag[tagName].orgIds.pop();
+            typeReposByTag[tagName].itemNames.pop();
 
             // delete contents of the tag entry
             delete orgsById[orgId].typeReposById[repositoryId].tagsByName[tagName];
         }
     }
 
-    function deleteTypeRepositoryRegistration(bytes32 orgId, bytes32 repositoryId) external {
+    function deleteTypeRepositoryRegistration(bytes32 orgId, bytes32 repositoryId) external override {
 
         requireOrgExistenceConstraint(orgId, true);
         requireAuthorization(orgId, true);
@@ -566,7 +575,7 @@ contract Registry is IRegistry, ERC165 {
             orgsById[orgId].typeReposById[typeRepoToUpdate].orgTypeRepoIndex = indexToUpdate;
         }
 
-        orgsById[orgId].typeRepoKeys.length--;
+        orgsById[orgId].typeRepoKeys.pop();
 
         // delete contents of repo registration
         delete orgsById[orgId].typeReposById[repositoryId];
@@ -579,116 +588,116 @@ contract Registry is IRegistry, ERC165 {
     //   \____|\___|\__|\__\___|_|  |___/
     //
 
-    function listOrganizations() external view returns (bytes32[] orgIds) {
+    function listOrganizations() external override view returns (bytes32[] memory orgIds) {
         return orgKeys;
     }
 
-    function getOrganizationById(bytes32 orgId) external view
-            returns(bool found, bytes32 id, bytes orgMetadataURI, address owner, address[] members, bytes32[] serviceIds, bytes32[] repositoryIds) {
+    function getOrganizationById(bytes32 orgId) external override view
+            returns(bool found, bytes32 id, bytes memory orgMetadataURI, address owner, address[] memory members, bytes32[] memory serviceIds, bytes32[] memory repositoryIds) {
 
         // check to see if this organization exists
         if(orgsById[orgId].organizationId == bytes32(0x0)) {
             found = false;
-            return;
+        } 
+        else {
+            found = true;
+            id = orgsById[orgId].organizationId;
+            orgMetadataURI = orgsById[orgId].orgMetadataURI;
+            owner = orgsById[orgId].owner;
+            members = orgsById[orgId].memberKeys;
+            serviceIds = orgsById[orgId].serviceKeys;
+            repositoryIds = orgsById[orgId].typeRepoKeys;
         }
 
-        found = true;
-        id = orgsById[orgId].organizationId;
-        orgMetadataURI = orgsById[orgId].orgMetadataURI;
-        owner = orgsById[orgId].owner;
-        members = orgsById[orgId].memberKeys;
-        serviceIds = orgsById[orgId].serviceKeys;
-        repositoryIds = orgsById[orgId].typeRepoKeys;
+
     }
 
-    function listServicesForOrganization(bytes32 orgId) external view returns (bool found, bytes32[] serviceIds) {
+    function listServicesForOrganization(bytes32 orgId) external override view returns (bool found, bytes32[] memory serviceIds) {
 
         // check to see if this organization exists
         if(orgsById[orgId].organizationId == bytes32(0x0)) {
             found = false;
-            return;
         }
-
-        found = true;
-        serviceIds = orgsById[orgId].serviceKeys;
+        else {
+            found = true;
+            serviceIds = orgsById[orgId].serviceKeys;
+        }
     }
 
-    function getServiceRegistrationById(bytes32 orgId, bytes32 serviceId) external view
-            returns (bool found, bytes32 id, bytes metadataURI, bytes32[] tags) {
+    function getServiceRegistrationById(bytes32 orgId, bytes32 serviceId) external override view
+            returns (bool found, bytes32 id, bytes memory metadataURI, bytes32[] memory tags) {
 
         // check to see if this organization exists
         if(orgsById[orgId].organizationId == bytes32(0x0)) {
             found = false;
-            return;
-        }
-
-        // check to see if this repo exists
-        if(orgsById[orgId].servicesById[serviceId].serviceId == bytes32(0x0)) {
+        } 
+        else if(orgsById[orgId].servicesById[serviceId].serviceId == bytes32(0x0)) {
+            // check to see if this repo exists
             found = false;
-            return;
+        }
+        else {
+            found        = true;
+            id           = orgsById[orgId].servicesById[serviceId].serviceId;
+            metadataURI  = orgsById[orgId].servicesById[serviceId].metadataURI;
+            tags         = orgsById[orgId].servicesById[serviceId].tags;
         }
 
-        found        = true;
-        id           = orgsById[orgId].servicesById[serviceId].serviceId;
-        metadataURI  = orgsById[orgId].servicesById[serviceId].metadataURI;
-        tags         = orgsById[orgId].servicesById[serviceId].tags;
     }
 
-    function listTypeRepositoriesForOrganization(bytes32 orgId) external view returns (bool found, bytes32[] repositoryIds) {
+    function listTypeRepositoriesForOrganization(bytes32 orgId) external override view returns (bool found, bytes32[] memory repositoryIds) {
 
         // check to see if this organization exists
         if(orgsById[orgId].organizationId == bytes32(0x0)) {
             found = false;
-            return;
+        } else {
+            found = true;
+            repositoryIds = orgsById[orgId].typeRepoKeys;
         }
 
-        found = true;
-        repositoryIds = orgsById[orgId].typeRepoKeys;
     }
 
-    function getTypeRepositoryById(bytes32 orgId, bytes32 repositoryId) external view
-            returns (bool found, bytes32 id, bytes repositoryURI, bytes32[] tags) {
+    function getTypeRepositoryById(bytes32 orgId, bytes32 repositoryId) external override view
+            returns (bool found, bytes32 id, bytes memory repositoryURI, bytes32[] memory tags) {
 
         // check to see if this organization exists
         if(orgsById[orgId].organizationId == bytes32(0x0)) {
             found = false;
-            return;
-        }
-
-        // check to see if this repo exists
-        if(orgsById[orgId].typeReposById[repositoryId].repositoryId == bytes32(0x0)) {
+        } 
+        else if(orgsById[orgId].typeReposById[repositoryId].repositoryId == bytes32(0x0)) {
+            // check to see if this repo exists
             found = false;
-            return;
+        }
+        else {
+            found = true;
+            id = repositoryId;
+            repositoryURI = orgsById[orgId].typeReposById[repositoryId].repositoryURI;
+            tags = orgsById[orgId].typeReposById[repositoryId].tags;
         }
 
-        found = true;
-        id = repositoryId;
-        repositoryURI = orgsById[orgId].typeReposById[repositoryId].repositoryURI;
-        tags = orgsById[orgId].typeReposById[repositoryId].tags;
     }
 
-    function listServiceTags() external view returns (bytes32[] tags) {
+    function listServiceTags() external override view returns (bytes32[] memory tags) {
         return serviceTags;
     }
 
-    function listServicesForTag(bytes32 tag) external view returns (bytes32[] orgIds, bytes32[] serviceIds) {
+    function listServicesForTag(bytes32 tag) external override view returns (bytes32[] memory orgIds, bytes32[] memory serviceIds) {
         orgIds = servicesByTag[tag].orgIds;
         serviceIds = servicesByTag[tag].itemNames;
     }
 
-    function listTypeRepositoryTags() external view returns (bytes32[] tags) {
+    function listTypeRepositoryTags() external override view returns (bytes32[] memory tags) {
         return typeRepoTags;
     }
 
-    function listTypeRepositoriesForTag(bytes32 tag) external view returns (bytes32[] orgIds, bytes32[] repositoryIds) {
+    function listTypeRepositoriesForTag(bytes32 tag) external override view returns (bytes32[] memory orgIds, bytes32[] memory repositoryIds) {
         orgIds = typeReposByTag[tag].orgIds;
         repositoryIds = typeReposByTag[tag].itemNames;
     }
 
     // ERC165: https://eips.ethereum.org/EIPS/eip-165
-    function supportsInterface(bytes4 interfaceID) external view returns (bool) {
-        return
-            interfaceID == this.supportsInterface.selector || // ERC165
-            interfaceID == 0x1d466fef; // IRegistry
-    }
+    //function supportsInterface(bytes4 interfaceID) external view returns (bool) {
+    //    return
+    //        interfaceID == this.supportsInterface.selector || // ERC165
+    //        interfaceID == 0x1d466fef; // IRegistry
+    //}
 }
