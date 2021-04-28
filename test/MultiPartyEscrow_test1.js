@@ -46,7 +46,7 @@ contract('MultiPartyEscrow', function(accounts) {
         {   
             // Minting enough tokens for the testcases
             // An explicit call is required to mint the tokens
-            //await token.mint(accounts[0],N1 + N2 + N2, {from:accounts[0]});
+            await token.mint(accounts[0],100000000000000, {from:accounts[0]});
 
             //Deposit 42000 from accounts[0]
             await token.approve(escrow.address,N1, {from:accounts[0]});
