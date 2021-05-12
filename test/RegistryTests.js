@@ -22,22 +22,16 @@ assert.notEqual = assert.notStrictEqual;
 const start = Object.freeze({
      Orgs     : 2,
      Services : 5,
-     TypeRepos: 5,
-     Tags     : 10
 });
 
 const end = Object.freeze({
      Orgs     : 2,
      Services : 5,
-     TypeRepos: 5,
-     Tags     : 10
 });
 
 const increment = Object.freeze({
     Orgs     : 1,
     Services : 1,
-    TypeRepos: 1,
-    Tags     : 1
 });
 
 const doTest = () => {
@@ -52,9 +46,9 @@ const doTest = () => {
 };
 
 
-const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPerOrg, suite_numTags) => {
+const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg) => {
 
-    contract(`Registry Integration Tests | numOrgs: ${suite_numOrgs}, servicesPerOrg: ${suite_servicesPerOrg}, reposPerOrg: ${suite_reposPerOrg}, numTags: ${suite_numTags}`, async (accounts) => {
+    contract(`Registry Integration Tests | numOrgs: ${suite_numOrgs}, servicesPerOrg: ${suite_servicesPerOrg}`, async (accounts) => {
 
         before(async () => {
             s.RegistryInstance = await Registry.deployed();
@@ -71,11 +65,7 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                 getOrgName        : (i) => `${c.OrganizationName}_${i}`,
                 getMemberAddress  : (i) => `0x${String(i).padStart(40, '0')}`,
                 getServiceId    : (orgId, i) => `${orgId}_Service_${i}`,
-                getMetaUri        : (orgId, repoId) => 'ipfs://' + web3.utils.fromAscii(`${repoId}-${orgId}`).substring(0, 50),
-                getServiceTagName : (i) => `serviceTagFoo_${i}`,
-                getRepoId       : (orgId, i) => `${orgId}_Repo_${i}`,
-                getRepoUri        : (orgId, repoId) => 'ipfs://' + web3.utils.fromAscii(`${orgId}-${repoId}`).substring(0, 50),
-                getRepoTagName    : (i) => `repoTagFoo_${i}`
+                getMetaUri        : (orgId, repoId) => 'ipfs://' + web3.utils.fromAscii(`${repoId}-${orgId}`).substring(0, 50)
             })
         });
 
@@ -84,12 +74,7 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
             RegistryInstance: null,
             Data: Object.seal({
                 Orgs: new Set(),
-                ServiceTags: new Set(),
-                RepoTags: new Set(),
-                OrgsToServices: new Map(),
-                OrgsToRepos: new Map(),
-                TagsToServices: new Map(),
-                TagsToRepos: new Map()
+                OrgsToServices: new Map()
             })
         });
 
@@ -114,36 +99,33 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
 
             const createResult = await s.RegistryInstance.createOrganization(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_orgMetadataURI), _membersArray);
             s.Data.Orgs.add(_orgId);
-            const {found, id, orgMetadataURI, owner, members, serviceIds, repositoryIds} = await s.RegistryInstance.getOrganizationById.call(web3.utils.asciiToHex(_orgId));
-            return {receipt: createResult.receipt, view: {found, id, orgMetadataURI, owner, members, serviceIds, repositoryNames: repositoryIds}};
+            const {found, id, orgMetadataURI, owner, members, serviceIds} = await s.RegistryInstance.getOrganizationById.call(web3.utils.asciiToHex(_orgId));
+            return {receipt: createResult.receipt, view: {found, id, orgMetadataURI, owner, members, serviceIds}};
         };
 
         const deleteOrganization = async (_orgId) => {
 
             const deleteResult = await s.RegistryInstance.deleteOrganization(web3.utils.asciiToHex(_orgId));
 
-            s.Data.OrgsToServices.getOrCreateSet(_orgId).forEach(deleteAllLocalTagsForService);
-            s.Data.OrgsToRepos.getOrCreateSet(_orgId).forEach(deleteAllLocalTagsForRepo);
+            s.Data.OrgsToServices.getOrCreateSet(_orgId);
 
             s.Data.Orgs.delete(_orgId);
             s.Data.OrgsToServices.delete(_orgId);
-            s.Data.OrgsToRepos.delete(_orgId);
 
-            const {found, id, orgMetadataURI, owner, serviceIds, repositoryIds} = await s.RegistryInstance.getOrganizationById.call(web3.utils.asciiToHex(_orgId));
+            const {found, id, orgMetadataURI, owner, serviceIds} = await s.RegistryInstance.getOrganizationById.call(web3.utils.asciiToHex(_orgId));
 
-            return {receipt: deleteResult.receipt, view: {found, id, orgMetadataURI, owner, serviceIds, repositoryNames: repositoryIds}};
+            return {receipt: deleteResult.receipt, view: {found, id, orgMetadataURI, owner, serviceIds}};
         };
 
-        const createService = async (_orgId, _serviceId, _metadataURI, _tags) => {
+        const createService = async (_orgId, _serviceId, _metadataURI) => {
 
-            const createResult = await s.RegistryInstance.createServiceRegistration(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_serviceId), web3.utils.asciiToHex(_metadataURI), convertTags(_tags));
+            const createResult = await s.RegistryInstance.createServiceRegistration(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_serviceId), web3.utils.asciiToHex(_metadataURI));
 
             s.Data.OrgsToServices.getOrCreateSet(_orgId).add(_serviceId);
-            updateLocalServiceTagData(_orgId, _serviceId, _tags, true);
 
-            const {found, id, metadataURI, tags} = await s.RegistryInstance.getServiceRegistrationById.call(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_serviceId));
+            const {found, id, metadataURI} = await s.RegistryInstance.getServiceRegistrationById.call(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_serviceId));
 
-            return {receipt: createResult.receipt, view: {found, name: id, metadataURI, serviceTags: tags}};
+            return {receipt: createResult.receipt, view: {found, name: id, metadataURI}};
         };
 
         const deleteService = async (_orgId, _serviceId) => {
@@ -152,134 +134,24 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
 
             s.Data.OrgsToServices.getOrCreateSet(_orgId).delete(_serviceId);
 
-            deleteAllLocalTagsForService(_serviceId);
+            const {found, id, metadataURI} = await s.RegistryInstance.getServiceRegistrationById.call(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_serviceId));
 
-            const {found, id, metadataURI, tags} = await s.RegistryInstance.getServiceRegistrationById.call(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_serviceId));
-
-            return {receipt: deleteResult.receipt, view: {found, name: id, metadataURI, serviceTags: tags}};
+            return {receipt: deleteResult.receipt, view: {found, name: id, metadataURI}};
         };
 
-        const createTypeRepository = async (_orgId, _repoId, _repoUri, _tags) => {
-
-            const createResult = await s.RegistryInstance.createTypeRepositoryRegistration(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_repoId), web3.utils.asciiToHex(_repoUri), convertTags(_tags));
-
-            s.Data.OrgsToRepos.getOrCreateSet(_orgId).add(_repoId);
-            updateLocalRepoTagData(_orgId, _repoId, _tags, true);
-
-            const {found, id, repositoryURI, tags} = await s.RegistryInstance.getTypeRepositoryById.call(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_repoId));
-
-            return {receipt: createResult.receipt, view: {found, name: id, repositoryURI, repositoryTags: tags}};
-        };
-
-        const deleteRepo = async (_orgId, _repoId) => {
-
-            const deleteResult = await s.RegistryInstance.deleteTypeRepositoryRegistration(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_repoId));
-
-            s.Data.OrgsToRepos.getOrCreateSet(_orgId).delete(_repoId);
-
-            deleteAllLocalTagsForRepo(_repoId);
-
-            const {found, id, repositoryURI, tags} = await s.RegistryInstance.getTypeRepositoryById.call(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_repoId));
-
-            return {receipt: deleteResult.receipt, view: {found, name: id, repositoryURI, repositoryTags: tags}};
-        };
-
-        const addTagsToService = async (_orgId, _serviceId, _tags) => {
-
-            const addResult = await s.RegistryInstance.addTagsToServiceRegistration(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_serviceId), convertTags(_tags));
-
-            updateLocalServiceTagData(_orgId, _serviceId, _tags, true);
-
-            const {found, id, metadataURI, tags} = await s.RegistryInstance.getServiceRegistrationById.call(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_serviceId));
-
-            return {receipt: addResult.receipt, view: {found, name: id, metadataURI, serviceTags: tags}};
-        };
-
-        const addTagsToRepo = async (_orgId, _repoId, _tags) => {
-
-            const addResult = await s.RegistryInstance.addTagsToTypeRepositoryRegistration(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_repoId), convertTags(_tags));
-
-            updateLocalRepoTagData(_orgId, _repoId, _tags, true);
-
-            const {found, id, repositoryURI, tags} = await s.RegistryInstance.getTypeRepositoryById.call(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_repoId));
-
-            return {receipt: addResult.receipt, view: {found, name: id, repositoryURI, repositoryTags: tags}};
-        };
-
-        const removeTagsFromService = async (_orgId, _serviceId, _tags) => {
-
-            const removeResult = await s.RegistryInstance.removeTagsFromServiceRegistration(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_serviceId), convertTags(_tags));
-
-            updateLocalServiceTagData(_orgId, _serviceId, _tags, false);
-
-            const {found, id, metadataURI, tags} = await s.RegistryInstance.getServiceRegistrationById.call(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_serviceId));
-
-            return {receipt: removeResult.receipt, view: {found, name: id, metadataURI, serviceTags: tags}};
-        };
-
-        const removeTagsFromRepo = async (_orgId, _repoId, _tags) => {
-
-            const removeResult = await s.RegistryInstance.removeTagsFromTypeRepositoryRegistration(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_repoId), convertTags(_tags));
-
-            updateLocalRepoTagData(_orgId, _repoId, _tags, false);
-
-            const {found, id, repositoryURI, tags} = await s.RegistryInstance.getTypeRepositoryById.call(web3.utils.asciiToHex(_orgId), web3.utils.asciiToHex(_repoId));
-
-            return {receipt: removeResult.receipt, view: {found, name: id, repositoryURI, repositoryTags: tags}};
-        };
 
         // helpers for local data store
-
-        const deleteAllLocalTagsForService = (_serviceId) => {
-            s.Data.TagsToServices.forEach((v, k) => v.delete(_serviceId));
-        };
-
-        const deleteAllLocalTagsForRepo = (_repoId) => s.Data.TagsToRepos.forEach((v, k) => v.delete(_repoId));
-
-        const updateLocalServiceTagData = (_orgId, _serviceId, _tags, _add) => {
-
-            if (_add) {
-                _tags.forEach(t => {
-                    s.Data.ServiceTags.add(t);
-                    s.Data.TagsToServices.getOrCreateSet(t).add(_serviceId);
-                });
-            } else {
-                _tags.forEach(t => {
-                    s.Data.TagsToServices.getOrCreateSet(t).delete(_serviceId);
-                })
-            }
-        };
-
-        const updateLocalRepoTagData = (_orgId, _repoId, _tags, _add) => {
-
-            if (_add) {
-                _tags.forEach(t => {
-                    s.Data.RepoTags.add(t);
-                    s.Data.TagsToRepos.getOrCreateSet(t).add(_repoId);
-                });
-            } else {
-                _tags.forEach(t => {
-                    s.Data.TagsToRepos.getOrCreateSet(t).delete(_repoId);
-                });
-            }
-        };
 
         /**
          * Asserts that the smart contract state matches the in-memory state
          */
         const validateAllTheThings = async (
-            /* Set<String>              */ _orgIds, _serviceTags, _repoTags,
-            /* Map<String, Set<String>> */ _orgsToServices, _orgsToRepos, _tagsToServices, _tagsToRepos) => {
+            /* Set<String>              */ _orgIds, 
+            /* Map<String, Set<String>> */ _orgsToServices) => {
 
             // validate top level orgs and tags
             const orgIds = (await s.RegistryInstance.listOrganizations.call()).map(bytesToString);
             assertArraysEqual(assert.equal, [..._orgIds], orgIds, "listOrganizations returned unexpected org names");
-
-            const serviceTags = (await s.RegistryInstance.listServiceTags.call()).map(bytesToString);
-            assertArraysEqual(assert.equal, [..._serviceTags], serviceTags, "listServiceTags returned unexpected service tags");
-
-            const repoTags = (await s.RegistryInstance.listTypeRepositoryTags.call()).map(bytesToString);
-            assertArraysEqual(assert.equal, [..._repoTags], repoTags, "listTypeRepositoryTags returned unexpected repo tags");
 
             // validate org->service mappings
             await _orgsToServices.forEachAsync(async (orgId, services) => {
@@ -292,44 +164,10 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                     , "listServicesForOrganization returned unexpected services for org " + orgId);
             });
 
-            // validate org->repo mappings
-            await _orgsToRepos.forEachAsync(async (orgId, repos) => {
-
-                const {found, repositoryIds} = await s.RegistryInstance.listTypeRepositoriesForOrganization.call(web3.utils.asciiToHex(orgId));
-
-                const repoIdsDecoded = repositoryIds?repositoryIds.map(bytesToString):[];
-
-                assertArraysEqual(assert.equal, [...repos], repoIdsDecoded
-                    , "listTypeRepositoriesForOrganization returned unexpected repos for org " + orgId);
-            });
-
-            // validate tag->service mappings
-            await _tagsToServices.forEachAsync(async (tagName, services) => {
-
-                const {orgIds, serviceIds} = await s.RegistryInstance.listServicesForTag.call(web3.utils.asciiToHex(tagName));
-
-                const orgIdsDecoded = orgIds.map(bytesToString); // TODO: actually validate the org names
-                const serviceIdsDecoded = serviceIds?serviceIds.map(bytesToString):[];
-
-                assertArraysEqual(assert.equal, [...services], serviceIdsDecoded
-                    , "listServicesForTag returned unexpected services for tag " + tagName);
-            });
-
-            // validate tag->repo mappings
-            await _tagsToRepos.forEachAsync(async (tagName, repos) => {
-
-                const {orgIds, repositoryIds} = await s.RegistryInstance.listTypeRepositoriesForTag.call(web3.utils.asciiToHex(tagName));
-
-                const orgIdsDecoded = orgIds.map(bytesToString); // TODO: actually validate the org names
-                const repoIdsDecoded = repositoryIds?repositoryIds.map(bytesToString):[];
-
-                assertArraysEqual(assert.equal, [...repos], repoIdsDecoded
-                    , "listTypeRepositoriesForTag returned unexpected repos for tag " + tagName);
-            });
         };
 
 
-        const testLogic = async (numOrgs, servicesPerOrg, reposPerOrg, numTags) => {
+        const testLogic = async (numOrgs, servicesPerOrg) => {
             // create numOrgs orgs
             for (let i = 0; i < numOrgs; i++) {
                 // setup params
@@ -346,7 +184,7 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                         , `createOrganization tx should succeed for ${orgId}`);
 
                     // destructure view
-                    const {found, id, orgMetadataURI, owner, members, serviceIds, repositoryNames} = createResult.view;
+                    const {found, id, orgMetadataURI, owner, members, serviceIds} = createResult.view;
                     const membersDecoded = members.map(m => addressToString(m));
                     // validate view
                     assert.equal(true, found, "Org not found after registration");
@@ -355,63 +193,30 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                     assert.equal(c.CreatorAccount, addressToString(owner), "Org registered with the wrong owner");
                     assertArraysEqual(assert.equal, membersArray, membersDecoded, "Org registered with incorrect members");
                     assert.equal(0, serviceIds.length, "Org registered with pre-existing services");
-                    assert.equal(0, repositoryNames?repositoryNames.length:0, "Org registered with pre-existing type repos");
                 });
             }
 
-            // create servicesPerOrg services per org, with tags/2 tags per service
-            const serviceTagsFirstHalf = intRange(0, Math.floor(numTags / 2)).map(c.Format.getServiceTagName);
+            // create servicesPerOrg services per org
             for (let i = 0; i < numOrgs; i++) {
                 for (let j = 0; j < servicesPerOrg; j++) {
                     const orgId = c.Format.getOrgId(i);
                     const serviceId = c.Format.getServiceId(orgId, j);
                     const metadataURI = c.Format.getMetaUri(orgId, j);
 
-                    it(`Creates a service ${serviceId} for org ${orgId} with ${serviceTagsFirstHalf.length} tags`, async () => {
+                    it(`Creates a service ${serviceId} for org ${orgId} `, async () => {
                         // interact with contract
-                        const createResult = await createService(orgId, serviceId, metadataURI, serviceTagsFirstHalf);
+                        const createResult = await createService(orgId, serviceId, metadataURI);
 
                         // validate receipt
                         assert.equal(TX_STATUS.SUCCESS, createResult.receipt.status?TX_STATUS.SUCCESS:TX_STATUS.FAILURE, `createService tx should succeed for ${serviceId}`);
 
                         // destructure view
-                        const {found: found, name: viewServiceId, metadataURI: viewMetadataURI, serviceTags: viewServiceTags} = createResult.view;
-                        
-                        const viewServiceTagsDecoded = viewServiceTags?viewServiceTags.map(bytesToString):[];
+                        const {found: found, name: viewServiceId, metadataURI: viewMetadataURI} = createResult.view;
 
                         // validate view
                         assert.equal(true, found, "Service not found after registration");
                         assert.equal(serviceId, bytesToString(viewServiceId), "Service registered with the wrong name");
                         assert.equal(metadataURI, bytesToString(viewMetadataURI),  "Service registered with the wrong uri");
-                        assertArraysEqual(assert.equal, serviceTagsFirstHalf, viewServiceTagsDecoded, "Service registered with incorrect tags");
-                    });
-                }
-            }
-
-            // create reposPerOrg type repositories per org, with tags/2 tags per repo
-            const repoTagsFirstHalf = intRange(0, Math.floor(numTags / 2)).map(c.Format.getRepoTagName);
-            for (let i = 0; i < numOrgs; i++) {
-                for (let j = 0; j < reposPerOrg; j++) {
-                    const orgId = c.Format.getOrgId(i);
-                    const repoId = c.Format.getRepoId(orgId, j);
-                    const repoUri = c.Format.getRepoUri(orgId, j);
-
-                    it(`Creates a type repository ${repoId} for org ${orgId} with ${repoTagsFirstHalf.length} tags`, async () => {
-                        // interact with contract
-                        const createResult = await createTypeRepository(orgId, repoId, repoUri, repoTagsFirstHalf);
-
-                        // validate receipt
-                        assert.equal(TX_STATUS.SUCCESS, createResult.receipt.status?TX_STATUS.SUCCESS:TX_STATUS.FAILURE, `createTypeRepository tx should succeed for ${repoId}`);
-
-                        // destructure view
-                        const {found: found, name: viewRepoId, repositoryURI: viewRepoUri, repositoryTags: viewRepoTags} = createResult.view;
-                        const viewRepoTagsDecoded = viewRepoTags?viewRepoTags.map(bytesToString):[];
-
-                        // validate view
-                        assert.equal(true, found, "Repo not found after registration");
-                        assert.equal(repoId, bytesToString(viewRepoId), "Repo registered with the wrong name");
-                        assert.equal(repoUri, bytesToString(viewRepoUri), "Repo registered with the wrong URI");
-                        assertArraysEqual(assert.equal, repoTagsFirstHalf, viewRepoTagsDecoded, "Repo registered with incorrect tags");
                     });
                 }
             }
@@ -419,73 +224,7 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
 
             // VALIDATE ALL THE THINGS
 
-            it(`VALIDATE ALL THE THINGS!`, async () => await validateAllTheThings(s.Data.Orgs, s.Data.ServiceTags, s.Data.RepoTags, s.Data.OrgsToServices, s.Data.OrgsToRepos, s.Data.TagsToServices, s.Data.TagsToRepos));
-
-
-            // add tags/2 tags to each service and repo
-            const serviceTagsSecondHalf = numTags === 0 ? [] : intRange(Math.floor(numTags / 2) + 1, numTags).map(c.Format.getServiceTagName);
-            if (numTags !== 0) {
-                for (let i = 0; i < numOrgs; i++) {
-                    for (let j = 0; j < servicesPerOrg; j++) {
-                        const orgId = c.Format.getOrgId(i);
-                        const serviceId = c.Format.getServiceId(orgId, j);
-                        const metadataURI = c.Format.getMetaUri(orgId, j);
-
-                        it(`Adds ${serviceTagsSecondHalf.length} more tags to ${serviceId}`, async () => {
-
-                            const addResult = await addTagsToService(orgId, serviceId, serviceTagsSecondHalf)
-
-                            assert.equal(TX_STATUS.SUCCESS, addResult.receipt.status?TX_STATUS.SUCCESS:TX_STATUS.FAILURE, `addTagsToService should succeed for ${serviceId} with ${serviceTagsSecondHalf.length} tags`);
-
-                            // destructure view
-                            const {found: found, name: viewServiceId, metadataURI: viewMetadataURI, serviceTags: viewServiceTags} = addResult.view;
-                            const viewServiceTagsDecoded = viewServiceTags?viewServiceTags.map(bytesToString):[];
-                            const expectedServiceTags = [...serviceTagsFirstHalf, ...serviceTagsSecondHalf];
-
-
-                            // validate view
-                            assert.equal(true, found, "Service not found after adding tags");
-                            assert.equal(serviceId, bytesToString(viewServiceId), "Service name doesnt match after adding tags");
-                            assert.equal(metadataURI, bytesToString(viewMetadataURI), "Service metadataURI doesnt match after adding tags");
-                            assertArraysEqual(assert.equal, expectedServiceTags, viewServiceTagsDecoded, "Service registered with incorrect tags");
-                        });
-                    }
-                }
-            }
-
-            const repoTagsSecondHalf = numTags === 0 ? [] : intRange(Math.floor(numTags / 2) + 1, numTags).map(c.Format.getRepoTagName);
-            if (numTags !== 0) {
-                for (let i = 0; i < numOrgs; i++) {
-                    for (let j = 0; j < reposPerOrg; j++) {
-                        const orgId = c.Format.getOrgId(i);
-                        const repoId = c.Format.getRepoId(orgId, j);
-                        const repoUri = c.Format.getRepoUri(orgId, j);
-
-                        it(`Adds ${repoTagsSecondHalf.length} more tags to ${repoId}`, async () => {
-                            // interact with contract
-                            const addResult = await addTagsToRepo(orgId, repoId, repoTagsSecondHalf);
-
-                            // validate receipt
-                            assert.equal(TX_STATUS.SUCCESS, addResult.receipt.status?TX_STATUS.SUCCESS:TX_STATUS.FAILURE, `addTagsToRepo should succeed for ${repoId}`);
-
-                            // destructure view
-                            const {found: found, name: viewRepoId, repositoryURI: viewRepoUri, repositoryTags: viewRepoTags} = addResult.view;
-                            const viewRepoTagsDecoded = viewRepoTags?viewRepoTags.map(bytesToString):[];
-                            const expectedRepoTags = [...repoTagsFirstHalf, ...repoTagsSecondHalf];
-
-                            // validate view
-                            assert.equal(true, found, "Repo not found after registration");
-                            assert.equal(repoId, bytesToString(viewRepoId), "Repo registered with the wrong name");
-                            assert.equal(repoUri, bytesToString(viewRepoUri), "Repo registered with the wrong URI");
-                            assertArraysEqual(assert.equal, expectedRepoTags, viewRepoTagsDecoded, "Repo registered with incorrect tags");
-                        });
-                    }
-                }
-            }
-
-
-            it(`VALIDATE - after adding second half tags`, async () =>
-                await validateAllTheThings(s.Data.Orgs, s.Data.ServiceTags, s.Data.RepoTags, s.Data.OrgsToServices, s.Data.OrgsToRepos, s.Data.TagsToServices, s.Data.TagsToRepos));
+            it(`VALIDATE ALL THE THINGS!`, async () => await validateAllTheThings(s.Data.Orgs, s.Data.OrgsToServices));
 
             // delete the first, middle, last service
             let remainingServiceIndexes = [];
@@ -515,7 +254,7 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
 
                         assert.equal(TX_STATUS.SUCCESS, deleteResult.receipt.status?TX_STATUS.SUCCESS:TX_STATUS.FAILURE, `deleteService should succeed for ${serviceId}`);
 
-                        const {found: found, name: viewServiceId, serviceTags: viewServiceTags} = deleteResult.view;
+                        const {found: found, name: viewServiceId} = deleteResult.view;
                         assert.equal(false, found, "Service was still found after deletion");
                     });
                 });
@@ -524,47 +263,8 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
             }
 
             it(`VALIDATE - after deleting services`, async () =>
-                await validateAllTheThings(s.Data.Orgs, s.Data.ServiceTags, s.Data.RepoTags, s.Data.OrgsToServices, s.Data.OrgsToRepos, s.Data.TagsToServices, s.Data.TagsToRepos));
+                await validateAllTheThings(s.Data.Orgs, s.Data.OrgsToServices));
 
-            // delete the first, middle, last repo
-            let remainingRepoIndexes = [];
-            for (let i = 0; i < numOrgs; i++) {
-                const orgId = c.Format.getOrgId(i);
-
-                let repoIndexesToDelete = [];
-
-                if (reposPerOrg > 0) {
-                    repoIndexesToDelete.push(0); // delete the first repo
-                }
-
-                if (reposPerOrg > 1) {
-                    repoIndexesToDelete.push(reposPerOrg - 1); // delete the last repo
-                }
-
-                if (reposPerOrg > 2) {
-                    repoIndexesToDelete.push(Math.floor(reposPerOrg / 2)); // delete a middle repo
-                }
-
-                repoIndexesToDelete.forEach(repoIndex => {
-                    const repoId = c.Format.getRepoId(orgId, repoIndex);
-
-                    it(`Deletes ${repoId} from ${orgId}`, async () => {
-                        const deleteResult = await deleteRepo(orgId, repoId);
-
-                        assert.equal(TX_STATUS.SUCCESS, deleteResult.receipt.status?TX_STATUS.SUCCESS:TX_STATUS.FAILURE, `deleteRepo should succeed for ${repoId}`);
-
-                        const {found: found, name: viewRepoId, repositoryURI: viewRepoUri, repositoryTags: viewRepoTags} = deleteResult.view;
-
-                        assert.equal(false, found, "Repo was still found after deletion");
-                    });
-                });
-
-                remainingRepoIndexes = intRange(0, reposPerOrg).difference(repoIndexesToDelete);
-            }
-
-            it(`VALIDATE - after deleting repos`, async () => {
-                await validateAllTheThings(s.Data.Orgs, s.Data.ServiceTags, s.Data.RepoTags, s.Data.OrgsToServices, s.Data.OrgsToRepos, s.Data.TagsToServices, s.Data.TagsToRepos)
-            });
 
             // delete first, middle, last org
             let remainingOrgIndexes = [];
@@ -586,14 +286,14 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
                 orgIndexesToDelete.forEach(orgIndex => {
                     const orgId = c.Format.getOrgId(orgIndex);
 
-                    it(`Deletes org ${orgId} with ${numTags} tags`, async () => {
+                    it(`Deletes org ${orgId}`, async () => {
 
                         const deleteResult = await deleteOrganization(orgId);
 
                         assert.equal(TX_STATUS.SUCCESS, deleteResult.receipt.status?TX_STATUS.SUCCESS:TX_STATUS.FAILURE, `deleteOrg should succeed for ${orgId}`);
 
                         // destructure view
-                        const {found, name, owner, serviceIds, repositoryNames} = deleteResult.view;
+                        const {found, name, owner, serviceIds} = deleteResult.view;
 
                         // validate view
                         assert.equal(false, found, "Org still found after deletion");
@@ -604,73 +304,12 @@ const runDynamicTestSuite = (suite_numOrgs, suite_servicesPerOrg, suite_reposPer
             }
 
             it(`VALIDATE - after deleting orgs`, async () => {
-                await validateAllTheThings(s.Data.Orgs, s.Data.ServiceTags, s.Data.RepoTags, s.Data.OrgsToServices, s.Data.OrgsToRepos, s.Data.TagsToServices, s.Data.TagsToRepos)
+                await validateAllTheThings(s.Data.Orgs, s.Data.OrgsToServices)
             });
 
-
-            // delete tags/4 tags from each service and repo
-
-            if (numTags !== 0) {
-                const allServiceTags = [...serviceTagsFirstHalf, ...serviceTagsSecondHalf];
-                const serviceTagsToRemove = [...serviceTagsFirstHalf, ...serviceTagsSecondHalf].filter((e, i) => i % 4 === 3);
-                const expectedServiceTags = [...serviceTagsFirstHalf, ...serviceTagsSecondHalf].filter((e, i) => [0, 1, 2].includes(i % 4));
-                for (const i of remainingOrgIndexes) {
-                    for (const j of remainingServiceIndexes) {
-                        const orgId = c.Format.getOrgId(i);
-                        const serviceId = c.Format.getServiceId(orgId, j);
-                        const metadataURI = c.Format.getMetaUri(orgId, j);
-
-                        it(`Removes ${serviceTagsToRemove.length} tags from ${serviceId}`, async () => {
-                            const removeResult = await removeTagsFromService(orgId, serviceId, serviceTagsToRemove);
-
-                            assert.equal(TX_STATUS.SUCCESS, removeResult.receipt.status?TX_STATUS.SUCCESS:TX_STATUS.FAILURE, `removeResult should succeed for ${serviceId} with ${serviceTagsToRemove.length} tags`);
-
-                            const {found: found, name: viewServiceId, metadataURI: viewMetadataURI, serviceTags: viewServiceTags} = removeResult.view;
-                            const viewServiceTagsDecoded = viewServiceTags.map(bytesToString);
-
-                            // validate view
-                            assert.equal(true, found, "Service not found after removing tags");
-                            assert.equal(serviceId, bytesToString(viewServiceId), "Service name doesnt match after removing tags");
-                            assert.equal(metadataURI, bytesToString(viewMetadataURI), "Service metadataURI doesnt match after removing tags");
-                            assertArraysEqual(assert.equal, expectedServiceTags, viewServiceTagsDecoded, "Service registered with incorrect tags");
-                        });
-                    }
-                }
-
-                const allRepoTags = [...repoTagsFirstHalf, ...repoTagsSecondHalf];
-                const repoTagsToRemove = [...repoTagsFirstHalf, ...repoTagsSecondHalf].filter((e, i) => i % 4 === 3);
-                const expectedRepoTags = [...repoTagsFirstHalf, ...repoTagsSecondHalf].filter((e, i) => [0, 1, 2].includes(i % 4));
-                for (const i of remainingOrgIndexes) {
-                    for (const j of remainingRepoIndexes) {
-                        const orgId = c.Format.getOrgId(i);
-                        const repoId = c.Format.getRepoId(orgId, j);
-                        const repoUri = c.Format.getRepoUri(orgId, j);
-
-                        it(`Removes ${repoTagsToRemove.length} tags from ${repoId}`, async () => {
-                            const removeResult = await removeTagsFromRepo(orgId, repoId, repoTagsToRemove);
-
-                            assert.equal(TX_STATUS.SUCCESS, removeResult.receipt.status?TX_STATUS.SUCCESS:TX_STATUS.FAILURE, `removeResult should succeed for ${repoId} with ${repoTagsToRemove.length} tags`);
-
-                            // destructure view
-                            const {found: found, name: viewRepoId, repositoryURI: viewRepoUri, repositoryTags: viewRepoTags} = removeResult.view;
-                            const viewRepoTagsDecoded = viewRepoTags.map(bytesToString);
-
-                            // validate view
-                            assert.equal(true, found, "Repo not found after registration");
-                            assert.equal(repoId, bytesToString(viewRepoId), "Repo registered with the wrong name");
-                            assert.equal(repoUri, bytesToString(viewRepoUri), "Repo registered with the wrong URI");
-                            assertArraysEqual(assert.equal, expectedRepoTags, viewRepoTagsDecoded, "Repo registered with incorrect tags");
-                        });
-                    }
-                }
-            }
-
-            it(`VALIDATE - after deleting tags`, async () => {
-                await validateAllTheThings(s.Data.Orgs, s.Data.ServiceTags, s.Data.RepoTags, s.Data.OrgsToServices, s.Data.OrgsToRepos, s.Data.TagsToServices, s.Data.TagsToRepos)
-            });
         };
 
-        await testLogic(suite_numOrgs, suite_servicesPerOrg, suite_reposPerOrg, suite_numTags) ;
+        await testLogic(suite_numOrgs, suite_servicesPerOrg) ;
     });
 };
 

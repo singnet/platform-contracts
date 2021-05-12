@@ -9,7 +9,7 @@ import "./ERC165Checker.sol";
 contract TestERC165 {
     bytes4 constant InvalidID   = 0xffffffff;
     bytes4 constant ERC165ID    = 0x01ffc9a7;
-    bytes4 constant RegistryID  = 0x1d466fef;
+    bytes4 constant RegistryID  = 0x3f2242ea;
 
     using ERC165Checker for *;
 

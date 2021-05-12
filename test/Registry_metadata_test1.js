@@ -27,7 +27,7 @@ contract('Registry', function(accounts) {
 
             await registry.createOrganization(orgId, orgMetadataURI, [accounts[1]]);
 
-            await registry.createServiceRegistration(orgId, serviceId, metadataURI, [])
+            await registry.createServiceRegistration(orgId, serviceId, metadataURI)
             let rez = await registry.getServiceRegistrationById(orgId, serviceId)
             assert.equal(rez[2], metadataURI)
 
