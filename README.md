@@ -18,7 +18,7 @@ Includes SingularityNET platform contracts, migrations, tests
 
 | Name      | InterfaceID ([ERC-165](https://eips.ethereum.org/EIPS/eip-165)) | Source Code                              |
 |-----------|-----------------------------------------------------------------|------------------------------------------|
-| IRegistry | 0x1d466fef                                                      | [IRegistry.sol](contracts/IRegistry.sol) |
+| IRegistry | 0x3f2242ea                                                      | [IRegistry.sol](contracts/IRegistry.sol) |
 
 ## Deployed Contracts (npm version 0.3.3)
 

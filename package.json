@@ -1,6 +1,6 @@
 {
   "name": "singularitynet-platform-contracts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Includes SingularityNET platform contracts, migrations, tests",
   "directories": {

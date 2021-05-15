@@ -63,7 +63,7 @@ contract('MultiPartyEscrow', function(accounts) {
 
             //try to withdraw more than we have
             await testErrorRevert(escrow.withdraw(N2 + 1, {from:accounts[4]}))
-            escrow.withdraw(N3, {from:accounts[4]})
+            await escrow.withdraw(N3, {from:accounts[4]})
             assert.equal((await escrow.balances.call(accounts[4])).toNumber(), N2 - N3)
             assert.equal((await token.balanceOf(escrow.address)).toNumber(), N1 + N2 - N3)
             assert.equal((await token.balanceOf(accounts[4])).toNumber(), N3)
@@ -72,13 +72,13 @@ contract('MultiPartyEscrow', function(accounts) {
             await token.transfer(accounts[8],  N2, {from:accounts[0]});
             await token.approve(escrow.address,N2, {from:accounts[8]});
             await escrow.deposit(N2, {from:accounts[8]});
-            escrow.transfer(accounts[9], N1, {from:accounts[8]} );
+            await escrow.transfer(accounts[9], N1, {from:accounts[8]} );
             assert.equal((await escrow.balances.call(accounts[8])).toNumber(), N2 - N1)
             assert.equal((await escrow.balances.call(accounts[9])).toNumber(), N1)
             
             // Transferring back to a[0] to make the remaining functions in tact
-            escrow.withdraw(N2 - N1, {from:accounts[8]})
-            escrow.withdraw(N1, {from:accounts[9]})
+            await escrow.withdraw(N2 - N1, {from:accounts[8]})
+            await escrow.withdraw(N1, {from:accounts[9]})
             await token.transfer(accounts[0],  N2 - N1, {from:accounts[8]});
             await token.transfer(accounts[0],  N1, {from:accounts[9]});
 
