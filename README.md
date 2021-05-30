@@ -14,7 +14,30 @@ Includes SingularityNET platform contracts, migrations, tests
 ### MultiPartyEscrow
 * Contract which support payment channels in SingularityNet.
 
-## Interfaces (npm version 0.3.2)
+
+## Interfaces (npm version 1.0.1) - AGIX Compatible
+
+| Name      | InterfaceID ([ERC-165](https://eips.ethereum.org/EIPS/eip-165)) | Source Code                              |
+|-----------|-----------------------------------------------------------------|------------------------------------------|
+| IRegistry | 0x3f2242ea                                                      | [IRegistry.sol](contracts/IRegistry.sol) |
+
+## Deployed Contracts (npm version 1.0.1)
+
+* Registry (Mainnet): [0x247DEbEBB766E4fA99667265A158060018D5f4F8](https://etherscan.io/address/0x247DEbEBB766E4fA99667265A158060018D5f4F8)
+* Multi Party Escrow (Mainnet): [0x5e592F9b1d303183d963635f895f0f0C48284f4e](https://etherscan.io/address/0x5e592F9b1d303183d963635f895f0f0C48284f4e)
+* AGI Token (Mainnet) :  [0x5B7533812759B45C2B44C19e320ba2cD2681b542](https://etherscan.io/address/0x5B7533812759B45C2B44C19e320ba2cD2681b542)
+
+* Registry (Kovan): [0xc254E2c484bfa175EE1E299DfeF6183bC3Fe12Ad](https://kovan.etherscan.io/address/0xc254E2c484bfa175EE1E299DfeF6183bC3Fe12Ad )
+* Multi Party Escrow (Kovan): [0x2BfED8c52b43DBb7F0a8201d1d9e478E48656bf5](https://kovan.etherscan.io/address/0x2BfED8c52b43DBb7F0a8201d1d9e478E48656bf5)
+* AGI Token (Kovan) :  [0x20802d1a9581b94e51db358C09e0818d6bd071b4](https://kovan.etherscan.io/address/0x20802d1a9581b94e51db358C09e0818d6bd071b4)
+
+* Registry (Ropsten) :  [0xB12089BD3F20A2C546FAad4167A08C57584f89C8](https://ropsten.etherscan.io/address/0xB12089BD3F20A2C546FAad4167A08C57584f89C8)
+* Multi Party Escrow (Ropsten) :  [0xFB1EB92D0721f0109bCC3aFd4eBbF0f7F06FCB52](https://ropsten.etherscan.io/address/0xFB1EB92D0721f0109bCC3aFd4eBbF0f7F06FCB52)
+* AGI Token (Ropsten) :  [0xA1e841e8F770E5c9507E2f8cfd0aA6f73009715d](https://ropsten.etherscan.io/address/0xA1e841e8F770E5c9507E2f8cfd0aA6f73009715d)
+
+
+
+## Interfaces (npm version 0.3.2) - AGI Compatible
 
 | Name      | InterfaceID ([ERC-165](https://eips.ethereum.org/EIPS/eip-165)) | Source Code                              |
 |-----------|-----------------------------------------------------------------|------------------------------------------|
