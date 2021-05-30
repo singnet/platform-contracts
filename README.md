@@ -55,8 +55,8 @@ Includes SingularityNET platform contracts, migrations, tests
 * AGI Token (Ropsten) :  [0xb97E9bBB6fd49865709d3F1576e8506ad640a13B](https://ropsten.etherscan.io/address/0xb97E9bBB6fd49865709d3F1576e8506ad640a13B)
 
 ## Requirements
-* [Node.js](https://github.com/nodejs/node) (8+)
-* [Npm](https://www.npmjs.com/package/npm)
+* [Node.js](https://github.com/nodejs/node) (v10.11.0)
+* [Npm](https://www.npmjs.com/package/npm) (6.4.1)
 
 ## Install
 
@@ -67,12 +67,12 @@ npm install
 
 ### Compile 
 ```bash
-truffle compile
+npm run-script compile
 ```
 
 ### Test 
 ```bash
-truffle test
+npm run-script test
 ```
 
 ## Package
