@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/singnet/platform-contracts#readme",
   "dependencies": {
-    "@openzeppelin/contracts": "^3.2.0",
+    "@openzeppelin/contracts": "^4.7.2",
     "@truffle/contract": "^4.2.23",
     "@truffle/hdwallet-provider": "^1.1.0",
     "singularitynet-token-contracts": "^3.0.0",
