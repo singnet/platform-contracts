@@ -38,7 +38,7 @@
     "fs-extra": "^5.0.0",
     "moment": "^2.22.2",
     "webpack-cli": "^3.0.8",
-    "ethereumjs-abi": "^0.6.5",
-    "ethereumjs-util": "^5.2.0"
+    "ethereumjs-abi": "^0.6.8",
+    "ethereumjs-util": "^7.1.5"
   }
 }
