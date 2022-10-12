@@ -36,6 +36,11 @@ let truffleOptions = {
              provider: () => provider("https://ropsten.infura.io/v3/" + process.env.InfuraKey),
             network_id: "3", // ropsten network ID, 
         },
+        goerli: {
+            gasPrice: 1000000000,
+            provider: () => provider("https://goerli.infura.io/v3/" + process.env.InfuraKey),
+           network_id: "5", // ropsten network ID, 
+       },
         main: {
             gasPrice: 70000000000,
             provider: () => provider("https://mainnet.infura.io/v3/" + process.env.InfuraKey),
@@ -50,6 +55,12 @@ let truffleOptions = {
             showTimeSpent: 'true'
         }
     },
+    plugins: [
+        'truffle-plugin-verify'
+          ],
+    api_keys: {
+        etherscan: process.env.EtherScanKey
+      },
     // Configure your compilers
     compilers: {
         solc: {
