@@ -39,7 +39,7 @@
     "ethereumjs-abi": "^0.6.8",
     "ethereumjs-util": "^7.1.5",
     "fs-extra": "^5.0.0",
-    "moment": "^2.22.2",
+    "moment": "^2.29.4",
     "webpack-cli": "^3.0.8"
   }
 }
