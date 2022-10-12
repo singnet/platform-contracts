@@ -14,6 +14,11 @@ Includes SingularityNET platform contracts, migrations, tests
 ### MultiPartyEscrow
 * Contract which support payment channels in SingularityNet.
 
+## Deployed Contracts on Goerli Testnet (npm version 1.0.2)
+* Registry (Goerli) :  [0x0DD7feC305f2374d7eed35d6d28134936c025A7A](https://goerli.etherscan.io/address/0x0DD7feC305f2374d7eed35d6d28134936c025A7A)
+* Multi Party Escrow (Goerli) :  [0x6245F856EFFBDB3ED6a3c64385b27A78B42F65e1](https://goerli.etherscan.io/address/0x6245F856EFFBDB3ED6a3c64385b27A78B42F65e1)
+* AGI Token (Goerli) :  [0xdd4292864063d0DA1F294AC65D74d55a44F4766C](https://goerli.etherscan.io/address/0xdd4292864063d0DA1F294AC65D74d55a44F4766C)
+
 
 ## Interfaces (npm version 1.0.1) - AGIX Compatible
 
@@ -34,7 +39,6 @@ Includes SingularityNET platform contracts, migrations, tests
 * Registry (Ropsten) :  [0xB12089BD3F20A2C546FAad4167A08C57584f89C8](https://ropsten.etherscan.io/address/0xB12089BD3F20A2C546FAad4167A08C57584f89C8)
 * Multi Party Escrow (Ropsten) :  [0xFB1EB92D0721f0109bCC3aFd4eBbF0f7F06FCB52](https://ropsten.etherscan.io/address/0xFB1EB92D0721f0109bCC3aFd4eBbF0f7F06FCB52)
 * AGI Token (Ropsten) :  [0xA1e841e8F770E5c9507E2f8cfd0aA6f73009715d](https://ropsten.etherscan.io/address/0xA1e841e8F770E5c9507E2f8cfd0aA6f73009715d)
-
 
 
 ## Interfaces (npm version 0.3.2) - AGI Compatible
@@ -76,6 +80,7 @@ Includes SingularityNET platform contracts, migrations, tests
 * Multi Party Escrow (Ropsten) :  [0x7e6366fbe3bdfce3c906667911fc5237cc96bd08](https://ropsten.etherscan.io/address/0x7e6366fbe3bdfce3c906667911fc5237cc96bd08)
 * Registry (Ropsten) :  [0x5156fde2ca71da4398f8c76763c41bc9633875e4](https://ropsten.etherscan.io/address/0x5156fde2ca71da4398f8c76763c41bc9633875e4)
 * AGI Token (Ropsten) :  [0xb97E9bBB6fd49865709d3F1576e8506ad640a13B](https://ropsten.etherscan.io/address/0xb97E9bBB6fd49865709d3F1576e8506ad640a13B)
+
 
 ## Requirements
 * [Node.js](https://github.com/nodejs/node) (v10.11.0)
