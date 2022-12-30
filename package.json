@@ -28,7 +28,7 @@
     "@truffle/contract": "^4.2.23",
     "@truffle/hdwallet-provider": "^1.1.0",
     "singularitynet-token-contracts": "^3.0.1",
-    "truffle": "5.1.46",
+    "truffle": "5.7.1",
     "truffle-plugin-verify": "^0.5.31"
   },
   "devDependencies": {
