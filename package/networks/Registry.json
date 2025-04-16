@@ -1,0 +1,205 @@
+{
+    "1": {
+        "events": {
+            "0x0e7857bfbd020070a2c8d2fe38c788de1e6adc88cb46f60cf6ec7cd385e81db1": {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "orgId",
+                        "type": "bytes32"
+                    }
+                ],
+                "name": "OrganizationCreated",
+                "type": "event"
+            },
+            "0xb1dbc279d80967cb8113073651e5919753c82fad7b002581eb7a020eaf89e9a7": {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "orgId",
+                        "type": "bytes32"
+                    }
+                ],
+                "name": "OrganizationDeleted",
+                "type": "event"
+            },
+            "0x06ccb920be65231f5c9d04dd4883d3c7648ebe5f5317cc7177ee4f4a7cc2d038": {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "orgId",
+                        "type": "bytes32"
+                    }
+                ],
+                "name": "OrganizationModified",
+                "type": "event"
+            },
+            "0x3229c7118d95880b1bb8abc6231f47f1a63d7b1e7e22fbd91a8ccffc9fa75df9": {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "orgId",
+                        "type": "bytes32"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "serviceId",
+                        "type": "bytes32"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "bytes",
+                        "name": "metadataURI",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "ServiceCreated",
+                "type": "event"
+            },
+            "0x3caed2ddcd24bae20b0075a02d974ba3a229dace98271af93ce8c8f3ebd9d272": {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "orgId",
+                        "type": "bytes32"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "serviceId",
+                        "type": "bytes32"
+                    }
+                ],
+                "name": "ServiceDeleted",
+                "type": "event"
+            },
+            "0xb7b13a2b2a9c0147b27815cbec2c7e5ed10588c9d5812211619614c379174c5a": {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "orgId",
+                        "type": "bytes32"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "serviceId",
+                        "type": "bytes32"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "bytes",
+                        "name": "metadataURI",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "ServiceMetadataModified",
+                "type": "event"
+            },
+            "0xd8b715d9bf49bca034a993b5b934475414e84c904dcbf90dbddd139808b97b05": {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "orgId",
+                        "type": "bytes32"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "serviceId",
+                        "type": "bytes32"
+                    }
+                ],
+                "name": "ServiceTagsModified",
+                "type": "event"
+            },
+            "0x5124da9b6fa39b72e36fd353b25ddc71861b18c5dcafea15e97a850a1696adbc": {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "orgId",
+                        "type": "bytes32"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "typeRepositoryId",
+                        "type": "bytes32"
+                    }
+                ],
+                "name": "TypeRepositoryCreated",
+                "type": "event"
+            },
+            "0x6ede3bb1e53daa5c72ee70092a3ce9a7dadac03f980fe8726ad2716c7f871d54": {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "orgId",
+                        "type": "bytes32"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "typeRepositoryId",
+                        "type": "bytes32"
+                    }
+                ],
+                "name": "TypeRepositoryDeleted",
+                "type": "event"
+            },
+            "0xea3bcbabd0c9d3dae0474b21e6aeef5b2598eafe710788a0da66a15ffb65f449": {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "orgId",
+                        "type": "bytes32"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "typeRepositoryId",
+                        "type": "bytes32"
+                    }
+                ],
+                "name": "TypeRepositoryModified",
+                "type": "event"
+            }
+        },
+        "links": {},
+        "address": "0x247DEbEBB766E4fA99667265A158060018D5f4F8",
+        "transactionHash": "0x6290f6227af2ded31ef5e5a99e8fc0dfee9524446d944446edd1e784bababe74"
+    },
+    "5": {
+        "events": {},
+        "links": {},
+        "address": "0x0DD7feC305f2374d7eed35d6d28134936c025A7A",
+        "transactionHash": "0x973454b14e7fb52b2a733a3f3738dc2cfa657c1fcbd3e343e41bb51711849cee"
+    },
+    "11155111": {
+        "events": {},
+        "links": {},
+        "address": "0x4DCc70c6FCE4064803f0ae0cE48497B3f7182e5D",
+        "transactionHash": "0xc54823ed287fe4a4c7a85595d8ae19a2200492fa830401e1d7edc10ef80470c5"
+    }
+}
