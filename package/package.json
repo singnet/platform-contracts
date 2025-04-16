@@ -1,6 +1,6 @@
 {
     "name": "singularitynet-platform-contracts",
-    "version": "1.0.4",
+    "version": "2.0.0",
     "description": "Includes SingularityNET platform contracts, migrations, tests",
     "repository": {
         "type": "git",
@@ -13,6 +13,6 @@
     },
     "homepage": "https://github.com/singnet/platform-contracts#readme",
     "dependencies": {
-        "singularitynet-token-contracts": "^3.0.2"
+        "singularitynet-token-contracts": "3.1.0"
     }
 }
