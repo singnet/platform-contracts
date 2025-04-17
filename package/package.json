@@ -1,6 +1,6 @@
 {
     "name": "singularitynet-platform-contracts",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": "Includes SingularityNET platform contracts, migrations, tests",
     "repository": {
         "type": "git",
