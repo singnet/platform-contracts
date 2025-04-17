@@ -26,12 +26,12 @@
         },
         "FET": {
             "dev": {
-                "address": "0xB5648eC3f4bEd518D60d533d2692ef56Fef55905",
-                "transactionHash": "0x7cacdf8e2c768ca1ac8d8134a62ad34615e677bb0b4a35177321edb413ce61ef"
+                "address": "0xE73aC4AC2D9Df5698710fFB2f6c3923ADf0bA055",
+                "transactionHash": "0x165a10ddb1d04a38eae9179346baa8667aa8d69b1d5cd07e59dd8233b0eb1457"
             },
             "demo": {
-                "address": "0x36b3544904f90561248A7095c3abCF53D6C2e997",
-                "transactionHash": "0x40ac90077925c36b870eae5ac28ac8840e6c4d85c055d47742a1008e0a405f69"
+                "address": "0x4DCc70c6FCE4064803f0ae0cE48497B3f7182e5D",
+                "transactionHash": "0xc54823ed287fe4a4c7a85595d8ae19a2200492fa830401e1d7edc10ef80470c5"
             }
         }
     }
