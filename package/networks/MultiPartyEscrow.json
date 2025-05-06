@@ -6,7 +6,12 @@
                 "transactionHash": "0x3cd235303853dab271613a7679c9c5bfc7c86b05305620dadaaa7c46920b66c7"
             }
         },
-        "FET": {}
+        "FET": {
+            "prod": {
+                "address": "0xdF8d4826E016aFA8803d94A716FEB70aD5D2B8Ac",
+                "transactionHash": "0xac237d845702f0cb4bbfa7564bd12fd712a3bd01ffa0f3cb6556135fca0ce38b"
+            }
+        }
     },
     "11155111": {
         "AGIX": {
